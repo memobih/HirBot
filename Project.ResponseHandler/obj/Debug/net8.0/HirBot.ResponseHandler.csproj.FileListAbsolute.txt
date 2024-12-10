@@ -1,0 +1,12 @@
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\bin\Debug\net8.0\HirBot.ResponseHandler.deps.json
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\bin\Debug\net8.0\HirBot.ResponseHandler.dll
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\bin\Debug\net8.0\HirBot.ResponseHandler.pdb
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.csproj.AssemblyReference.cache
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.AssemblyInfoInputs.cache
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.AssemblyInfo.cs
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.csproj.CoreCompileInputs.cache
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.dll
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\refint\HirBot.ResponseHandler.dll
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.pdb
+C:\Users\ahmed\source\repos\HIrBot\Project.ResponseHandler\obj\Debug\net8.0\ref\HirBot.ResponseHandler.dll
