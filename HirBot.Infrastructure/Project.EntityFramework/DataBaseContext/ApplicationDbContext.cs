@@ -10,13 +10,7 @@ namespace HirBot.EntityFramework.DataBaseContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-
-      
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            
-        }
+ 
        
 
     }

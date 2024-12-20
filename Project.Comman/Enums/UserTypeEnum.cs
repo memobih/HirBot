@@ -9,7 +9,7 @@ namespace HirBot.Comman.Enums
     public enum UserType
     {
 
-        Cashier = 1,  // Cashier
+        user = 1,  // Cashier
         Admin = 2     // Admin
     }
 

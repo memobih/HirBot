@@ -2,8 +2,9 @@
 using Newtonsoft.Json;
 using System.Formats.Asn1;
 using Newtonsoft.Json.Linq;
+using Project.ResponseHandler.Models;
 
-namespace Project.ResponseHandler.Models
+namespace HirBot.ResponseHandler.Models
 {
     public class APIOperationResponse<T>
     {

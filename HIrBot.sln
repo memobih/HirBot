@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HIrBot", "HIrBot\HIrBot.csproj", "{32E9136C-1DA2-4724-8B89-634031DEA148}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HirBot", "HIrBot\HirBot.csproj", "{32E9136C-1DA2-4724-8B89-634031DEA148}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Infrastructure", "HirBot.Infrastructure", "{672ADC91-A4BE-49F0-9030-430D150787EB}"
 EndProject
@@ -26,6 +26,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HirBot.ResponseHandler", "Project.ResponseHandler\HirBot.ResponseHandler.csproj", "{32160BD9-3884-4E2F-A099-AF18739DD084}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HirBot.EntityFramework", "HirBot.Infrastructure\Project.EntityFramework\HirBot.EntityFramework.csproj", "{1301ABEC-5EF7-4EDC-9FFB-29F9E06F52BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.User", "HirBot.User", "{44A1FD07-9E08-4C19-B783-1DE05AB754F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.Api", "User.Api\User.Api.csproj", "{E68B2949-FF92-42D8-974A-3D8E43593128}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.Services", "User.Services\User.Services.csproj", "{47CC2A6C-A646-41E5-95A4-7160C4D1B588}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +67,14 @@ Global
 		{1301ABEC-5EF7-4EDC-9FFB-29F9E06F52BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1301ABEC-5EF7-4EDC-9FFB-29F9E06F52BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1301ABEC-5EF7-4EDC-9FFB-29F9E06F52BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E68B2949-FF92-42D8-974A-3D8E43593128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E68B2949-FF92-42D8-974A-3D8E43593128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E68B2949-FF92-42D8-974A-3D8E43593128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E68B2949-FF92-42D8-974A-3D8E43593128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47CC2A6C-A646-41E5-95A4-7160C4D1B588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47CC2A6C-A646-41E5-95A4-7160C4D1B588}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47CC2A6C-A646-41E5-95A4-7160C4D1B588}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47CC2A6C-A646-41E5-95A4-7160C4D1B588}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +87,9 @@ Global
 		{C36F5DD6-A15F-4FD7-AE5F-E595F5761BEC} = {0B9ECA70-4DE2-4BBD-8D4A-B279A689AC65}
 		{32160BD9-3884-4E2F-A099-AF18739DD084} = {0B9ECA70-4DE2-4BBD-8D4A-B279A689AC65}
 		{1301ABEC-5EF7-4EDC-9FFB-29F9E06F52BF} = {672ADC91-A4BE-49F0-9030-430D150787EB}
+		{44A1FD07-9E08-4C19-B783-1DE05AB754F2} = {45F58424-F858-429F-8B62-28F5A5E5DE6D}
+		{E68B2949-FF92-42D8-974A-3D8E43593128} = {44A1FD07-9E08-4C19-B783-1DE05AB754F2}
+		{47CC2A6C-A646-41E5-95A4-7160C4D1B588} = {44A1FD07-9E08-4C19-B783-1DE05AB754F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EBBDB97-0427-45B0-9B28-E23E2F77A5FA}

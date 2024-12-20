@@ -1,7 +1,12 @@
 ﻿using HirBot.Data.IGenericRepository_IUOW;
-using HirBot.Comman.Idenitity;
 using HirBot.EntityFramework.DataBaseContext;
-namespace HirBot.Repository.Repository
+using HirBot.Comman.Idenitity;
+using HirBot.Comman.Idenitity;
+using HirBot.Data.IGenericRepository_IUOW;
+using HirBot.EntityFramework.DataBaseContext;
+using HirBot.Repository.Repository;
+
+namespace Project.Repository.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -14,11 +19,6 @@ namespace HirBot.Repository.Repository
 
             Users = new GeneralRepository<ApplicationUser>(_context);
         }
-
-        public UnitOfWork()
-        {
-        }
-
         public async Task<bool> SaveAsync()
         {
             int result = await _context.SaveChangesAsync();

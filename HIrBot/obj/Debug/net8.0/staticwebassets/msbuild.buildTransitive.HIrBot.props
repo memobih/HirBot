@@ -1,3 +1,3 @@
 ﻿<Project>
-  <Import Project="..\buildMultiTargeting\HIrBot.props" />
+  <Import Project="..\buildMultiTargeting\HirBot.props" />
 </Project>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HirBot.ResponseHandler.Models;
+using Microsoft.AspNetCore.Mvc;
 using Project.ResponseHandler.Consts;
 using System;
 using System.Collections.Generic;

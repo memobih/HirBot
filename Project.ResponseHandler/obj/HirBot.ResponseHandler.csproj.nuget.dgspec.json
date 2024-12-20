@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ahmed\\source\\repos\\HIrBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj": {}
+    "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ahmed\\source\\repos\\HIrBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj": {
+    "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\HIrBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj",
+        "projectUniqueName": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj",
         "projectName": "HirBot.ResponseHandler",
-        "projectPath": "C:\\Users\\ahmed\\source\\repos\\HIrBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj",
+        "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj",
         "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ahmed\\source\\repos\\HIrBot\\Project.ResponseHandler\\obj\\",
+        "outputPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.ResponseHandler\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
