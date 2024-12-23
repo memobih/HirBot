@@ -1,0 +1,12 @@
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\bin\Debug\net8.0\test.services.deps.json
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\bin\Debug\net8.0\test.services.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\bin\Debug\net8.0\test.services.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\test.services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\test.services.AssemblyInfoInputs.cache
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\test.services.AssemblyInfo.cs
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\test.services.csproj.CoreCompileInputs.cache
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\test.services.sourcelink.json
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\test.services.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\refint\test.services.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\test.services.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\test.services\obj\Debug\net8.0\ref\test.services.dll

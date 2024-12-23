@@ -11,18 +11,40 @@
   },
   {
     "ContainingType": "User.Api.Controllers.UserController",
-    "Method": "te",
-    "RelativePath": "api/User",
-    "HttpMethod": "GET",
+    "Method": "login",
+    "RelativePath": "api/User/login",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "User.Services.DataTransferObjects.Authencation.LoginDto",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
     "ContainingType": "User.Api.Controllers.UserController",
-    "Method": "AddUser",
-    "RelativePath": "api/User/AddUser",
+    "Method": "Logout",
+    "RelativePath": "api/User/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "token",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "User.Api.Controllers.UserController",
+    "Method": "UserRegister",
+    "RelativePath": "api/User/UserRegister",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -37,16 +59,16 @@
   },
   {
     "ContainingType": "User.Api.Controllers.UserController",
-    "Method": "login",
-    "RelativePath": "api/User/login",
+    "Method": "Validate",
+    "RelativePath": "api/User/validate",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "request",
-        "Type": "User.Services.DataTransferObjects.Authencation.LoginDto",
-        "IsRequired": true
+        "Name": "token",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

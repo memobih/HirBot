@@ -1,5 +1,6 @@
 using HirBot.Comman.Idenitity;
 using HirBot.EntityFramework.DataBaseContext;
+using HirBot.Redies;
 using HirBot.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -50,9 +51,23 @@ builder.Services.AddSwaggerGen(c =>
                 }
             });
 });
+builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("cs")));
+{
+    options.UseMySql(builder.Configuration.GetConnectionString("cs"),
+    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("cs")));
+});
+builder.Services.AddSingleton<RedisService>(sp =>
+{
+    var config = builder.Configuration;
+    var redisHost = config["Redis:Host"];
+    var redisPassword = config["Redis:Password"];
+    int redisPort = 14070;
+    var redisUsername = config["Redis:Username"];
+    return new RedisService(redisHost, redisPassword, redisPort, redisUsername);
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

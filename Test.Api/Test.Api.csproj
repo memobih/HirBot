@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Project.Comman\HirBot.Comman.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
+    <ProjectReference Include="..\User.Services\User.Services.csproj" />
   </ItemGroup>
 
 </Project>

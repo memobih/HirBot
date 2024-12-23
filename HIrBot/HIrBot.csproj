@@ -11,12 +11,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HirBot.Infrastructure\Project.EntityFramework\HirBot.EntityFramework.csproj" />
     <ProjectReference Include="..\HirBot.Infrastructure\Project.Repository\HireBot.Repository.csproj" />
+    <ProjectReference Include="..\HirBot.Redies\HirBot.Redies.csproj" />
     <ProjectReference Include="..\Test.Api\Test.Api.csproj" />
     <ProjectReference Include="..\User.Api\User.Api.csproj" />
     <ProjectReference Include="..\User.Services\User.Services.csproj" />

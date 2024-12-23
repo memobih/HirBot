@@ -23,74 +23,130 @@ using Azure.Core;
 using Project.ResponseHandler.Consts;
 using Azure.Identity;
 using Microsoft.Identity.Client;
+using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
+using User.Services.models;
+using HirBot.Data.IGenericRepository_IUOW;
+using Azure;
+using HirBot.Redies;
+using Newtonsoft.Json.Linq;
 
 namespace User.Services.Implemntation
 {
     public  class AuthenticationService :  Project.Services.Interfaces.IAuthenticationService
     {
+        #region services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
-        public AuthenticationService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        private readonly RedisService _redisService;
+
+        public AuthenticationService(UserManager<ApplicationUser> userManager, IConfiguration configuration, RedisService redisService)
         {
             _userManager = userManager;
             _configuration = configuration; 
+            _redisService = redisService;
         }
-        public async Task<APIOperationResponse<object>> AddUser(UserRegisterDto userRegisterDto)
+        #endregion
+        #region Authenticated
+        public async Task<APIOperationResponse<AuthModel>> RegisterUser(UserRegisterDto userRegisterDto)
         {
-            
+            var respon = new AuthModel();
+
             try
-            {
+            { 
+                var user =await _userManager.FindByEmailAsync(userRegisterDto.Email); 
+                
+                if(user!=null)
+                {
+                    return APIOperationResponse<AuthModel>.BadRequest("this email already register");
+                } 
+
                 var newUser = new ApplicationUser();
                 newUser.Email = userRegisterDto.Email;
                 newUser.FullName = userRegisterDto.FullName;
                 newUser.PhoneNumber = userRegisterDto.PhoneNumber;
-                newUser.UserName = userRegisterDto.UserName;
+                newUser.UserName = userRegisterDto.Email;
                 newUser.UserType = UserType.user;
+
                 IdentityResult result = await _userManager.CreateAsync(newUser, userRegisterDto.Password);
                 if (!result.Succeeded)
                 {
                     var errors = result.Errors.Select(e => e.Description).ToList();
-                    return APIOperationResponse<object>.BadRequest(message: "Failed to register the  user. Please check the provided details.", errors);
+                    return APIOperationResponse<AuthModel>.BadRequest(message: "Failed to register the  user. Please check the provided details.", errors);
                 }
-              var token = await GenerateJwtTokenAsync(newUser);
-                return APIOperationResponse<object>.Success(new {result ,token}, " user created successfully.");
+                string accessToken =await  GenerateJwtTokenAsync(newUser);
+                RefreshToken refreshtoken = GenerateRefreshToken();
+                respon.Email = newUser.Email;
+                respon.RefreshToken = refreshtoken.token;
+                respon.Token = accessToken;
+                respon.Message = "created successful";
+                respon.IsAuthenticated = true;
+                respon.ExpiresOn = refreshtoken.expirationOn;
+                newUser.refreshTokens?.Add(refreshtoken);
+                await _userManager.UpdateAsync(newUser);
+                return APIOperationResponse<AuthModel>.Success(respon, " user created successfully.");
             }
             catch (Exception ex)
             {
-                return APIOperationResponse<object>.ServerError("An error occurred while register the  user.", new List<string> { ex.Message });
+                respon.Message= "An error occurred while register the  user.";
+                return APIOperationResponse<AuthModel>.ServerError(respon.Message, new List<string> { ex.Message });
             }
         } 
-        public async Task<APIOperationResponse<object>> Login(LoginDto request)
+        public async Task<APIOperationResponse<AuthModel>> Login(LoginDto request)
         {
+            var respon = new AuthModel();
 
             try
-            {
-
-                var user = await _userManager.FindByNameAsync(request.UserName);
-
+            { 
+                var user = await _userManager.FindByEmailAsync(request.Email);
                 if (user != null)
                 {
                     var isVaild = await _userManager.CheckPasswordAsync(user, request.Password);
                     if (isVaild)
                     {
-                        var token = await GenerateJwtTokenAsync(user);
-                        return APIOperationResponse<object>.Success(new { token }, message: "user is login");
+                         string token = await GenerateJwtTokenAsync(user);
+                        RefreshToken refreshtoken = GenerateRefreshToken();
+                        respon.Email = user.Email;
+                        respon.RefreshToken = refreshtoken.token;
+                        respon.Token = token;
+                        respon.Message = "login successful";
+                        respon.IsAuthenticated = true;
+                        respon.ExpiresOn = refreshtoken.expirationOn;
+                        user.refreshTokens?.Add(refreshtoken);
+                        await _userManager.UpdateAsync(user);
+                        return APIOperationResponse<AuthModel>.Success(respon, message: "user is login");
                     }
-                    return APIOperationResponse<object>.BadRequest("check your password or email");
+                    return APIOperationResponse<AuthModel>.BadRequest("check your password or email");
 
                 }
-                return APIOperationResponse<object>.BadRequest("check your password or email");
+                return APIOperationResponse<AuthModel>.BadRequest("check your password or email");
 
             }
             catch (Exception ex)
             {
-                return APIOperationResponse<object>.ServerError("An error occurred while register the  user.", new List<string> { ex.Message });
+                return APIOperationResponse<AuthModel>.ServerError("An error occurred while register the  user.", new List<string> { ex.Message });
             }
 
+        }  
+        public async Task<bool> Logout(string token , string accessToken)
+        {  
+
+            var user= await _userManager.Users.FirstOrDefaultAsync(u=>u.refreshTokens.Any(t=>t.token==token));
+            if(user==null)
+               return false;
+                   var refreshToken = user.refreshTokens.Single(t => t.token == token);
+                   user.refreshTokens.Remove(refreshToken);
+                     await _userManager.UpdateAsync(user);
+                    var expiry = TimeSpan.FromDays(2);
+                   var result = await _redisService.StoreJwtTokenAsync(accessToken, expiry);
+
+            return true;
+
+         
         }
-
-
-        private async Task<string> GenerateJwtTokenAsync(ApplicationUser user)
+        #endregion
+        #region TOKEN AND REFRESH TOKEN
+        private async Task<string > GenerateJwtTokenAsync(ApplicationUser user)
         {  //Token claims
             var claims = new List<Claim>()
                     {
@@ -117,9 +173,45 @@ namespace User.Services.Implemntation
                 signingCredentials: signingCredentials
                 );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            string mytoken= new JwtSecurityTokenHandler().WriteToken(token);
+           
+            return mytoken;
         }
+        private RefreshToken GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
 
-      
+             var generator = new RNGCryptoServiceProvider();
+
+            generator.GetBytes(randomNumber);
+
+            return new RefreshToken
+            {
+                token = Convert.ToBase64String(randomNumber),
+                expirationOn = DateTime.UtcNow.AddDays(10),
+                CreatedOn = DateTime.UtcNow
+            };
+        }
+        public async Task<AuthModel> RefreshTokenAsync(string token)
+        { 
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.refreshTokens.Any(t => t.token == token));
+            var respon = new AuthModel();
+            if (user == null)
+            {
+                respon.Message = "token is invalid";
+                return respon;
+            }
+
+            var refreshToken = user.refreshTokens.Single(t => t.token == token); // the refreah token of the user
+
+            if (!refreshToken.isActive)
+            {
+                respon.Message = "token is invalid";
+            }
+
+             string t = await GenerateJwtTokenAsync(user);
+            return respon;
+        }
+        #endregion
     }
 }

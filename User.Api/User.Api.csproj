@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HirBot.Redies\HirBot.Redies.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
     <ProjectReference Include="..\User.Services\User.Services.csproj" />
   </ItemGroup>

@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
+    <ProjectReference Include="..\Project.Comman\HirBot.Comman.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Project.Comman\HirBot.Comman.csproj" />
+    <Folder Include="Entities\" />
   </ItemGroup>
 
 </Project>

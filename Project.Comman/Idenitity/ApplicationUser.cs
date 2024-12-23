@@ -13,6 +13,6 @@ namespace HirBot.Comman.Idenitity
         [RegularExpression(@"^\d+$")]
         public string PhoneNumber { get; set; }
         public UserType UserType { get; set; }
-
+        public List<RefreshToken> refreshTokens { get; set; }
     }
 }
