@@ -134,12 +134,11 @@ namespace User.Services.Implemntation
             var user= await _userManager.Users.FirstOrDefaultAsync(u=>u.refreshTokens.Any(t=>t.token==token));
             if(user==null)
                return false;
-                   var refreshToken = user.refreshTokens.Single(t => t.token == token);
-                   user.refreshTokens.Remove(refreshToken);
-                     await _userManager.UpdateAsync(user);
-                    var expiry = TimeSpan.FromDays(2);
-                   var result = await _redisService.StoreJwtTokenAsync(accessToken, expiry);
-
+                      var refreshToken = user.refreshTokens.Single(t => t.token == token);
+                      user.refreshTokens.Remove(refreshToken);
+                      await _userManager.UpdateAsync(user);
+                      var expiry = TimeSpan.FromDays(2);
+                      var result = await _redisService.StoreJwtTokenAsync(accessToken, expiry);
             return true;
 
          
@@ -169,7 +168,7 @@ namespace User.Services.Implemntation
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
                 claims: claims,
-                expires: DateTime.Now.AddDays(10),
+                expires: DateTime.Now.AddHours(2),
                 signingCredentials: signingCredentials
                 );
 

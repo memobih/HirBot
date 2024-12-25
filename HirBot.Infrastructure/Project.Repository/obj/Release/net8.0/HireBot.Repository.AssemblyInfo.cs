@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HireBot.Repository")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+25876267de28f97ec7bd6a1410bbc4948047b793")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a9b62a5fb9e867a0014f5da3877834580b5d6bca")]
 [assembly: System.Reflection.AssemblyProductAttribute("HireBot.Repository")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HireBot.Repository")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
