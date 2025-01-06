@@ -1,11 +1,6 @@
 ﻿using HirBot.ResponseHandler.Models;
 using Microsoft.AspNetCore.Mvc;
 using Project.ResponseHandler.Consts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Project.ResponseHandler.Models
 {

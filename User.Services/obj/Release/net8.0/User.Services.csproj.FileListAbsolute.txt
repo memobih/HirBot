@@ -20,3 +20,9 @@ C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Release\net8.0\User
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Release\net8.0\refint\User.Services.dll
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Release\net8.0\User.Services.pdb
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Release\net8.0\ref\User.Services.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Release\net8.0\HirBot.EntityFramework.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Release\net8.0\HireBot.Repository.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Release\net8.0\HireBot.Repository.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Release\net8.0\HirBot.EntityFramework.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Release\net8.0\Mailing.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Release\net8.0\Mailing.pdb

@@ -1,15 +1,16 @@
 using HirBot.Comman.Idenitity;
-using HirBot.EntityFramework.DataBaseContext;
 using HirBot.Redies;
-using HirBot.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using HirBot.Repository;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using User.Services;
+using HirBot.EntityFramework.DataBaseContext;
+using Mailing;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
@@ -105,8 +106,18 @@ builder.Services.AddAuthentication(option =>
                };
            });
 
+builder.Services.AddCors(corsOptions =>
+{
+    corsOptions.AddPolicy("MyPolicy",
+        corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
+                                              .AllowAnyHeader()
+                                              .AllowAnyMethod());
+});
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("Mailing"));
 
 var app = builder.Build();
+app.UseCors("MyPolicy");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

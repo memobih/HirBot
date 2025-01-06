@@ -22,3 +22,9 @@ C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HirBot.Redi
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HirBot.Redies.pdb
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HirBot.Data.dll
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HirBot.Data.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HirBot.EntityFramework.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HireBot.Repository.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HirBot.EntityFramework.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\HireBot.Repository.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\Mailing.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Api\bin\Debug\net8.0\Mailing.pdb

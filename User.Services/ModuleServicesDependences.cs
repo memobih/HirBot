@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Mailing;
+using Microsoft.Extensions.DependencyInjection;
 using Project.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace User.Services
         public static IServiceCollection AddUsersServices(this IServiceCollection service)
         {
             service.AddTransient<IAuthenticationService, AuthenticationService>();
+            service.AddScoped<IMailingService, MailingService>();
             return service;
         }
     }

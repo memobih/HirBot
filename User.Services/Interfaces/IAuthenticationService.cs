@@ -16,6 +16,11 @@ namespace Project.Services.Interfaces
         //Task<APIOperationResponse<object>> ChangePasswordAsync(ChangePasswordDto changePasswordDto, string userId);
         Task<APIOperationResponse<AuthModel> > Login(LoginDto request);
         Task<bool> Logout(string token ,string accesstoken);
+        Task<APIOperationResponse<AuthModel>> RefreshTokenAsync(string token);
+        public Task<APIOperationResponse<AuthModel>> RegisterCompany(CompanyRegisterDto companyRegisterDto);
+        public Task<bool> ResendOTP(string email);
+        public Task<APIOperationResponse<AuthModel>> ConfirmEmail(string email, int otp);
+        public Task<APIOperationResponse<object>> ResetPassword(string password);
         //Task<APIOperationResponse<GetUserDto>> GetUserByIdAsync(string userId);
 
         //Task<APIOperationResponse<object>> UpdateUserAsync(GetUserDto updateUserDto);

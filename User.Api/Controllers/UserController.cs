@@ -1,19 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.ResponseHandler.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using User.Services.DataTransferObjects.Authencation;
-using Project.Services.Interfaces;
 using HirBot.Redies;
 using Microsoft.AspNetCore.Http;
-
-
+using Azure;
+using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace User.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -43,8 +37,22 @@ namespace User.Api.Controllers
             if(response.StatusCode==200&&!string.IsNullOrEmpty(response.Data.RefreshToken))
             {
                 SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
+                return Ok(new { satue = response.Succeeded, response.Message});
             }
-            return StatusCode(response.StatusCode, response);
+            return StatusCode(response.StatusCode, new { satue = response.Succeeded, response.Message,response.Errors});
+        }
+        [Route("CompanyRegister")]
+        [HttpPost]
+        public async Task<IActionResult> CompanyRegister([FromForm]CompanyRegisterDto addCompanyDto)
+        { 
+    
+            var response = await _authenticationService.RegisterCompany(addCompanyDto);
+            if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
+            {
+                SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
+                return Ok(new { satue = response.Succeeded, response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
+            }
+            return StatusCode(response.StatusCode, new { satue = response.Succeeded ,response.Message, response.Errors });
         }
         [Route("login")]
         [HttpPost]
@@ -54,9 +62,10 @@ namespace User.Api.Controllers
             if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
             {
                 SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
+                return Ok(new { status= response.Succeeded ,response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
             }
-            return StatusCode(response.StatusCode, response);
-        }
+            return StatusCode(response.StatusCode, new { satue = response.Succeeded, response.Message, response.Errors });
+        } 
          [HttpPost("logout")]
         [Authorize]
         public async Task<IActionResult> Logout(string token)
@@ -66,26 +75,65 @@ namespace User.Api.Controllers
             string currentToken= authorizationHeader.Substring("Bearer ".Length);
             var result = await _authenticationService.Logout(token, currentToken);
             if (result)
-                return Ok();
-           return BadRequest();
+                return Ok("you are logout sucessful");
+           return BadRequest("there are error when you logout");
+        }
+        [HttpPost("ConfirmEmail")]
+
+        public async Task<IActionResult> ConfirmEmail(string email , [FromHeader] int otp)
+        {
+           var response = await _authenticationService.ConfirmEmail(email, otp);
+            if(response.Succeeded )
+                return Ok(new { status = response.Succeeded, response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
+            return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
+        }
+        [HttpPost("ResetPassword")]
+        [Authorize]
+        public  async Task<IActionResult> ResetPassword([FromBody] [Required(ErrorMessage = "Password is required")]
+ [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
+ string password)
+        { 
+            
+            var result =  await _authenticationService.ResetPassword(password);
+            if (result.StatusCode==200)
+                return Ok(new
+                {
+                    satus = true,
+                    massage="password is reseted"
+                });
+           return StatusCode(result.StatusCode,new {status=false , result.Message ,result.Errors});
+             
         }
 
-        [HttpPost("validate")]
-        public async Task<IActionResult> Validate( string token)
-        {
+        [HttpGet("ResendOTP")]
 
-            if (await _redisService.IsTokenBlacklistedAsync(token))
-            {
-                return Unauthorized(new { Message = "Token is invalid or blacklisted." });
-            }
-            return Ok();
-        }
-        private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
+        public async Task<IActionResult> ResendOTP(string email)
         {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = expires.ToLocalTime(),
+            bool result = await _authenticationService.ResendOTP(email);
+            if (result==true)
+                return Ok("code is sended");
+            else return BadRequest("check your email");
+        }
+
+
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromBody]string token)
+        {
+            var response = await  _authenticationService.RefreshTokenAsync(token);
+            if (response.StatusCode==200)
+            return StatusCode(200 ,new { status= response.Succeeded ,response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
+        
+            return StatusCode(response.StatusCode, new {
+                satus = response.Succeeded,
+                response.Message,response.Errors
+              });
+        }
+private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
+{
+    var cookieOptions = new CookieOptions
+    {
+        HttpOnly = true,
+        Expires = expires.ToLocalTime(),
                 Secure = true,
                 IsEssential = true,
                 SameSite = SameSiteMode.None

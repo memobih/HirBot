@@ -6,31 +6,40 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HirBot.Comman.Idenitity;
+using Mailing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Project.ResponseHandler.Models;
 namespace Test.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
 
     public class TestController : ApiControllerBase
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TestController( UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        private readonly IMailingService _mailingService;
+        public TestController(IMailingService mailingService )
         {
-            this.userManager = userManager;
-            _httpContextAccessor = httpContextAccessor;
+            _mailingService = mailingService;
         }
-
         [HttpGet]
         public IActionResult GetOk() {
-            return Ok();
+
+            try
+            {
+
+                var massage = new MailMassage(new [] { "abdomohamrd59@gmail.com" }, "test test", "test test");
+                _mailingService.SendMail(massage);
+                return Ok( );
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         } 
 
     }

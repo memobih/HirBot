@@ -16,12 +16,13 @@ namespace HirBot.ResponseHandler.Models
         public List<string>? Errors { get; set; }
         public T? Data { get; set; }
 
-        public static APIOperationResponse<T> Success(T result)
+        public static APIOperationResponse<T> Success(T result )
         {
             return new APIOperationResponse<T>
             {
                 Code = CommonErrorCodes.NULL,
                 Data = result,
+                Succeeded = true,
                 StatusCode = (int)ResponseType.Success
             };
         }
@@ -94,6 +95,18 @@ namespace HirBot.ResponseHandler.Models
         public static APIOperationResponse<T> ServerError(string? message = null, List<string>? errors = null)
         {
             return CreateResponse(ResponseType.InternalServerError, message, errors, default);
+        }
+        public static APIOperationResponse<T> Conflict(string? message = null, List<string>? errors = null)
+        {
+            return CreateResponse(ResponseType.Conflict, message, errors, default);
+        }
+        public static APIOperationResponse<T> UnprocessableEntity(string? message = null, List<string>? errors = null)
+        {
+            return CreateResponse(ResponseType.UnprocessableEntity, message, errors, default);
+        }
+        public static APIOperationResponse<T> UnOthrized(string? message = null, List<string>? errors = null)
+        {
+            return CreateResponse(ResponseType.UnOthrized, message, errors, default);
         }
 
 

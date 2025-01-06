@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using HirBot.Comman.Idenitity;
+using HirBot.Data.Entities;
+using Mysqlx.Crud;
 
 namespace HirBot.EntityFramework.DataBaseContext
 {
@@ -13,7 +15,11 @@ namespace HirBot.EntityFramework.DataBaseContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<ApplicationUser>()
+                   .HasOne<Company>() // No navigation property in Order
+                   .WithMany()          // No collection in Customer
+                   .HasForeignKey(o => o.CompanyID)
+                   .IsRequired(false); // Specify the foreign key
             modelBuilder.Entity<ApplicationUser>().ToTable("users");
             modelBuilder.Entity<IdentityRole>().ToTable("roles");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("user_roles");
@@ -22,8 +28,22 @@ namespace HirBot.EntityFramework.DataBaseContext
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("role_claims");
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("user_tokens"); 
         } 
-
+          
         public DbSet<ApplicationUser> users { get; set; }
-
+        public DbSet<Application> Applications { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Education> Educations { get; set; }
+        public DbSet<Exam> Exams { get; set; }
+        public DbSet<Experience> Experiences { get; set; }
+        public DbSet<Interview> Interviews { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<JobRequirment> JobRequirements { get; set; }
+        public DbSet<Level> Levels { get; set; }
+        public DbSet<Option> Options { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Skill> Skills { get; set; }
+        public DbSet<UserAnwer> UserAnswers { get; set; }
+        public DbSet<UserSkill> UserSkills { get; set; }
     }
 }

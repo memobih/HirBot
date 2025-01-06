@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HirBot.Data\HirBot.Data.csproj" />
+    <ProjectReference Include="..\HirBot.Infrastructure\Project.Repository\HireBot.Repository.csproj" />
     <ProjectReference Include="..\HirBot.Redies\HirBot.Redies.csproj" />
-    <ProjectReference Include="..\Project.Comman\HirBot.Comman.csproj" />
+    <ProjectReference Include="..\Mailing\Mailing.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
   </ItemGroup>
 

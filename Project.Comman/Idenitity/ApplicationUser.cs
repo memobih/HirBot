@@ -9,10 +9,17 @@ namespace HirBot.Comman.Idenitity
     {
         [Required, MaxLength(1000)]
         public string FullName { get; set; }
-        [Required, MaxLength(11)]
+        [MaxLength(11)]
         [RegularExpression(@"^\d+$")]
-        public string PhoneNumber { get; set; }
-        public UserType UserType { get; set; }
+        public string ?  PhoneNumber  { get; set; }
+        public UserType role { get; set; }
+        public string ? ImagePath { get; set; } 
+        public string  ?CoverPath { get; set; }
+         public string ? CompanyID { get; set; }
+        public int ?VerificationCode {  get; set; } 
+         public DateTime ? Code_Send_at { get; set; }
+        public bool ?IsVerified { get; set; }
         public List<RefreshToken> refreshTokens { get; set; }
+
     }
 }

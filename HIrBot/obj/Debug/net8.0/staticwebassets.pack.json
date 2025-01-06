@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HIrBot\\wwwroot\\uploads\\Screenshot (3).png",
+      "PackagePath": "staticwebassets\\uploads\\Screenshot (3).png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.HirBot.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.HirBot.props",
+      "PackagePath": "build\\HirBot.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.HirBot.props",
+      "PackagePath": "buildMultiTargeting\\HirBot.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.HirBot.props",
+      "PackagePath": "buildTransitive\\HirBot.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

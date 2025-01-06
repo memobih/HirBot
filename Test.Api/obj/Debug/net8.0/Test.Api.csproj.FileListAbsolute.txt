@@ -31,9 +31,11 @@ C:\Users\ahmed\source\repos\memobih\HirBot\Test.Api\obj\Debug\net8.0\Test.Api.pd
 C:\Users\ahmed\source\repos\memobih\HirBot\Test.Api\obj\Debug\net8.0\ref\Test.Api.dll
 C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.Comman.dll
 C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.Comman.pdb
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\User.Services.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\User.Services.pdb
 C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.Data.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.Redies.dll
 C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.Data.pdb
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.Redies.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.EntityFramework.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HireBot.Repository.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HirBot.EntityFramework.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\HireBot.Repository.pdb
+C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\Mailing.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\Test.Api\bin\Debug\net8.0\Mailing.pdb
