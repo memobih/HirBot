@@ -9,8 +9,11 @@ using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Web;
+
 namespace User.Api.Controllers
-{
+{ 
+
+
     [Route("api/[controller]")]
     [ApiController] 
 
@@ -93,9 +96,9 @@ namespace User.Api.Controllers
         public  async Task<IActionResult> ResetPassword([FromBody] [Required(ErrorMessage = "Password is required")]
  [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
  string password)
-        { 
-            
-            var result =  await _authenticationService.ResetPassword(password);
+        {
+
+            var result = await _authenticationService.ResetPassword(password);
             if (result.StatusCode==200)
                 return Ok(new
                 {
@@ -118,8 +121,8 @@ namespace User.Api.Controllers
 
 
         [HttpPost("RefreshToken")]
-        public async Task<IActionResult> RefreshToken([FromBody]string token)
-        {
+ public async Task<IActionResult> RefreshToken([FromBody]string token)
+   {
             var response = await  _authenticationService.RefreshTokenAsync(token);
             if (response.StatusCode==200)
             return StatusCode(200 ,new { status= response.Succeeded ,response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
