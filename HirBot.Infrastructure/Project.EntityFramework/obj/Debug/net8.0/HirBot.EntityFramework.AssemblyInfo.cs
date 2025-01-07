@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HirBot.EntityFramework")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f29250c16a3b3dab6b6569683db4483afba98f7d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b6dda2343be03acd219376aa32a99e2f40c1722d")]
 [assembly: System.Reflection.AssemblyProductAttribute("HirBot.EntityFramework")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HirBot.EntityFramework")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
