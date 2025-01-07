@@ -9,6 +9,7 @@ using Microsoft.VisualBasic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Web;
+using System.Net;
 
 namespace User.Api.Controllers
 { 
@@ -120,18 +121,24 @@ namespace User.Api.Controllers
         }
 
 
-        [HttpPost("RefreshToken")]
- public async Task<IActionResult> RefreshToken([FromBody]string token)
+  [HttpPost("RefreshToken")]
+ public async Task<IActionResult> RefreshToken()
    {
-            var response = await  _authenticationService.RefreshTokenAsync(token);
-            if (response.StatusCode==200)
+            
+            if (Request.Cookies.TryGetValue("RefreshToken", out var refreshToken))
+            {
+                 var response = await  _authenticationService.RefreshTokenAsync(refreshToken);
+                 if (response.StatusCode==200)
             return StatusCode(200 ,new { status= response.Succeeded ,response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
         
             return StatusCode(response.StatusCode, new {
                 satus = response.Succeeded,
                 response.Message,response.Errors
               });
-        }
+            }
+            return BadRequest("there are no refresh token");
+   }
+            
 private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
 {
     var cookieOptions = new CookieOptions
