@@ -22,6 +22,7 @@ using System.ComponentModel.DataAnnotations;
 using Mysqlx.Session;
 using Mailing;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace User.Services.Implemntation
 {
@@ -445,6 +446,7 @@ namespace User.Services.Implemntation
 
             generator.GetBytes(randomNumber);
 
+
             return new RefreshToken
             {
                 token = Convert.ToBase64String(randomNumber),
@@ -452,8 +454,9 @@ namespace User.Services.Implemntation
                 CreatedOn = DateTime.UtcNow
             };
         }
-        public async Task<APIOperationResponse<AuthModel>> RefreshTokenAsync(string token)
-        { 
+        public async Task<APIOperationResponse<AuthModel>> RefreshTokenAsync(string refreshtoken)
+        {
+           var token =HttpUtility.UrlDecode(refreshtoken);
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.refreshTokens.Any(t => t.token == token));
             var respon = new AuthModel();
             if (user == null)
