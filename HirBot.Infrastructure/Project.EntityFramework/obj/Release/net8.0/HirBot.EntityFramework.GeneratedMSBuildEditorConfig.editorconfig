@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = HirBot.EntityFramework
-build_property.ProjectDir = C:\Users\ahmed\source\repos\memobih\HirBot\HirBot.Infrastructure\Project.EntityFramework\
+build_property.ProjectDir = C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Infrastructure\Project.EntityFramework\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
