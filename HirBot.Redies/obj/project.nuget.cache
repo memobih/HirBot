@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QJT1Bw1X/mI=",
+  "dgSpecHash": "wLj2qGNYDc4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj",
+  "projectFilePath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ahmed\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\6.0.0\\microsoft.extensions.logging.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
