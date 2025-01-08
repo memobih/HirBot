@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Infrastructure", "Hi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Domain", "HirBot.Domain", "{9CFD1BD4-50ED-47FC-A99A-E697019AD2CF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HirBot", "HIrBot\HirBot.csproj", "{32E9136C-1DA2-4724-8B89-634031DEA148}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Setting", "HirBot.Setting", "{0B9ECA70-4DE2-4BBD-8D4A-B279A689AC65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Servieces", "HirBot.Servieces", "{45F58424-F858-429F-8B62-28F5A5E5DE6D}"
@@ -41,6 +43,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32E9136C-1DA2-4724-8B89-634031DEA148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32E9136C-1DA2-4724-8B89-634031DEA148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32E9136C-1DA2-4724-8B89-634031DEA148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32E9136C-1DA2-4724-8B89-634031DEA148}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C470193F-EADD-47AE-812B-D2B3626A4E0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C470193F-EADD-47AE-812B-D2B3626A4E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C470193F-EADD-47AE-812B-D2B3626A4E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
