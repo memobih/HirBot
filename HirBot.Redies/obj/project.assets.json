@@ -208,7 +208,7 @@
       "projectName": "HirBot.Redies",
       "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj",
       "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Redies\\obj\\",
+      "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Redies\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

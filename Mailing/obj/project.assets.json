@@ -425,7 +425,7 @@
       "projectName": "Mailing",
       "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Mailing\\Mailing.csproj",
       "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Mailing\\obj\\",
+      "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Mailing\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
