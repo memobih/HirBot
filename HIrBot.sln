@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HirBot", "/mnt/mahmoud/GrPro/HirBot/HIrBot/HIrBot.csproj", "{32E9136C-1DA2-4724-8B89-634031DEA148}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Infrastructure", "HirBot.Infrastructure", "{672ADC91-A4BE-49F0-9030-430D150787EB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Domain", "HirBot.Domain", "{9CFD1BD4-50ED-47FC-A99A-E697019AD2CF}"
@@ -35,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.Services", "User.Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HirBot.Redies", "HirBot.Redies\HirBot.Redies.csproj", "{D74CB043-96A8-4AB7-B4F9-F7E94566F5C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mailing", "Mailing\Mailing.csproj", "{9C7DDEA4-3B8F-4E7B-BA21-855C4B04166D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mailing", "Mailing\Mailing.csproj", "{9C7DDEA4-3B8F-4E7B-BA21-855C4B04166D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +41,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{32E9136C-1DA2-4724-8B89-634031DEA148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32E9136C-1DA2-4724-8B89-634031DEA148}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32E9136C-1DA2-4724-8B89-634031DEA148}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32E9136C-1DA2-4724-8B89-634031DEA148}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C470193F-EADD-47AE-812B-D2B3626A4E0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C470193F-EADD-47AE-812B-D2B3626A4E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C470193F-EADD-47AE-812B-D2B3626A4E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
