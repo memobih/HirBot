@@ -176,6 +176,7 @@ namespace User.Api.Controllers
         }
 
         private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
+
         {
             var cookieOptions = new CookieOptions
             {
@@ -187,6 +188,22 @@ namespace User.Api.Controllers
             };
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
+        [HttpPost("ChangePassword")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var response = await _authenticationService.ChangePasswordAsync(changePasswordDto);
+                if (response.StatusCode == 200)
+                    return Ok(new { status = response.Succeeded, response.Message });
+                return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
+            }
         }
     }
 }

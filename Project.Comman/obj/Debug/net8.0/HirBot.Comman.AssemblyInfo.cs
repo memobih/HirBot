@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HirBot.Comman")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7f0c7fba0d4a50f4468a6b0c7eae66d022b485e8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a561def3c84adfaa3cb565ce2a139a90b326e5d6")]
 [assembly: System.Reflection.AssemblyProductAttribute("HirBot.Comman")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HirBot.Comman")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

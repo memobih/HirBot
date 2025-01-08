@@ -21,6 +21,7 @@ namespace Project.Services.Interfaces
         public Task<bool> ResendOTP(string email);
         public Task<APIOperationResponse<AuthModel>> ConfirmEmail(string email, int otp);
         public Task<APIOperationResponse<object>> ResetPassword(string password);
+        public Task<APIOperationResponse<object>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
         //Task<APIOperationResponse<GetUserDto>> GetUserByIdAsync(string userId);
 
         //Task<APIOperationResponse<object>> UpdateUserAsync(GetUserDto updateUserDto);

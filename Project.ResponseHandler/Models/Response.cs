@@ -32,8 +32,6 @@ namespace HirBot.ResponseHandler.Models
             return new APIOperationResponse<T>
             {
                Code= error,
-
-
                 Message = description,
                 StatusCode =(int) errorCode,
                

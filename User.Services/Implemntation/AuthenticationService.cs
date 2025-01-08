@@ -202,7 +202,7 @@ namespace User.Services.Implemntation
         }
         public async Task<APIOperationResponse<object>> ResetPassword(
             [Required(ErrorMessage = "Password is required")]
- [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
+            [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
         string password)
         {
             try
@@ -482,6 +482,36 @@ namespace User.Services.Implemntation
             return APIOperationResponse<AuthModel>.Success(respon, message: "token is refreshed");
         }
 
+
+        #endregion
+
+        #region Password Change
+   
+        public async Task<APIOperationResponse<object>> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
+        {
+            
+            var user = await GetCurrentUserAsync();
+
+            if (!await _userManager.CheckPasswordAsync(user, changePasswordDto.OldPassword))
+            {
+                return APIOperationResponse<object>.BadRequest("The old password is incorrect.");
+            }
+            try
+            {
+                
+                if (user == null)
+                    return APIOperationResponse<object>.NotFound("user is not found");
+                var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.OldPassword, changePasswordDto.NewPassword);
+                if (result.Succeeded)
+                    return APIOperationResponse<object>.Success(new { message = "password changed successfuly" }, "password changed successfuly");
+                return APIOperationResponse<object>.BadRequest("check your password");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.UnprocessableEntity("an error accured", new List<string> { ex.Message });
+            }
+            
+        }
 
         #endregion
     }
