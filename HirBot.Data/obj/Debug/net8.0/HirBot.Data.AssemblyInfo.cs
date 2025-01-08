@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HirBot.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6309d2ad58c1addb474eac4120fd2656d2dc709")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+852176cf935cd91507fe31ad64f07b4a0f2ae673")]
 [assembly: System.Reflection.AssemblyProductAttribute("HirBot.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HirBot.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
