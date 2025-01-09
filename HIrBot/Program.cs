@@ -68,7 +68,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(builder.Configuration.GetConnectionString("cs"),
-    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("cs")));
+    ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("cs")),
+    options => options.MigrationsAssembly("Project.EntityFramework"));
 });
 
 builder.Services.AddSingleton<RedisService>(sp =>
