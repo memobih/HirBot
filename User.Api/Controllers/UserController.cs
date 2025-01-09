@@ -160,7 +160,7 @@ namespace User.Api.Controllers
         {
 
             if (Request.Cookies.TryGetValue("RefreshToken", out var refreshToken))
-            {
+            { 
                 var response = await _authenticationService.RefreshTokenAsync(refreshToken);
                 if (response.StatusCode == 200)
                     return StatusCode(200, new { status = response.Succeeded, response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });

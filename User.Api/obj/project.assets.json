@@ -5159,9 +5159,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Api\\User.Api.csproj",
+      "projectUniqueName": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Api\\User.Api.csproj",
       "projectName": "User.Api",
-      "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Api\\User.Api.csproj",
+      "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Api\\User.Api.csproj",
       "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Api\\obj\\",
       "projectStyle": "PackageReference",
@@ -5185,8 +5185,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\User.Services.csproj": {
-              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\User.Services.csproj"
+            "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Services\\User.Services.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Services\\User.Services.csproj"
             }
           }
         }

@@ -454,9 +454,8 @@ namespace User.Services.Implemntation
                 CreatedOn = DateTime.UtcNow
             };
         }
-        public async Task<APIOperationResponse<AuthModel>> RefreshTokenAsync(string refreshtoken)
+        public async Task<APIOperationResponse<AuthModel>> RefreshTokenAsync(string token)
         {
-           var token =HttpUtility.UrlDecode(refreshtoken);
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.refreshTokens.Any(t => t.token == token));
             var respon = new AuthModel();
             if (user == null)

@@ -5037,9 +5037,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
+      "projectUniqueName": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
       "projectName": "HirBot.EntityFramework",
-      "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
+      "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
       "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\obj\\",
       "projectStyle": "PackageReference",
@@ -5063,8 +5063,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj": {
-              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj"
+            "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj"
             }
           }
         }

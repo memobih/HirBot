@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "/w7zTWBFQJ62NIEZTrmwwTFK72n0g7Xyoj37DRftGf0=",
+  "Hash": "2MCyypaNPfpfrUPcZprT+khkfF7MQ1mRTUUZjBO2FrI=",
   "Source": "HirBot",
   "BasePath": "_content/HirBot",
   "Mode": "Default",
@@ -10,7 +10,7 @@
     {
       "Name": "HirBot\\wwwroot",
       "Source": "HirBot",
-      "ContentRoot": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HIrBot\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HIrBot\\wwwroot\\",
       "BasePath": "_content/HirBot",
       "Pattern": "**"
     }

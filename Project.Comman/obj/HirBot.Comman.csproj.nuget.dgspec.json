@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj": {}
+    "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj": {
+    "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
+        "projectUniqueName": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
         "projectName": "HirBot.Comman",
-        "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
+        "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
         "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\obj\\",
         "projectStyle": "PackageReference",

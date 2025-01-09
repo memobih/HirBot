@@ -5141,9 +5141,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\User.Services.csproj",
+      "projectUniqueName": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Services\\User.Services.csproj",
       "projectName": "User.Services",
-      "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\User.Services.csproj",
+      "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Services\\User.Services.csproj",
       "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\obj\\",
       "projectStyle": "PackageReference",
@@ -5167,17 +5167,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj": {
-              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj"
+            "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj"
             },
-            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj": {
-              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj"
+            "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj"
             },
-            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Mailing\\Mailing.csproj": {
-              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Mailing\\Mailing.csproj"
+            "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Mailing\\Mailing.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Mailing\\Mailing.csproj"
             },
-            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj": {
-              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj"
+            "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj"
             }
           }
         }
