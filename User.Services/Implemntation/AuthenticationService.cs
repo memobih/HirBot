@@ -95,6 +95,7 @@ namespace User.Services.Implemntation
                 } 
                 newUser.refreshTokens?.Add(refreshtoken);
                 await _userManager.UpdateAsync(newUser);
+                await _userManager.AddToRoleAsync(newUser, "User");
                 return APIOperationResponse<AuthModel>.Success(respon, " user created successfully.");
             }
             catch (Exception ex)
@@ -193,6 +194,7 @@ namespace User.Services.Implemntation
                     newCompany.BusinessLicense = path;
                 }
                 await _unitOfWork.Companies.AddAsync(newCompany);
+                await _userManager.AddToRoleAsync(newUser, "Company");
                 return APIOperationResponse<AuthModel>.Success(respon, " company created successfully.");
             }
             catch (Exception ex)
