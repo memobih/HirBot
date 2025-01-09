@@ -28,7 +28,7 @@ namespace Test.Api.Controllers
         }
         [HttpGet]
         public IActionResult GetOk() {
-            return Ok("hhh");
+            return Ok("hhh mahmad");
         } 
 
     }
