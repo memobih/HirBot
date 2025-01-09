@@ -666,3 +666,14 @@ C:/Users/ahmed/Source/Repos/memobih/HirBot/HIrBot/bin/Debug/net8.0/Mailing.pdb
 /mnt/mahmoud/gr/HirBot/HIrBot/obj/Debug/net8.0/HIrBot.pdb
 /mnt/mahmoud/gr/HirBot/HIrBot/obj/Debug/net8.0/HIrBot.genruntimeconfig.cache
 /mnt/mahmoud/gr/HirBot/HIrBot/obj/Debug/net8.0/ref/HIrBot.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.csproj.AssemblyReference.cache
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.AssemblyInfoInputs.cache
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.AssemblyInfo.cs
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.csproj.CoreCompileInputs.cache
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.sourcelink.json
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\refint\HirBot.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\HIrBot\obj\Debug\net8.0\HirBot.pdb
