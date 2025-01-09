@@ -5135,42 +5135,49 @@
     ]
   },
   "packageFolders": {
-    "/home/mahmoud-nour/.nuget/packages/": {}
+    "C:\\Users\\ahmed\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/mnt/mahmoud/gr/HirBot/User.Services/User.Services.csproj",
+      "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\User.Services.csproj",
       "projectName": "User.Services",
-      "projectPath": "/mnt/mahmoud/gr/HirBot/User.Services/User.Services.csproj",
-      "packagesPath": "/home/mahmoud-nour/.nuget/packages/",
-      "outputPath": "/mnt/mahmoud/gr/HirBot/User.Services/obj/",
+      "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\User.Services.csproj",
+      "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\User.Services\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/home/mahmoud-nour/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\ahmed\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "/usr/lib/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.Repository/HireBot.Repository.csproj": {
-              "projectPath": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.Repository/HireBot.Repository.csproj"
+            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj"
             },
-            "/mnt/mahmoud/gr/HirBot/HirBot.Redies/HirBot.Redies.csproj": {
-              "projectPath": "/mnt/mahmoud/gr/HirBot/HirBot.Redies/HirBot.Redies.csproj"
+            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj"
             },
-            "/mnt/mahmoud/gr/HirBot/Mailing/Mailing.csproj": {
-              "projectPath": "/mnt/mahmoud/gr/HirBot/Mailing/Mailing.csproj"
+            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Mailing\\Mailing.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Mailing\\Mailing.csproj"
             },
-            "/mnt/mahmoud/gr/HirBot/Project.ResponseHandler/HirBot.ResponseHandler.csproj": {
-              "projectPath": "/mnt/mahmoud/gr/HirBot/Project.ResponseHandler/HirBot.ResponseHandler.csproj"
+            "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj": {
+              "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.ResponseHandler\\HirBot.ResponseHandler.csproj"
             }
           }
         }
@@ -5184,8 +5191,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.100"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -5212,7 +5218,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

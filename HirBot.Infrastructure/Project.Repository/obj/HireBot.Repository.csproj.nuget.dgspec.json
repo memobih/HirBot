@@ -1,34 +1,40 @@
 {
   "format": 1,
   "restore": {
-    "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.Repository/HireBot.Repository.csproj": {}
+    "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj": {}
   },
   "projects": {
-    "/mnt/mahmoud/gr/HirBot/HirBot.Data/HirBot.Data.csproj": {
+    "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/mnt/mahmoud/gr/HirBot/HirBot.Data/HirBot.Data.csproj",
+        "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj",
         "projectName": "HirBot.Data",
-        "projectPath": "/mnt/mahmoud/gr/HirBot/HirBot.Data/HirBot.Data.csproj",
-        "packagesPath": "/home/mahmoud-nour/.nuget/packages/",
-        "outputPath": "/mnt/mahmoud/gr/HirBot/HirBot.Data/obj/",
+        "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj",
+        "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/mahmoud-nour/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ahmed\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/mnt/mahmoud/gr/HirBot/Project.Comman/HirBot.Comman.csproj": {
-                "projectPath": "/mnt/mahmoud/gr/HirBot/Project.Comman/HirBot.Comman.csproj"
+              "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj": {
+                "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj"
               }
             }
           }
@@ -42,8 +48,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -64,35 +69,41 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.EntityFramework/HirBot.EntityFramework.csproj": {
+    "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.EntityFramework/HirBot.EntityFramework.csproj",
+        "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
         "projectName": "HirBot.EntityFramework",
-        "projectPath": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.EntityFramework/HirBot.EntityFramework.csproj",
-        "packagesPath": "/home/mahmoud-nour/.nuget/packages/",
-        "outputPath": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.EntityFramework/obj/",
+        "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
+        "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/mahmoud-nour/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ahmed\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/mnt/mahmoud/gr/HirBot/HirBot.Data/HirBot.Data.csproj": {
-                "projectPath": "/mnt/mahmoud/gr/HirBot/HirBot.Data/HirBot.Data.csproj"
+              "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj": {
+                "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj"
               }
             }
           }
@@ -106,8 +117,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -148,35 +158,41 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.Repository/HireBot.Repository.csproj": {
+    "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.Repository/HireBot.Repository.csproj",
+        "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj",
         "projectName": "HireBot.Repository",
-        "projectPath": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.Repository/HireBot.Repository.csproj",
-        "packagesPath": "/home/mahmoud-nour/.nuget/packages/",
-        "outputPath": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.Repository/obj/",
+        "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj",
+        "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/mahmoud-nour/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ahmed\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.EntityFramework/HirBot.EntityFramework.csproj": {
-                "projectPath": "/mnt/mahmoud/gr/HirBot/HirBot.Infrastructure/Project.EntityFramework/HirBot.EntityFramework.csproj"
+              "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj": {
+                "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj"
               }
             }
           }
@@ -190,8 +206,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -238,27 +253,33 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "/mnt/mahmoud/gr/HirBot/Project.Comman/HirBot.Comman.csproj": {
+    "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/mnt/mahmoud/gr/HirBot/Project.Comman/HirBot.Comman.csproj",
+        "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
         "projectName": "HirBot.Comman",
-        "projectPath": "/mnt/mahmoud/gr/HirBot/Project.Comman/HirBot.Comman.csproj",
-        "packagesPath": "/home/mahmoud-nour/.nuget/packages/",
-        "outputPath": "/mnt/mahmoud/gr/HirBot/Project.Comman/obj/",
+        "projectPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
+        "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/mahmoud-nour/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ahmed\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -276,8 +297,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -322,7 +342,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

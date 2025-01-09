@@ -1,20 +1,19 @@
 {
   "Version": 1,
-  "Hash": "Hm8k8LefZQqB8AbFhNJQ81+eg8BSrY5AXMKWDSIoTN4=",
-  "Source": "HIrBot",
-  "BasePath": "_content/HIrBot",
+  "Hash": "3W6NTXRLwb57NjzGoifRMYwwueLUbsOp6bTF5IaPGwI=",
+  "Source": "HirBot",
+  "BasePath": "_content/HirBot",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [
     {
-      "Name": "HIrBot/wwwroot",
-      "Source": "HIrBot",
-      "ContentRoot": "/mnt/mahmoud/gr/HirBot/HIrBot/wwwroot/",
-      "BasePath": "_content/HIrBot",
+      "Name": "HirBot\\wwwroot",
+      "Source": "HirBot",
+      "ContentRoot": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HIrBot\\wwwroot\\",
+      "BasePath": "_content/HirBot",
       "Pattern": "**"
     }
   ],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }
