@@ -28,18 +28,7 @@ namespace Test.Api.Controllers
         }
         [HttpGet]
         public IActionResult GetOk() {
-
-            try
-            {
-
-                var massage = new MailMassage(new [] { "abdomohamrd59@gmail.com" }, "test test", "test test");
-                _mailingService.SendMail(massage);
-                return Ok( );
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok("hhh");
         } 
 
     }

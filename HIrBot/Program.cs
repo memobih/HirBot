@@ -16,7 +16,10 @@ using HirBot.EntityFramework.DataBaseContext;
 using Mailing;
 
 // Set absolute paths for Linux compatibility
-var contentRoot = Directory.GetCurrentDirectory();
+var isWindows = System.Runtime.InteropServices.RuntimeInformation
+    .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+
+var contentRoot = isWindows ? Directory.GetCurrentDirectory() : "/mnt/mahmoud/gr/HirBot/HIrBot";
 var webRoot = Path.Combine(contentRoot, "wwwroot");
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -24,7 +27,6 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     ContentRootPath = contentRoot,
     WebRootPath = webRoot
 });
-
 var configuration = builder.Configuration;
 
 // Add services to the container.
