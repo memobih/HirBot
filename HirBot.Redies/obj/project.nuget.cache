@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "QJT1Bw1X/mI=",
+  "dgSpecHash": "QEdHs1jiR1k=",
   "success": true,
   "projectFilePath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Redies\\HirBot.Redies.csproj",
   "expectedPackageFiles": [
@@ -9,5 +9,12 @@
     "C:\\Users\\ahmed\\.nuget\\packages\\stackexchange.redis\\2.8.24\\stackexchange.redis.2.8.24.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.io.pipelines\\5.0.1\\system.io.pipelines.5.0.1.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Redies\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

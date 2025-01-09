@@ -11,7 +11,7 @@
         "projectName": "HirBot.Data",
         "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Data\\HirBot.Data.csproj",
         "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Data\\obj\\",
+        "outputPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -80,7 +80,7 @@
         "projectName": "HirBot.EntityFramework",
         "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
         "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\obj\\",
+        "outputPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -169,7 +169,7 @@
         "projectName": "HirBot.Comman",
         "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
         "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\Project.Comman\\obj\\",
+        "outputPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

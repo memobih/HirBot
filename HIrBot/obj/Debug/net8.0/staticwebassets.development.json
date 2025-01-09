@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"ContentRoots":["C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HIrBot\\wwwroot\\"],"Root":{"Children":null,"Asset":null,"Patterns":[{"ContentRootIndex":0,"Pattern":"**","Depth":0}]}}
+=======
+{"ContentRoots":["/mnt/mahmoud/gr/HirBot/HIrBot/wwwroot/"],"Root":{"Children":null,"Asset":null,"Patterns":[{"ContentRootIndex":0,"Pattern":"**","Depth":0}]}}
+>>>>>>> aefe153d99362fbf74cb9a74dc787100cd3ef0dc

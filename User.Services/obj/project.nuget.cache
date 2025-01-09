@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "44LRNLsK8Xg=",
+  "dgSpecHash": "Y/XA6WXMi5A=",
   "success": true,
   "projectFilePath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Services\\User.Services.csproj",
   "expectedPackageFiles": [
@@ -112,5 +112,12 @@
     "C:\\Users\\ahmed\\.nuget\\packages\\system.windows.extensions\\8.0.0\\system.windows.extensions.8.0.0.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\zstdsharp.port\\0.8.0\\zstdsharp.port.0.8.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\User.Services\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bw+fiOFfaIc=",
+  "dgSpecHash": "74M+/Aj1pXE=",
   "success": true,
   "projectFilePath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\HirBot.Comman.csproj",
   "expectedPackageFiles": [
@@ -82,5 +82,12 @@
     "C:\\Users\\ahmed\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\Project.Comman\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

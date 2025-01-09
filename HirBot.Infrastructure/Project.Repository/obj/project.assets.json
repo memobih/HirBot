@@ -4770,7 +4770,7 @@
       "projectName": "HireBot.Repository",
       "projectPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\HireBot.Repository.csproj",
       "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ahmed\\source\\repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\obj\\",
+      "outputPath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -4857,5 +4857,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.Repository\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }
