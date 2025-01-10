@@ -123,9 +123,10 @@ builder.Services.AddAuthentication(option =>
 builder.Services.AddCors(corsOptions =>
 {
     corsOptions.AddPolicy("MyPolicy",
-        corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
+        corsPolicyBuilder => corsPolicyBuilder .SetIsOriginAllowed(origin => true) // Allow any origin
                                               .AllowAnyHeader()
-                                              .AllowAnyMethod());
+                                              .AllowAnyMethod()
+                                              .AllowCredentials() );
 });
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("Mailing"));
