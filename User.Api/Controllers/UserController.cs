@@ -106,9 +106,12 @@ namespace User.Api.Controllers
             return BadRequest("there are error when you logout");
         }
         [HttpPost("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail([Required(ErrorMessage ="email is requred")]
+        public async Task<IActionResult> ConfirmEmail(
+            [Required(ErrorMessage ="email is requred")]
         [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Invalid email format")]
-        string email, [FromHeader] int otp)
+        string email,
+        [Required (ErrorMessage ="Otp is required") ]      
+        [FromHeader] int otp)
         {
             if (!ModelState.IsValid)
             {
