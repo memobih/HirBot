@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "zi/rosfyJNw=",
+  "dgSpecHash": "5vMXKtYsAMc=",
   "success": true,
   "projectFilePath": "C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HirBot.Infrastructure\\Project.EntityFramework\\HirBot.EntityFramework.csproj",
   "expectedPackageFiles": [
@@ -58,6 +58,12 @@
     "C:\\Users\\ahmed\\.nuget\\packages\\mysql.data\\9.1.0\\mysql.data.9.1.0.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\mysqlconnector\\2.3.5\\mysqlconnector.2.3.5.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\8.0.2\\pomelo.entityframeworkcore.mysql.8.0.2.nupkg.sha512",
+    "C:\\Users\\ahmed\\.nuget\\packages\\runtime.any.system.io\\4.3.0\\runtime.any.system.io.4.3.0.nupkg.sha512",
+    "C:\\Users\\ahmed\\.nuget\\packages\\runtime.any.system.reflection\\4.3.0\\runtime.any.system.reflection.4.3.0.nupkg.sha512",
+    "C:\\Users\\ahmed\\.nuget\\packages\\runtime.any.system.reflection.primitives\\4.3.0\\runtime.any.system.reflection.primitives.4.3.0.nupkg.sha512",
+    "C:\\Users\\ahmed\\.nuget\\packages\\runtime.any.system.runtime\\4.3.0\\runtime.any.system.runtime.4.3.0.nupkg.sha512",
+    "C:\\Users\\ahmed\\.nuget\\packages\\runtime.any.system.text.encoding\\4.3.0\\runtime.any.system.text.encoding.4.3.0.nupkg.sha512",
+    "C:\\Users\\ahmed\\.nuget\\packages\\runtime.any.system.threading.tasks\\4.3.0\\runtime.any.system.threading.tasks.4.3.0.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
@@ -78,6 +84,7 @@
     "C:\\Users\\ahmed\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.memory.data\\1.0.2\\system.memory.data.1.0.2.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\ahmed\\.nuget\\packages\\system.private.uri\\4.3.0\\system.private.uri.4.3.0.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.reflection\\4.3.0\\system.reflection.4.3.0.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.reflection.metadata\\6.0.1\\system.reflection.metadata.6.0.1.nupkg.sha512",
     "C:\\Users\\ahmed\\.nuget\\packages\\system.reflection.primitives\\4.3.0\\system.reflection.primitives.4.3.0.nupkg.sha512",

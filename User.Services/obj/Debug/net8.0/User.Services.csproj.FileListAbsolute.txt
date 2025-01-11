@@ -43,7 +43,6 @@ C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/bin/Debug/net8.0/HirBot
 C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/bin/Debug/net8.0/HirBot.Comman.pdb
 C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/bin/Debug/net8.0/HirBot.Data.pdb
 C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/bin/Debug/net8.0/HirBot.EntityFramework.pdb
-C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/obj/Debug/net8.0/User.Services.csproj.AssemblyReference.cache
 C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/obj/Debug/net8.0/User.Services.GeneratedMSBuildEditorConfig.editorconfig
 C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/obj/Debug/net8.0/User.Services.AssemblyInfoInputs.cache
 C:/Users/ahmed/source/repos/memobih/HirBot/User.Services/obj/Debug/net8.0/User.Services.AssemblyInfo.cs
@@ -99,7 +98,6 @@ C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Debug\net8.0\HirBot
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Debug\net8.0\HirBot.Comman.pdb
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Debug\net8.0\HirBot.Data.pdb
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\bin\Debug\net8.0\HirBot.EntityFramework.pdb
-C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\User.Services.csproj.AssemblyReference.cache
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\User.Services.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\User.Services.AssemblyInfoInputs.cache
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\User.Services.AssemblyInfo.cs
@@ -110,3 +108,4 @@ C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\User.S
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\refint\User.Services.dll
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\User.Services.pdb
 C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\ref\User.Services.dll
+C:\Users\ahmed\Source\Repos\memobih\HirBot\User.Services\obj\Debug\net8.0\User.Services.csproj.AssemblyReference.cache

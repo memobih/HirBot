@@ -182,9 +182,9 @@ namespace User.Api.Controllers
             {
                 HttpOnly = true,
                 Expires = expires.ToLocalTime(),
-                Secure = true,
+                Secure = false,
                 IsEssential = true,
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.Lax
             };
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
