@@ -123,7 +123,7 @@ builder.Services.AddAuthentication(option =>
 builder.Services.AddCors(corsOptions =>
 {
     corsOptions.AddPolicy("MyPolicy",
-        corsPolicyBuilder => corsPolicyBuilder.SetIsOriginAllowed(origin => true) 
+        corsPolicyBuilder => corsPolicyBuilder.SetIsOriginAllowed(origin => true)
                                               .AllowAnyHeader()
                                               .AllowAnyMethod()
                                               .AllowCredentials() 

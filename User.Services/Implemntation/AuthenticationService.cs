@@ -411,18 +411,16 @@ namespace User.Services.Implemntation
         #endregion
         #region TOKEN AND REFRESH TOKEN
         private async Task<string > GenerateJwtTokenAsync(ApplicationUser user)
-        {  
+        {
             var claims = new List<Claim>()
                     {
                         new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                        new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName! ),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim ("role" , user.role.ToString()),
+                        new Claim ("username" , user.UserName) , 
+                        new Claim ("email",user.Email) , 
                     };
-            var roles = await _userManager.GetRolesAsync(user);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim("roles", role));
-            }
+         
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

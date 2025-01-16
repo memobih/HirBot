@@ -47,9 +47,9 @@ namespace User.Api.Controllers
                 if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
                 {
                     SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
-                    return Ok(new { satue = response.Succeeded, response.Message });
+                    return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
                 }
-                
+
                 return StatusCode(response.StatusCode, new { satue = response.Succeeded, response.Message, response.Errors });
             }
         }
@@ -88,7 +88,7 @@ namespace User.Api.Controllers
                 if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
                 {
                     SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
-                    return Ok(new { status = response.Succeeded, response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
+                    return Ok(new { status = response.Succeeded, response.Message, Data = new {token= response.Data.Token} });
                 }
                 return StatusCode(response.StatusCode, new { satue = response.Succeeded, response.Message, response.Errors });
             }
@@ -121,7 +121,7 @@ namespace User.Api.Controllers
             {
                 var response = await _authenticationService.ConfirmEmail(email, otp);
                 if (response.Succeeded)
-                    return Ok(new { status = response.Succeeded, response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
+                    return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
                 return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
             }
         }
@@ -162,11 +162,11 @@ namespace User.Api.Controllers
         public async Task<IActionResult> RefreshToken()
         {
 
-            if (Request.Cookies.TryGetValue("RefreshToken", out var refreshToken))
+            if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             { 
                 var response = await _authenticationService.RefreshTokenAsync(refreshToken);
                 if (response.StatusCode == 200)
-                    return StatusCode(200, new { status = response.Succeeded, response.Message, Data = new { user = response.Data, response.Data.Token, response.Data.ExpiresOn } });
+                    return Ok(new { status = response.Succeeded, response.Message, Data = new {token= response.Data.Token} });
 
                 return StatusCode(response.StatusCode, new
                 {
@@ -180,14 +180,16 @@ namespace User.Api.Controllers
 
         private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
 
-        {
+        { 
+
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Expires = expires.ToLocalTime(),
                 Secure = false,
                 IsEssential = true,
-                SameSite = SameSiteMode.None
+                SameSite = SameSiteMode.None  ,
+                Path = "/"
             };
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
