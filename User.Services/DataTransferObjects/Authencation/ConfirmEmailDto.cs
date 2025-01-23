@@ -12,9 +12,7 @@ namespace User.Services.DataTransferObjects.Authencation
         [Required(ErrorMessage = "email is requred")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
-        [MinLength(6 ,ErrorMessage ="invalid otp")]
         [Required(ErrorMessage = "otp is required")]
-
         public int otp {  get; set; }
     }
 }
