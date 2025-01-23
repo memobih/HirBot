@@ -49,16 +49,3 @@ C:/Users/ahmed/source/repos/memobih/HirBot/Project.ResponseHandler/obj/Debug/net
 /mnt/mahmoud/gr/HirBot/Project.ResponseHandler/obj/Debug/net8.0/refint/HirBot.ResponseHandler.dll
 /mnt/mahmoud/gr/HirBot/Project.ResponseHandler/obj/Debug/net8.0/HirBot.ResponseHandler.pdb
 /mnt/mahmoud/gr/HirBot/Project.ResponseHandler/obj/Debug/net8.0/ref/HirBot.ResponseHandler.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\bin\Debug\net8.0\HirBot.ResponseHandler.deps.json
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\bin\Debug\net8.0\HirBot.ResponseHandler.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\bin\Debug\net8.0\HirBot.ResponseHandler.pdb
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.csproj.AssemblyReference.cache
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.AssemblyInfoInputs.cache
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.AssemblyInfo.cs
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.csproj.CoreCompileInputs.cache
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.sourcelink.json
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\refint\HirBot.ResponseHandler.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\HirBot.ResponseHandler.pdb
-C:\Users\ahmed\Source\Repos\memobih\HirBot\Project.ResponseHandler\obj\Debug\net8.0\ref\HirBot.ResponseHandler.dll

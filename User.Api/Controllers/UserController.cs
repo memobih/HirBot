@@ -48,7 +48,8 @@ namespace User.Api.Controllers
         }
         [Route("CompanyRegister")]
         [HttpPost]
-        public async Task<IActionResult> CompanyRegister([FromForm] CompanyRegisterDto addCompanyDto)
+        public async Task<IActionResult> CompanyRegister(
+         [FromForm] CompanyRegisterDto addCompanyDto)
         {
 
              if (!ModelState.IsValid)

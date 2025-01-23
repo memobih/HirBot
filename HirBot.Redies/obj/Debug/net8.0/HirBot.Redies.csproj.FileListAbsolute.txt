@@ -37,16 +37,3 @@ C:/Users/ahmed/source/repos/memobih/HirBot/HirBot.Redies/obj/Debug/net8.0/ref/Hi
 /mnt/mahmoud/gr/HirBot/HirBot.Redies/obj/Debug/net8.0/refint/HirBot.Redies.dll
 /mnt/mahmoud/gr/HirBot/HirBot.Redies/obj/Debug/net8.0/HirBot.Redies.pdb
 /mnt/mahmoud/gr/HirBot/HirBot.Redies/obj/Debug/net8.0/ref/HirBot.Redies.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\bin\Debug\net8.0\HirBot.Redies.deps.json
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\bin\Debug\net8.0\HirBot.Redies.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\bin\Debug\net8.0\HirBot.Redies.pdb
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.csproj.AssemblyReference.cache
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.AssemblyInfoInputs.cache
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.AssemblyInfo.cs
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.csproj.CoreCompileInputs.cache
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.sourcelink.json
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\refint\HirBot.Redies.dll
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\HirBot.Redies.pdb
-C:\Users\ahmed\Source\Repos\memobih\HirBot\HirBot.Redies\obj\Debug\net8.0\ref\HirBot.Redies.dll
