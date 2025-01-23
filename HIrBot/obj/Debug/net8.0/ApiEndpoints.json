@@ -115,14 +115,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "email",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "otp",
-        "Type": "System.Int32",
-        "IsRequired": false
+        "Name": "confirmEmailDto",
+        "Type": "User.Services.DataTransferObjects.Authencation.ConfirmEmailDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -150,13 +145,7 @@
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "token",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

@@ -37,21 +37,14 @@ namespace User.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> UserRegister(UserRegisterDto adduserDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            else
-            {
+             
                 var response = await _authenticationService.RegisterUser(adduserDto);
                 if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
                 {
                     SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
-                    return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
+                    return Ok(new { status = response.Succeeded, response.Message });
                 }
-
-                return StatusCode(response.StatusCode, new { satue = response.Succeeded, response.Message, response.Errors });
-            }
+                return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
         }
         [Route("CompanyRegister")]
         [HttpPost]
@@ -78,52 +71,47 @@ namespace User.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> login(LoginDto request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            else 
-            {
+           
                 var response = await _authenticationService.Login(request);
                 if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
                 {
                     SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
                     return Ok(new { status = response.Succeeded, response.Message, Data = new {token= response.Data.Token} });
                 }
-                return StatusCode(response.StatusCode, new { satue = response.Succeeded, response.Message, response.Errors });
-            }
+                return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
+            
         }
         [HttpPost("logout")]
         [Authorize]
-        public async Task<IActionResult> Logout(string token)
+        public async Task<IActionResult> Logout()
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var authorizationHeader = httpContext?.Request.Headers["Authorization"].ToString();
             string currentToken = authorizationHeader.Substring("Bearer ".Length);
-            var result = await _authenticationService.Logout(token, currentToken);
-            if (result)
-                return Ok("you are logout sucessful");
-            return BadRequest("there are error when you logout");
+            if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+            {
+   
+                var response = await _authenticationService.Logout(refreshToken, currentToken);
+                if (response)
+                    return Ok();
+
+                return BadRequest(new
+                {
+                    satus = "false",
+                    massage = "failed refresh token"   
+                });
+            } 
+            return BadRequest("no refresh token");
         }
         [HttpPost("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(
-            [Required(ErrorMessage ="email is requred")]
-        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Invalid email format")]
-        string email,
-        [Required (ErrorMessage ="Otp is required") ]      
-        [FromHeader] int otp)
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            else 
-            {
-                var response = await _authenticationService.ConfirmEmail(email, otp);
+         
+                var response = await _authenticationService.ConfirmEmail(confirmEmailDto);
                 if (response.Succeeded)
                     return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
                 return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
-            }
+            
         }
         [HttpPost("ResetPassword")]
         [Authorize]

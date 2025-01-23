@@ -19,7 +19,7 @@ namespace Project.Services.Interfaces
         Task<APIOperationResponse<AuthModel>> RefreshTokenAsync(string token);
         public Task<APIOperationResponse<AuthModel>> RegisterCompany(CompanyRegisterDto companyRegisterDto);
         public Task<bool> ResendOTP(string email);
-        public Task<APIOperationResponse<AuthModel>> ConfirmEmail(string email, int otp);
+        public Task<APIOperationResponse<AuthModel>> ConfirmEmail(ConfirmEmailDto confirmemail);
         public Task<APIOperationResponse<object>> ResetPassword(string password);
         public Task<APIOperationResponse<object>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
         //Task<APIOperationResponse<GetUserDto>> GetUserByIdAsync(string userId);

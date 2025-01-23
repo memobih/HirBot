@@ -50,37 +50,22 @@ namespace User.Services.Implemntation
 
             try
             {
-                var respon = new AuthModel();
-
                 var user =await _userManager.FindByEmailAsync(userRegisterDto.Email); 
-                
                 if(user!=null)
                 {
-                    return APIOperationResponse<AuthModel>.Conflict("this email already register");
+                    return APIOperationResponse<AuthModel>.Conflict("this email is already register");
                 } 
-
                 var newUser = new ApplicationUser();
                 newUser.Email = userRegisterDto.Email;
                 newUser.FullName = userRegisterDto.FullName;
-                //newUser.PhoneNumber = userRegisterDto.PhoneNumber;
                 newUser.UserName = userRegisterDto.Email.Split('@')[0];
                 newUser.role= UserType.User;
-
                 IdentityResult result = await _userManager.CreateAsync(newUser, userRegisterDto.Password);
                 if (!result.Succeeded)
                 {
                     var errors = result.Errors.Select(e => e.Description).ToList();
                     return APIOperationResponse<AuthModel>.BadRequest(message: "Failed to register the  user. Please check the provided details.", errors);
                 }
-                string accessToken =await  GenerateJwtTokenAsync(newUser);
-                RefreshToken refreshtoken = GenerateRefreshToken();
-                respon.Email = newUser.Email;
-                respon.RefreshToken = refreshtoken.token;
-                respon.Token = accessToken;
-                respon.Username = newUser.UserName;
-                respon.ExpiresOn = refreshtoken.expirationOn;
-                respon.Role = newUser.role.ToString();
-                respon.id = newUser.Id;
                 var otp = GenerateOtp();
                 newUser.VerificationCode = int.Parse(otp);   
                 newUser.Code_Send_at=DateTime.UtcNow.AddMinutes(5);
@@ -92,40 +77,45 @@ namespace User.Services.Implemntation
                 catch (Exception ex)
                 {
                     return APIOperationResponse<AuthModel>.ServerError("an error accured", new List<string> { ex.Message });
-                } 
-                newUser.refreshTokens?.Add(refreshtoken);
+                }
                 await _userManager.UpdateAsync(newUser);
                 await _userManager.AddToRoleAsync(newUser, "User");
-                return APIOperationResponse<AuthModel>.Success(respon, " user created successfully.");
+                return APIOperationResponse<AuthModel>.Created( "user created successfully.");
             }
             catch (Exception ex)
             { 
                 return APIOperationResponse<AuthModel>.UnprocessableEntity("an error accured", new List<string> { ex.Message });
             }
         }
-        public async Task<APIOperationResponse<AuthModel>> ConfirmEmail(String Email ,int otp )
+        public async Task<APIOperationResponse<AuthModel>> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
-            var respon = new AuthModel();
-
-            var user =await _userManager.FindByEmailAsync(Email);
-            if (user == null)
-                return APIOperationResponse<AuthModel>.NotFound(message: "user not found");
-            if (user.VerificationCode == otp && user.Code_Send_at >= DateTime.UtcNow )
+            try
             {
-                string accessToken = await GenerateJwtTokenAsync(user);
-                RefreshToken refreshtoken = GenerateRefreshToken();
-                respon.Email = user.Email;
-                respon.RefreshToken = refreshtoken.token;
-                respon.Token = accessToken;
-                respon.Username = user.UserName;
-                respon.ExpiresOn = refreshtoken.expirationOn;
-                respon.Role = user.role.ToString();
-                respon.id = user.Id;
-                user.IsVerified = true ;  
-                await _userManager.UpdateAsync(user);
-                return APIOperationResponse<AuthModel>.Success(respon, " user login successfully.");
+                var respon = new AuthModel();
+                var user = await _userManager.FindByEmailAsync(confirmEmailDto.Email);
+                if (user == null)
+                    return APIOperationResponse<AuthModel>.NotFound(message: "user not found");
+                if (user.VerificationCode == confirmEmailDto.otp && user.Code_Send_at >= DateTime.UtcNow)
+                {
+                    string accessToken = await GenerateJwtTokenAsync(user);
+                    RefreshToken refreshtoken = GenerateRefreshToken();
+                    respon.Email = user.Email;
+                    respon.RefreshToken = refreshtoken.token;
+                    respon.Token = accessToken;
+                    respon.Username = user.UserName;
+                    respon.ExpiresOn = refreshtoken.expirationOn;
+                    respon.Role = user.role.ToString();
+                    respon.id = user.Id;
+                    user.IsVerified = true;
+                    await _userManager.UpdateAsync(user);
+                    return APIOperationResponse<AuthModel>.Success(respon, "user login successfully.");
+                }
+                return APIOperationResponse<AuthModel>.BadRequest(message: "Un valid otp");
             }
-            return APIOperationResponse<AuthModel>.BadRequest(message: "un valid otp");
+            catch (Exception ex)
+            {
+                return APIOperationResponse<AuthModel>.UnprocessableEntity("An error accured", new List<string> { ex.Message });
+            }
         }
         public async Task<APIOperationResponse<AuthModel>> RegisterCompany(CompanyRegisterDto companyRegisterDto)
         {
@@ -205,7 +195,7 @@ namespace User.Services.Implemntation
         public async Task<APIOperationResponse<object>> ResetPassword(
             [Required(ErrorMessage = "Password is required")]
             [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
-        string password)
+           string password)
         {
             try
             {
@@ -234,14 +224,11 @@ namespace User.Services.Implemntation
                 var respon = new AuthModel();
 
                 var user = await _userManager.FindByEmailAsync(request.Email);
-                
-               
-                if (user != null )
+                 if (user != null )
                 {
 
                     if (user.IsVerified != true)
                         return APIOperationResponse<AuthModel>.UnOthrized("your email is not varified");
-
                     var isVaild = await _userManager.CheckPasswordAsync(user, request.Password);
                     if (isVaild)
                     {
@@ -256,18 +243,16 @@ namespace User.Services.Implemntation
                         respon.id = user.Id;
                         user.refreshTokens?.Add(refreshtoken);
                         await _userManager.UpdateAsync(user); 
-                        
                         return APIOperationResponse<AuthModel>.Success(respon, message: "user is login");
                     }
                     return APIOperationResponse<AuthModel>.BadRequest("check your password or email");
-
                 }
                 return APIOperationResponse<AuthModel>.BadRequest("check your password or email");
 
             }
             catch (Exception ex)
             {
-                return APIOperationResponse<AuthModel>.UnprocessableEntity("An error occurred while register the  user.", new List<string> { ex.Message });
+                return APIOperationResponse<AuthModel>.UnprocessableEntity("An error occurred while login the  user.", new List<string> { ex.Message });
             }
 
         }   
@@ -285,9 +270,9 @@ namespace User.Services.Implemntation
 
         }
         public async Task<bool> Logout(string token , string accessToken)
-        {  
-
-            var user= await _userManager.Users.FirstOrDefaultAsync(u=>u.refreshTokens.Any(t=>t.token==token));
+        {
+           
+           var user= await _userManager.Users.FirstOrDefaultAsync(u=>u.refreshTokens.Any(t=>t.token==token));
             if(user==null)
                return false;
 
