@@ -1,54 +1,21 @@
-.vs
-# .gitignore
-
 # Ignore binary files
-*.exe
 *.dll
-*.bin
-*.dat
-*.class
-*.dex
-*.elf
-*.o
-*.so
-*.a
-*.lib
-*.obj
-*.pyc
-*.pyo
-*.pyd
-*.jar
-*.war
-*.ear
-*.swp
-*.swo
-*.out
-*.iso
-*.img
-*.tar
-*.gz
-*.zip
-*.rar
-*.7z
-*.bz2
-*.xz
-*.lz
-*.lzma
-*.lzo
-*.z
-*.tgz
-*.tbz2
-*.txz
-*.tlz
-*.deb
-*.rpm
-*.dmg
-*.pkg
-*.msi
-*.crx
-*.plugin
-*.woff
-*.woff2
-*.ttf
-*.eot
-*.otf
+*.exe
+*.pdb
+
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore package-related files
+*.nupkg
+*.snupkg
+*.psmdcp
+
+# Ignore user-specific files
+*.user
+*.suo
+
+# Ignore temporary files
+*.tmp
+*.log
