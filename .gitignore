@@ -4,8 +4,8 @@
 *.pdb
 
 # Ignore build output directories
-bin/
-obj/
+/bin/
+/obj/
 
 # Ignore package-related files
 *.nupkg
