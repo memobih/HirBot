@@ -93,7 +93,10 @@ builder.Services.AddSwaggerGen();
 #region Dependency Injection
 builder.Services.AddInfrastructureServices().AddUsersServices();
 #endregion
-
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -153,6 +156,35 @@ builder.Services.AddAuthentication(option =>
         }
     };
 
+}).AddOAuth("google", options =>
+{
+    options.ClientId = "1025210167148-c2slbofk5jg4pk7626qkqh8avi768r1r.apps.googleusercontent.com";
+    options.ClientSecret = "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"; 
+    options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
+    options.TokenEndpoint = "https://accounts.google.com/o/oauth2/token";
+    options.CallbackPath = "/api/ExternalAuth/google-callback";
+    options.UserInformationEndpoint = "https://www.googleapis.com/oauth2/v1/userinfo";
+    options.SaveTokens = true;
+    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+    options.Scope.Add("email");
+    options.SaveTokens = true;
+    options.Events = new OAuthEvents
+    {
+        OnCreatingTicket = async context =>
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", context.AccessToken);
+            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+            response.EnsureSuccessStatusCode();
+
+            var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            context.RunClaimActions(user.RootElement);
+        }
+    };
 });
 
 builder.Services.AddCors(corsOptions =>
@@ -182,11 +214,18 @@ app.MapGet("/login", (
     return Results.Challenge(authenticationSchemes: new List<string>() { "github" });
 }
     );
+app.MapGet("/login/google", (
+    HttpContext ctx) =>
+{
+    return Results.Challenge(authenticationSchemes: new List<string>() { "google" });
+}
+    );
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c=>c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
+
 }
 
 app.UseHttpsRedirection();
