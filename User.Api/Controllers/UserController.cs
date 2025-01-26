@@ -198,6 +198,17 @@ namespace User.Api.Controllers
                     return Ok(new { status = response.Succeeded, response.Message });
                 return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
             }
-        }
+        } 
+
+
+
+
+
+
+
+
+
+
+
     }
 }
