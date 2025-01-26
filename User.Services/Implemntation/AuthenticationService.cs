@@ -23,6 +23,8 @@ using Mysqlx.Session;
 using Mailing;
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace User.Services.Implemntation
 {
@@ -497,6 +499,40 @@ namespace User.Services.Implemntation
             
         }
 
+        #endregion
+
+
+
+        #region  github login 
+
+
+        public async Task<APIOperationResponse<AuthModel>> GitHubCallback()
+        {
+            var result = await _contextAccessor.HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (result?.Principal == null)
+                return APIOperationResponse<AuthModel>.UnOthrized("login with github failed");
+
+            var claims = result.Principal.Claims.ToDictionary(c => c.Type, c => c.Value);
+
+            var userId = claims[ClaimTypes.NameIdentifier];
+            var username = claims[ClaimTypes.Name];
+            var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = username,
+                    Email = email
+                };
+                var identityResult = await _userManager.CreateAsync(user);
+                if (!identityResult.Succeeded)
+                    return APIOperationResponse<AuthModel>.Success(new AuthModel { Email=email , Username=username});
+            }
+            return APIOperationResponse<AuthModel>.Success(new AuthModel { Email = email, Username = username });
+        }
         #endregion
     }
 }

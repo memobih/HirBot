@@ -14,6 +14,11 @@ using System.Text;
 using User.Services;
 using HirBot.EntityFramework.DataBaseContext;
 using Mailing;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using System.Text.Json;
 
 // Set absolute paths for Linux compatibility
 var isWindows = System.Runtime.InteropServices.RuntimeInformation
@@ -105,6 +110,7 @@ builder.Services.AddAuthentication(option =>
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
 }).AddJwtBearer(options =>
 {
     options.SaveToken = true;
@@ -118,6 +124,35 @@ builder.Services.AddAuthentication(option =>
         ValidAudience = configuration["JWT:ValidAudience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
     };
+}).AddOAuth("github", options =>
+{
+    options.ClientId = "Ov23liRDEoQn7AlxrRew";
+    options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
+    options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+    options.TokenEndpoint = "https://github.com/login/oauth/access_token";
+    options.CallbackPath = "/api/ExternalAuth/github-callback";
+    options.UserInformationEndpoint = "https://api.github.com/user";
+    options.SaveTokens = true;
+    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
+    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+
+    options.Events = new OAuthEvents
+    {
+        OnCreatingTicket = async context =>
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", context.AccessToken);
+            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+            response.EnsureSuccessStatusCode();
+
+            var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            context.RunClaimActions(user.RootElement);
+        }
+    };
+
 });
 
 builder.Services.AddCors(corsOptions =>
@@ -131,11 +166,23 @@ builder.Services.AddCors(corsOptions =>
 });
 
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("Mailing"));
-
 var app = builder.Build();
-app.UseCors("MyPolicy");
+app.UseAuthentication(); // Check JWT token
 
+app.UseCors("MyPolicy");
 // Configure the HTTP request pipeline.
+app.MapGet("/", (
+    HttpContext ctx) =>
+{
+    return ctx.User.Claims.Select(x => new { x.Type, x.Value }).ToList();
+});
+app.MapGet("/login", (
+    HttpContext ctx) =>
+{
+    return Results.Challenge(authenticationSchemes: new List<string>() { "github" });
+}
+    );
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -143,7 +190,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); // Check JWT token
 app.UseAuthorization();
 
 app.MapControllers();
