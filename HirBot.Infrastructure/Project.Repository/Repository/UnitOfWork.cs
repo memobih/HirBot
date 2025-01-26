@@ -8,12 +8,12 @@ namespace Project.Repository.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ApplicationDbContext _context;
+        public ApplicationDbContext _context;
 
         public IGeneralRepository<User> Users { get; private set; }
         private IGeneralRepository<RefreshToken> refreshs { get; set; }
         public IGeneralRepository<Company> Companies { get;   private set ;}
-
+        
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
