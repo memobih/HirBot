@@ -19,3 +19,16 @@
 # Ignore temporary files
 *.tmp
 *.log
+/.vs/HIrBot/config/applicationhost.config
+/.vs/HIrBot/DesignTimeBuild/.dtbcache.v2
+/.vs/HIrBot/FileContentIndex/61f40834-6802-47e4-a7b3-bf2e8fb44dba.vsidx
+/.vs/HIrBot/FileContentIndex/6d45d651-e6f8-4bc8-84c0-94b03218f5b8.vsidx
+/.vs/HIrBot/FileContentIndex/bc58b172-8ae0-49dc-8e9e-0d3b78967a29.vsidx
+/.vs/HIrBot/FileContentIndex/d3150daa-9b9a-4e44-93e9-8a57b5f72da6.vsidx
+/.vs/HIrBot/FileContentIndex/f881f053-425e-47a2-8522-045e5acfea24.vsidx
+/.vs/HIrBot/v17/.futdcache.v2
+/.vs/HIrBot/v17/DocumentLayout.backup.json
+/.vs/HIrBot/v17/DocumentLayout.json
+/.vs/ProjectEvaluation/hirbot.metadata.v9.bin
+/.vs/ProjectEvaluation/hirbot.projects.v9.bin
+/.vs/ProjectEvaluation/hirbot.strings.v9.bin
