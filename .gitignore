@@ -1,1 +1,21 @@
-.vs/
+# Ignore binary files
+*.dll
+*.exe
+*.pdb
+
+# Ignore build output directories
+**/bin/
+**/obj/
+
+# Ignore package-related files
+*.nupkg
+*.snupkg
+*.psmdcp
+
+# Ignore user-specific files
+*.user
+*.suo
+
+# Ignore temporary files
+*.tmp
+*.log
