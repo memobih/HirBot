@@ -116,9 +116,8 @@ namespace User.Api.Controllers
         }
         [HttpPost("ResetPassword")]
         [Authorize]
-        public async Task<IActionResult> ResetPassword( [FromBody] [Required(ErrorMessage = "Password is required")]
-                                                        [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
-                                                        string password)
+        public async Task<IActionResult> ResetPassword(PasswordDto
+                                                         password)
         {
             if (!ModelState.IsValid)
             {

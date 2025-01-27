@@ -83,7 +83,7 @@ namespace HirBot.ResponseHandler.Models
         }
         public static APIOperationResponse<T> NotFound(string message = "Not found.")
         {
-            return new APIOperationResponse<T> { Succeeded = false, Message = message };
+            return CreateResponse(ResponseType.NotFound, message, null, default);
         }
         public static APIOperationResponse<T> BadRequest(string? message = null, List<string>? errors = null)
         {
