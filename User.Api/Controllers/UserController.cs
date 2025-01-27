@@ -201,14 +201,5 @@ namespace User.Api.Controllers
         } 
 
 
-
-
-
-
-
-
-
-
-
     }
 }
