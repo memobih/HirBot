@@ -97,7 +97,7 @@ namespace User.Services.Implemntation
                 var user = await _userManager.FindByEmailAsync(confirmEmailDto.Email);
                 if (user == null)
                     return APIOperationResponse<AuthModel>.NotFound(message: "user not found");
-                if (user.VerificationCode == confirmEmailDto.otp && user.Code_Send_at >= DateTime.UtcNow)
+                if (user.VerificationCode == int.Parse(confirmEmailDto.otp)&& user.Code_Send_at >= DateTime.UtcNow)
                 {
                     string accessToken = await GenerateJwtTokenAsync(user);
                     RefreshToken refreshtoken = GenerateRefreshToken();
@@ -195,9 +195,7 @@ namespace User.Services.Implemntation
             }
         }
         public async Task<APIOperationResponse<object>> ResetPassword(
-            [Required(ErrorMessage = "Password is required")]
-            [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
-           string password)
+            PasswordDto password)
         {
             try
             {
@@ -205,7 +203,7 @@ namespace User.Services.Implemntation
                 if (user== null)
                     return APIOperationResponse<object>.NotFound("user is not found");
                 string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await _userManager.ResetPasswordAsync(user, token, password);
+                await _userManager.ResetPasswordAsync(user, token, password.Password);
                 return APIOperationResponse<object>.Success(new { masagee = "password reset successfuly" }, "password reset successfuly");
 
             }

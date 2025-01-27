@@ -20,7 +20,7 @@ namespace Project.Services.Interfaces
         public Task<APIOperationResponse<AuthModel>> RegisterCompany(CompanyRegisterDto companyRegisterDto);
         public Task<bool> ResendOTP(string email);
         public Task<APIOperationResponse<AuthModel>> ConfirmEmail(ConfirmEmailDto confirmemail);
-        public Task<APIOperationResponse<object>> ResetPassword(string password);
+        public Task<APIOperationResponse<object>> ResetPassword(PasswordDto password);
         public Task<APIOperationResponse<object>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
         //Task<APIOperationResponse<GetUserDto>> GetUserByIdAsync(string userId);
 

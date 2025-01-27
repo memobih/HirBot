@@ -11,8 +11,11 @@ namespace User.Services.DataTransferObjects.Authencation
     {
         [Required(ErrorMessage = "email is requred")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Invalid email format")]
+        [RegularExpression(pattern: @"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid email address")]
+
         public string Email { get; set; }
         [Required(ErrorMessage = "otp is required")]
-        public int otp {  get; set; }
+        [RegularExpression(pattern: "^\\d{6}$", ErrorMessage = "Invalid OTP")]
+        public string otp {  get; set; }
     }
 }
