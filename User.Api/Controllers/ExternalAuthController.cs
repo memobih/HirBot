@@ -39,7 +39,7 @@ namespace User.Api.Controllers
             {
                 RedirectUri = "/api/ExternalAuth/github-callback"
             }, "github");
-        }
+        } 
 
         [HttpGet("github-callback")]
         public async Task<IActionResult> GitHubCallback()
@@ -63,6 +63,7 @@ namespace User.Api.Controllers
                     Email = email
                 };
                 var identityResult = await _userManager.CreateAsync(user);
+                
                 if (!identityResult.Succeeded)
                     return BadRequest(identityResult.Errors);
             }

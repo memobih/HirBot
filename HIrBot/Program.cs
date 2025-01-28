@@ -133,7 +133,7 @@ builder.Services.AddAuthentication(option =>
     options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
     options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
     options.TokenEndpoint = "https://github.com/login/oauth/access_token";
-    options.CallbackPath = "/oauth/github-cb";
+    options.CallbackPath = "/api/ExternalAuth/github-callback";
     options.UserInformationEndpoint = "https://api.github.com/user";
     options.SaveTokens = true;
     options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
