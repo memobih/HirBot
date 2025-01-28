@@ -13,7 +13,11 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore"  Version="7.2.0" />
   </ItemGroup>
-
+<ItemGroup>
+    <None Update="HIrBot\appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+</ItemGroup>
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\Test.Api\Test.Api.csproj" />

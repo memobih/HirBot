@@ -1,4 +1,4 @@
-using HirBot.EntityFramework.DataBaseContext;
+/*using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -23,3 +23,4 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }
+*/
