@@ -107,10 +107,10 @@ namespace User.Api.Controllers
         [HttpPost("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
-         
                 var response = await _authenticationService.ConfirmEmail(confirmEmailDto);
                 if (response.Succeeded)
                     return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
+                
                 return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
             
         }

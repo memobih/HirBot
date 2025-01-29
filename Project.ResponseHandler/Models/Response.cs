@@ -13,7 +13,7 @@ namespace HirBot.ResponseHandler.Models
         public string? Message { get; set; }
         [JsonConverter(typeof(ConfigConverter<IErrorCodes, CommonErrorCodes>))]
         public IErrorCodes Code { get; set; }
-        public List<string>? Errors { get; set; }
+        public object? Errors { get; set; }
         public T? Data { get; set; }
 
         public static APIOperationResponse<T> Success(T result )
@@ -37,7 +37,7 @@ namespace HirBot.ResponseHandler.Models
                
             };
         }
-        public static APIOperationResponse<T> CreateResponse(ResponseType responseType, string? message, List<string>? errors, T? data)
+        public static APIOperationResponse<T> CreateResponse(ResponseType responseType, string? message, object ?errors, T? data)
         {
             return new APIOperationResponse<T>
             {
@@ -85,7 +85,7 @@ namespace HirBot.ResponseHandler.Models
         {
             return CreateResponse(ResponseType.NotFound, message, null, default);
         }
-        public static APIOperationResponse<T> BadRequest(string? message = null, List<string>? errors = null)
+        public static APIOperationResponse<T> BadRequest(string? message = null, object errors = null )
         {
             return CreateResponse(ResponseType.BadRequest, message, errors, default);
         }

@@ -22,6 +22,7 @@ namespace Project.Services.Interfaces
         public Task<APIOperationResponse<AuthModel>> ConfirmEmail(ConfirmEmailDto confirmemail);
         public Task<APIOperationResponse<object>> ResetPassword(PasswordDto password);
         public Task<APIOperationResponse<object>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
+        public Task<APIOperationResponse<AuthModel>> GitHubCallback();
         //Task<APIOperationResponse<GetUserDto>> GetUserByIdAsync(string userId);
 
         //Task<APIOperationResponse<object>> UpdateUserAsync(GetUserDto updateUserDto);

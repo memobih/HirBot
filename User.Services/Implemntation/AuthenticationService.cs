@@ -91,13 +91,14 @@ namespace User.Services.Implemntation
         }
         public async Task<APIOperationResponse<AuthModel>> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
+            
             try
             {
                 var respon = new AuthModel();
                 var user = await _userManager.FindByEmailAsync(confirmEmailDto.Email);
                 if (user == null)
                     return APIOperationResponse<AuthModel>.NotFound(message: "user not found");
-                if (user.VerificationCode == int.Parse(confirmEmailDto.otp)&& user.Code_Send_at >= DateTime.UtcNow)
+                if (user.VerificationCode == int.Parse(confirmEmailDto.otp) && user.Code_Send_at >= DateTime.UtcNow)
                 {
                     string accessToken = await GenerateJwtTokenAsync(user);
                     RefreshToken refreshtoken = GenerateRefreshToken();
@@ -112,7 +113,7 @@ namespace User.Services.Implemntation
                     await _userManager.UpdateAsync(user);
                     return APIOperationResponse<AuthModel>.Success(respon, "user login successfully.");
                 }
-                return APIOperationResponse<AuthModel>.BadRequest(message: "Un valid otp");
+                return APIOperationResponse<AuthModel>.BadRequest(message: "Un valid otp" , new {otp="otp is not correct or expire"} );
             }
             catch (Exception ex)
             {
@@ -516,7 +517,6 @@ namespace User.Services.Implemntation
             var userId = claims[ClaimTypes.NameIdentifier];
             var username = claims[ClaimTypes.Name];
             var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
-
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
@@ -527,9 +527,11 @@ namespace User.Services.Implemntation
                 };
                 var identityResult = await _userManager.CreateAsync(user);
                 if (!identityResult.Succeeded)
-                    return APIOperationResponse<AuthModel>.Success(new AuthModel { Email=email , Username=username});
+                    return APIOperationResponse<AuthModel>.BadRequest("login is failed");
             }
-            return APIOperationResponse<AuthModel>.Success(new AuthModel { Email = email, Username = username });
+            string token = await GenerateJwtTokenAsync(user);
+
+            return APIOperationResponse<AuthModel>.Success(new AuthModel {Token=token,  Email = email, Username = username });
         }
         #endregion
     }
