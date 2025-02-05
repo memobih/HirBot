@@ -155,7 +155,7 @@ builder.Services.AddAuthentication(option =>
         }
     };
 
-}).AddOAuth("google", options =>
+}).AddCookie("cookie").AddOAuth("google", options =>
 {
     options.ClientId = "1025210167148-c2slbofk5jg4pk7626qkqh8avi768r1r.apps.googleusercontent.com";
     options.ClientSecret = "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"; 
@@ -170,7 +170,7 @@ builder.Services.AddAuthentication(option =>
     options.Scope.Add("email");
     options.Scope.Add("profile");
     options.SaveTokens = true;
-
+    options.SignInScheme="cookie";
     options.Events = new OAuthEvents
     {
         OnCreatingTicket = async context =>
@@ -219,6 +219,10 @@ app.MapGet("/login", (
 app.MapGet("/login/google", (
     HttpContext ctx) =>
 {
+    new AuthenticationProperties()
+    {
+        RedirectUri = "https://localhost:5005/"
+    };
     return Results.Challenge(authenticationSchemes: new List<string>() { "google" });
 }
     );
