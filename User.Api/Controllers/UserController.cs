@@ -49,7 +49,7 @@ namespace User.Api.Controllers
         [Route("CompanyRegister")]
         [HttpPost]
         public async Task<IActionResult> CompanyRegister(
-         [FromForm] CompanyRegisterDto addCompanyDto)
+      CompanyRegisterDto addCompanyDto)
         {
  //helllooo 
              if (!ModelState.IsValid)
@@ -62,9 +62,9 @@ namespace User.Api.Controllers
                  if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
                  {
                      SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
-                     return Ok(new { satue = response.Succeeded, response.Message });
+                     return Ok(new { status = response.Succeeded, response.Message });
                  }
-                 return StatusCode(response.StatusCode, new { satue = response.Succeeded, response.Message, response.Errors });
+                 return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
              }
             
         }
@@ -91,14 +91,12 @@ namespace User.Api.Controllers
             string currentToken = authorizationHeader.Substring("Bearer ".Length);
             if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             {
-   
                 var response = await _authenticationService.Logout(refreshToken, currentToken);
                 if (response)
                     return Ok();
-
                 return BadRequest(new
                 {
-                    satus = "false",
+                    status = "false",
                     massage = "failed refresh token"   
                 });
             } 
@@ -158,7 +156,7 @@ namespace User.Api.Controllers
 
                 return StatusCode(response.StatusCode, new
                 {
-                    satus = response.Succeeded,
+                    status = response.Succeeded,
                     response.Message,
                     response.Errors
                 });

@@ -93,10 +93,7 @@ builder.Services.AddSwaggerGen();
 #region Dependency Injection
 builder.Services.AddInfrastructureServices().AddUsersServices();
 #endregion
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.MinimumSameSitePolicy = SameSiteMode.None;
-});
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -114,7 +111,7 @@ builder.Services.AddAuthentication(option =>
     option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 
-}).AddJwtBearer(options =>
+}).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.SaveToken = true;
     options.RequireHttpsMetadata = false;
@@ -133,13 +130,15 @@ builder.Services.AddAuthentication(option =>
     options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
     options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
     options.TokenEndpoint = "https://github.com/login/oauth/access_token";
-    options.CallbackPath = "/api/ExternalAuth/github-callback";
+    options.CallbackPath = "/oauth/github-cb";
     options.UserInformationEndpoint = "https://api.github.com/user";
+    options.SignInScheme = IdentityConstants.ExternalScheme;
+
     options.SaveTokens = true;
     options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
-
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.Events = new OAuthEvents
     {
         OnCreatingTicket = async context =>
@@ -162,14 +161,16 @@ builder.Services.AddAuthentication(option =>
     options.ClientSecret = "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"; 
     options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
     options.TokenEndpoint = "https://accounts.google.com/o/oauth2/token";
-    options.CallbackPath = "/api/ExternalAuth/google-callback";
+    options.CallbackPath = "/signin-google";
     options.UserInformationEndpoint = "https://www.googleapis.com/oauth2/v1/userinfo";
-    options.SaveTokens = true;
     options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+    options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+    options.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
     options.Scope.Add("email");
+    options.Scope.Add("profile");
     options.SaveTokens = true;
+
     options.Events = new OAuthEvents
     {
         OnCreatingTicket = async context =>
@@ -185,6 +186,8 @@ builder.Services.AddAuthentication(option =>
             context.RunClaimActions(user.RootElement);
         }
     };
+    options.SignInScheme = IdentityConstants.ExternalScheme;
+
 });
 
 builder.Services.AddCors(corsOptions =>
@@ -203,17 +206,16 @@ app.UseAuthentication(); // Check JWT token
 
 app.UseCors("MyPolicy");
 // Configure the HTTP request pipeline.
-app.MapGet("/", (
-    HttpContext ctx) =>
+app.MapGet("/", ( HttpContext ctx) =>
 {
     return ctx.User.Claims.Select(x => new { x.Type, x.Value }).ToList();
-});
+}
+);
 app.MapGet("/login", (
     HttpContext ctx) =>
 {
-    return Results.Challenge(authenticationSchemes: new List<string>() { "github" });
-}
-    );
+   return Results.Challenge(authenticationSchemes: new List<string>() { "github" });
+} );
 app.MapGet("/login/google", (
     HttpContext ctx) =>
 {

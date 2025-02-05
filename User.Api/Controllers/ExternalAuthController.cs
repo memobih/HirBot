@@ -25,10 +25,11 @@ namespace User.Api.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly UnitOfWork unitOfWork;
-        
-        public ExternalAuthController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        private readonly Project.Services.Interfaces.IAuthenticationService _authenticationService;
+
+        public ExternalAuthController(Project.Services.Interfaces.IAuthenticationService authenticationService ,SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
         {
+            _authenticationService = authenticationService;
             _signInManager = signInManager;
             _userManager = userManager;
         }
@@ -39,75 +40,36 @@ namespace User.Api.Controllers
             {
                 RedirectUri = "/api/ExternalAuth/github-callback"
             }, "github");
-        } 
+        }
 
         [HttpGet("github-callback")]
         public async Task<IActionResult> GitHubCallback()
         {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (result?.Principal == null)
-                return Unauthorized(new { message = "GitHub login failed" });
+            var result= await _authenticationService.GitHubCallback();
 
-            var claims = result.Principal.Claims.ToDictionary(c => c.Type, c => c.Value);
-
-            var userId = claims[ClaimTypes.NameIdentifier];
-            var username = claims[ClaimTypes.Name];
-            var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
-
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                user = new ApplicationUser
-                {
-                    UserName = username,
-                    Email = email
-                };
-                var identityResult = await _userManager.CreateAsync(user);
-                
-                if (!identityResult.Succeeded)
-                    return BadRequest(identityResult.Errors);
-            }
-            return Ok(user);
+            if(result.StatusCode==200)
+                return Redirect ( "https://external-site.com/targetpage?token=" +result.Data.Token);
+            string url = "https://external-site.com/targetpag";
+            return Redirect(url);
         }
+
         [HttpGet("google-login")]
-        public async Task<IActionResult> GoogleLogin()
+        public IActionResult GoogleLogin()
         {
-            return Challenge(new AuthenticationProperties
-            {
-                RedirectUri = "/api/ExternalAuth/google-callback"
-            }, "google");
+            var redirectUrl = "/api/ExternalAuth/google-callback";
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties("google", redirectUrl);
+            return Challenge(properties, "google");
         }
         [HttpGet("google-callback")]
         public async Task<IActionResult> GoogleCallback()
         {
-            var result = await HttpContext.AuthenticateAsync("google");
-            if (result?.Principal == null)
-                return Unauthorized(new { message = "Google login failed" });
 
-            var claims = result.Principal.Claims.ToDictionary(c => c.Type, c => c.Value);
-            var userId = claims[ClaimTypes.NameIdentifier];
-            var username = claims[ClaimTypes.Name];
-            var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                user = new ApplicationUser
-                {
-                    UserName = username,
-                    Email = email,
-                    PasswordHash = null
-                };
-                var identityResult = await _userManager.CreateAsync(user);
-                if (!identityResult.Succeeded)
-                    return BadRequest(identityResult.Errors);
-            }
-            var externaluserinfo=new UserLoginInfo ("google",userId,"Google");
-            var addloginresult=await _userManager.AddLoginAsync(user,externaluserinfo);
-            if(!addloginresult.Succeeded)
-            {
-                return BadRequest(addloginresult.Errors);
-            }
-            return Ok(user);
+            var result = await _authenticationService.GoogleCallback();
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (result.StatusCode == 200)
+                return Ok( new { token = result.Data.Token }   );
+           
+            return BadRequest("login with google is failed");
         }
 
     }

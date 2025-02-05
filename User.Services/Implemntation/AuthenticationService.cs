@@ -25,6 +25,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Web;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using System.IO;
+using HirBot.Comman.Helpers;
+using Microsoft.VisualBasic;
 
 namespace User.Services.Implemntation
 {
@@ -36,9 +39,11 @@ namespace User.Services.Implemntation
         private readonly RedisService _redisService;
         private readonly UnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AuthenticationService(IHttpContextAccessor contextAccessor, UserManager<ApplicationUser> userManager, IConfiguration configuration, RedisService redisService , UnitOfWork unitOfWork)
+        public AuthenticationService(SignInManager<ApplicationUser> signInManager,IHttpContextAccessor contextAccessor, UserManager<ApplicationUser> userManager, IConfiguration configuration, RedisService redisService , UnitOfWork unitOfWork)
         {
+            _signInManager=signInManager;
             _contextAccessor = contextAccessor;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
@@ -127,8 +132,6 @@ namespace User.Services.Implemntation
             { 
                 var respon = new AuthModel();
 
-           
-
                 var user = await _userManager.FindByEmailAsync(companyRegisterDto.CompanyEmail);
 
                 if (user != null)
@@ -139,11 +142,10 @@ namespace User.Services.Implemntation
                 var newUser = new ApplicationUser();
                 newUser.Email = companyRegisterDto.CompanyEmail;
                 newUser.FullName = companyRegisterDto.CompanyName;
-                //newUser.PhoneNumber = userRegisterDto.PhoneNumber;
-                newUser.UserName = companyRegisterDto.CompanyEmail;
+                newUser.UserName = companyRegisterDto.CompanyEmail.Split('@')[0]; ;
                 newUser.PhoneNumber = companyRegisterDto.ContactNumber;
-               
                 newUser.role = UserType.Company;
+                
 
                 IdentityResult result = await _userManager.CreateAsync(newUser, companyRegisterDto.Password);
                 if (!result.Succeeded)
@@ -161,30 +163,33 @@ namespace User.Services.Implemntation
                 respon.Role = newUser.role.ToString();
                 respon.id = newUser.Id;
                 newUser.refreshTokens?.Add(refreshtoken);
-
                 await _userManager.UpdateAsync(newUser); 
-                
                 var newCompany = new Company();
-                newCompany.Comments = companyRegisterDto.Comments;
+                newCompany.Comments = companyRegisterDto.AdditionalInformation;
                 newCompany.status = CompanyStatus.process;
                 newCompany.CreatedBy = newUser.Id;
                 newCompany.ModifiedBy = newUser.Id;
                 newCompany.country= companyRegisterDto.country;
                 newCompany.street= companyRegisterDto.street;
                 newCompany.Governate = companyRegisterDto.Governate;
-                newCompany.websiteUrl = companyRegisterDto.websiteUrl;
-                newCompany.SocialMeediaLink= companyRegisterDto.SocialMeediaLink;
+                newCompany.websiteUrl = companyRegisterDto.websiteURL;
+                newCompany.SocialMeediaLink= companyRegisterDto.SocialMediaLink;
                 newCompany.CompanyType = companyRegisterDto.CompanyType;
-                newCompany.TaxIndtefierNumber = companyRegisterDto.TaxIndtefierNumber;
+                newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
                 if (companyRegisterDto.BusinessLicense != null)
                 {
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", companyRegisterDto.BusinessLicense.FileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    using (var stream = new FileStream(path, FileMode.Create))
+                    try
                     {
-                        await companyRegisterDto.BusinessLicense.CopyToAsync(stream);
+                        string fileUrl = await FileHelper.UploadFileAsync(companyRegisterDto.BusinessLicense, newUser.UserName+ "BusinessLicense");
+                        newCompany.BusinessLicense = fileUrl;
                     }
-                    newCompany.BusinessLicense = path;
+                    catch (Exception ex)
+                    {
+                        return APIOperationResponse<AuthModel>.BadRequest("can not uplode the file", new
+                        {
+                            BusinessLicense = "can not uplode the file"
+                        });
+                    }
                 }
                 await _unitOfWork.Companies.AddAsync(newCompany);
                 await _userManager.AddToRoleAsync(newUser, "Company");
@@ -272,10 +277,10 @@ namespace User.Services.Implemntation
         }
         public async Task<bool> Logout(string token , string accessToken)
         {
-           
-           var user= await _userManager.Users.FirstOrDefaultAsync(u=>u.refreshTokens.Any(t=>t.token==token));
+
+            var user = await _userManager.Users.SingleOrDefaultAsync(u=>u.refreshTokens.Any(t=>t.token==token));
             if(user==null)
-               return false;
+                  return false;
 
                       var refreshToken = user.refreshTokens.Single(t => t.token == token);
                       user.refreshTokens.Remove(refreshToken);
@@ -517,13 +522,14 @@ namespace User.Services.Implemntation
             var userId = claims[ClaimTypes.NameIdentifier];
             var username = claims[ClaimTypes.Name];
             var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
                 user = new ApplicationUser
                 {
+                    FullName=username , 
                     UserName = username,
-                    Email = email
+                    Email = username
                 };
                 var identityResult = await _userManager.CreateAsync(user);
                 if (!identityResult.Succeeded)
@@ -534,5 +540,54 @@ namespace User.Services.Implemntation
             return APIOperationResponse<AuthModel>.Success(new AuthModel {Token=token,  Email = email, Username = username });
         }
         #endregion
+        public async Task<APIOperationResponse<AuthModel>> GoogleCallback()
+        {
+            var result = await _contextAccessor.HttpContext.AuthenticateAsync("google");
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+
+            if (result?.Principal == null || info == null)
+                return APIOperationResponse <AuthModel>.UnOthrized( "Google login failed" );
+
+            var claims = result.Principal.Claims.ToDictionary(c => c.Type, c => c.Value);
+            var userId = claims[ClaimTypes.NameIdentifier];
+            var firstName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+            var secondName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+            var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
+            var signing =await  _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (signing != null)
+            {
+                string token = await GenerateJwtTokenAsync(signing);
+
+                return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, Email = email, Username = signing.UserName });
+            }
+            else
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        UserName = email.Split('@')[0],
+                        Email = email,
+                        FullName = firstName + " " + secondName,
+
+                    };
+                    var identityResult = await _userManager.CreateAsync(user, GenerateRefreshToken().token);
+                    if (!identityResult.Succeeded)
+                        return APIOperationResponse<AuthModel>.BadRequest("Google login failed");
+
+                    await _userManager.AddLoginAsync(user, info);
+                    string token = await GenerateJwtTokenAsync(user);
+                    return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, Email = email, Username = user.UserName });
+                } 
+                else
+                {
+                    return APIOperationResponse<AuthModel>.Conflict("email is already register");
+
+                }
+            }
+        } 
+
+       
     }
 }

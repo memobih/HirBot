@@ -12,8 +12,9 @@ namespace User.Services.DataTransferObjects.Authencation
 
     
         [Required(ErrorMessage = "Password is required.")]
-        [RegularExpression(pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!#%*?&])[A-Za-z\\d@$!#%*?&]{8,20}$",
-            ErrorMessage = "Password must be 8-20 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%?&])[A-Za-z\d@$!#%?&]{8,20}$", ErrorMessage = "Password must be between 8 and 20 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
+
         public string Password { get; set; }
     
 

@@ -12,19 +12,11 @@ namespace User.Services.DataTransferObjects.Authencation
         [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
         [MaxLength(40, ErrorMessage = "Password cannot exceed 40 characters")]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters long")]
-        
         public string OldPassword { get; set; }
-
-        [Required(ErrorMessage = "New password is required")]
-        [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
-        [MaxLength(40, ErrorMessage = "Password cannot exceed 40 characters")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long")]
+        [Required(ErrorMessage = "Password is required.")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%?&])[A-Za-z\d@$!#%?&]{8,20}$", ErrorMessage = "Password must be between 8 and 20 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
         public string NewPassword { get; set; }
-
-        [Required(ErrorMessage = "Confirm password is required")]
-        [DataType(DataType.Password, ErrorMessage = "Invalid password format")]
-        [Compare("NewPassword", ErrorMessage = "Password and Confirm Password do not match")]
-        public string ConfirmPassword { get; set; }
+        
 
     }
 }
