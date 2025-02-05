@@ -86,7 +86,6 @@ builder.Services.AddSingleton<RedisService>(sp =>
     var redisUsername = config["Redis:Username"];
     return new RedisService(redisHost, redisPassword, redisPort, redisUsername);
 });
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
