@@ -87,6 +87,9 @@ namespace User.Services.Implemntation
                 }
                 await _userManager.UpdateAsync(newUser);
                 await _userManager.AddToRoleAsync(newUser, "User");
+                var Portfolio = new Portfolio();
+                Portfolio.UserID = newUser.Id;
+                await _unitOfWork._context.Portfolios.AddAsync(Portfolio);
                 return APIOperationResponse<AuthModel>.Created( "user created successfully.");
             }
             catch (Exception ex)

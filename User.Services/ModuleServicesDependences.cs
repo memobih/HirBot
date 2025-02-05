@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using User.Services.Implemntation;
+using User.Services.Interfaces;
 
 namespace User.Services
 {
@@ -16,6 +17,7 @@ namespace User.Services
         {
             service.AddTransient<IAuthenticationService, AuthenticationService>();
             service.AddScoped<IMailingService, MailingService>();
+            service.AddScoped<IContactInfoService, ContactInfoService>();
             return service;
         }
     }
