@@ -18,6 +18,7 @@ namespace User.Services
             service.AddTransient<IAuthenticationService, AuthenticationService>();
             service.AddScoped<IMailingService, MailingService>();
             service.AddScoped<IContactInfoService, ContactInfoService>();
+            service.AddScoped<IIamge, ImageService>();
             return service;
         }
     }

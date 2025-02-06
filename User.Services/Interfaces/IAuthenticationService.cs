@@ -1,4 +1,5 @@
-﻿using HirBot.ResponseHandler.Models;
+﻿using HirBot.Comman.Idenitity;
+using HirBot.ResponseHandler.Models;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Project.ResponseHandler.Models;
@@ -24,6 +25,7 @@ namespace Project.Services.Interfaces
         public Task<APIOperationResponse<object>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
         public Task<APIOperationResponse<AuthModel>> GitHubCallback();
         public Task<APIOperationResponse<AuthModel>> GoogleCallback();
+        public Task<ApplicationUser> GetCurrentUserAsync();
         //Task<APIOperationResponse<GetUserDto>> GetUserByIdAsync(string userId);
 
         //Task<APIOperationResponse<object>> UpdateUserAsync(GetUserDto updateUserDto);

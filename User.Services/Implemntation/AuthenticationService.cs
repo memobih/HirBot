@@ -221,7 +221,7 @@ namespace User.Services.Implemntation
                 return APIOperationResponse<object>.UnprocessableEntity("an error acuured" , new List<string> { ex.Message });
             }
         }
-        private async Task<ApplicationUser> GetCurrentUserAsync()
+        public async Task<ApplicationUser> GetCurrentUserAsync()
         {
             var currentUser = _contextAccessor.HttpContext.User;
             return await _userManager.GetUserAsync(currentUser);
