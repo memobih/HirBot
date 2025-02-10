@@ -15,7 +15,8 @@ using User.Services.Interfaces;
 
 namespace User.Api.Controllers.Portfolio
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [ApiController]
     public class ContactInfoController : ApiControllerBase
     {
         private readonly ILogger<ContactInfoController> _logger;
@@ -34,15 +35,21 @@ namespace User.Api.Controllers.Portfolio
         }
         [HttpGet("contact-info")]
         [Authorize]
-        public async Task<APIOperationResponse<ContactInfoDto>> GetContactInfoAsync()
-        {
-            return await _contactInfoService.GetContactInfoAsync();
+        public async Task<IActionResult> GetContactInfoAsync()
+        { 
+            var respon=  await _contactInfoService.GetContactInfoAsync();
+            if (respon.StatusCode == 200)
+                return Ok(new { status = true, respon.Data });
+            return BadRequest(new { status = false, massage = "This account is Not User" });
         }
         [HttpPut("contact-info-update")]
         [Authorize]
-        public async Task<APIOperationResponse<ContactInfoDto>> UpdateContactInfoAsync(ContactInfoDto contactInfoDto)
+        public async Task<IActionResult> UpdateContactInfoAsync(ContactInfoDto contactInfoDto)
         {
-            return await _contactInfoService.UpdateContactInfoAsync(contactInfoDto);
+           var respon= await _contactInfoService.UpdateContactInfoAsync(contactInfoDto);
+            if (respon.StatusCode == 200)
+                return Ok(new { status = true, massage = "Contact Info is updated" } );
+            return BadRequest(new { status = false, massage = "This is error accured" });
         }
 
     }

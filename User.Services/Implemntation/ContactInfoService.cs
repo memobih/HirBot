@@ -13,10 +13,11 @@ using Project.ResponseHandler.Consts;
 using Project.ResponseHandler.Models;
 using User.Services.DataTransferObjects;
 using User.Services.Interfaces;
-
+using HirBot.Comman.Enums;
+using HirBot.Data.Entities;
 namespace User.Services.Implemntation
 {
-    public class ContactInfoService : IContactInfoService
+    public class ContactInfoService  : IContactInfoService
     {
          private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
@@ -32,57 +33,64 @@ namespace User.Services.Implemntation
 
         public async Task<APIOperationResponse<ContactInfoDto>> GetContactInfoAsync()
         {
-            var user = GetCurrentUserAsync().Result ;
-            if(user == null)
+           var user =  await  GetCurrentUserAsync() ;
+            
+            if(user == null || user.role != UserType.User)
             {
-                return APIOperationResponse<ContactInfoDto>.NotFound("User not found");
+                return APIOperationResponse<ContactInfoDto>.UnOthrized("User not found");
             }
-            var ContactInfoDto=new ContactInfoDto();
-            var portfoli=await _unitOfWork._context.Portfolios.FirstOrDefaultAsync(x=>x.UserID==user.Id);
-            if(portfoli==null)
+            
+           var Portfolio =await  _unitOfWork._context.Portfolios.FirstOrDefaultAsync(p=> p.UserID==user.Id);
+            if(Portfolio== null)
             {
-                return APIOperationResponse<ContactInfoDto>.NotFound("Portfolio not found");
+                user.Portfolio = new HirBot.Data.Entities.Portfolio();
+                await _userManager.UpdateAsync(user);  
+                Portfolio=user.Portfolio;
             }
-            ContactInfoDto.Email=user.Email;
-            ContactInfoDto.Location=portfoli.location;
-            ContactInfoDto.PortfolioLink=portfoli.PortfolioUrl;
-            ContactInfoDto.Profile=portfoli.PortfolioUrl;
-            return APIOperationResponse<ContactInfoDto>.Success(ContactInfoDto);
-
+            ContactInfoDto contact = new ContactInfoDto();
+            contact.Location = Portfolio.location;
+            contact.PortfolioURL = Portfolio.PortfolioUrl;
+            contact.ContactNumber = user.PhoneNumber;
+            contact.GithubUrl = Portfolio.GithubUrl; 
+            return APIOperationResponse< ContactInfoDto > .Success(contact); 
         }
 
-        public async Task<APIOperationResponse<ContactInfoDto>> UpdateContactInfoAsync(ContactInfoDto contactInfoDto)
+        public async Task< APIOperationResponse<ContactInfoDto> > UpdateContactInfoAsync(ContactInfoDto contactInfoDto)
         {
-            var user = GetCurrentUserAsync().Result ;
-            if(user == null)
+            var user = await GetCurrentUserAsync();
+            if (user == null)
             {
                 return APIOperationResponse<ContactInfoDto>.NotFound("User not found");
             }
-            var portfoli=await _unitOfWork._context.Portfolios.FindAsync(user.Id);
-            if(portfoli==null)
+            var portfolio = await _unitOfWork._context.Portfolios.FirstOrDefaultAsync(P=>P.UserID==user.Id);
+            if (portfolio == null)
             {
-                return APIOperationResponse<ContactInfoDto>.NotFound("Portfolio not found");
+                user.Portfolio = new HirBot.Data.Entities.Portfolio();
+                await _userManager.UpdateAsync(user);
+                portfolio = user.Portfolio;
             }
-            portfoli.location=contactInfoDto.Location;
-            portfoli.PortfolioUrl=contactInfoDto.PortfolioLink;
-            user.Email=contactInfoDto.Email;
-            _unitOfWork._context.Portfolios.Update(portfoli);
-            _unitOfWork._context.Users.Update(user);
+            portfolio.location = contactInfoDto.Location;
+            portfolio.PortfolioUrl = contactInfoDto.PortfolioURL;
+            user.PhoneNumber = contactInfoDto.ContactNumber;
+            portfolio.GithubUrl = contactInfoDto.GithubUrl; 
+            await _unitOfWork.Users.UpdateAsync(user);
+            _unitOfWork._context.Portfolios.Update(portfolio); 
             try
             {
                 await _unitOfWork.SaveAsync();
-                return APIOperationResponse<ContactInfoDto>.Updated(message:"Contact info updated successfully");
+                return APIOperationResponse<ContactInfoDto>.Updated(message: "Contact info updated successfully");
             }
             catch (Exception e)
             {
-                return APIOperationResponse<ContactInfoDto>.ServerError("Error while updating contact info",new List<string>{e.Message});
+                return APIOperationResponse<ContactInfoDto>.ServerError("Error while updating contact info", new List<string> { e.Message });
             }
-             
+        } 
+            //}
+            private async Task<ApplicationUser> GetCurrentUserAsync()
+            {
+                var currentUser = _contextAccessor.HttpContext.User;
+                return await _userManager.GetUserAsync(currentUser);
+            }
         }
-        private async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            var currentUser = _contextAccessor.HttpContext.User;
-            return await _userManager.GetUserAsync(currentUser);
-        }
-    }
+    
 }

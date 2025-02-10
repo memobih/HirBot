@@ -11,6 +11,6 @@ namespace User.Services.Interfaces
     {
         public Task<APIOperationResponse<ContactInfoDto>> GetContactInfoAsync();
         public Task<APIOperationResponse<ContactInfoDto>> UpdateContactInfoAsync(ContactInfoDto contactInfoDto);
-        
+
     }
 }
