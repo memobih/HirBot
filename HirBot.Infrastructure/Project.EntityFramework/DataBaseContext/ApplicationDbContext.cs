@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using HirBot.Comman.Idenitity;
 using HirBot.Data.Entities;
-using Mysqlx.Crud;
+using HirBot.Comman.Idenitity;
 
 namespace HirBot.EntityFramework.DataBaseContext
 {
