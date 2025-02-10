@@ -9,10 +9,8 @@ namespace User.Services.Interfaces
 {
     public  interface IIamge
     {
-        public Task<bool> addProfileImage(ImageDto image);
         public Task<bool> editProfileImage(ImageDto image);
         public Task<bool> deleteProfileImage();
-        public Task<bool> addCoverImage(ImageDto image);
         public Task<bool> deleteCoverImage();
         public Task<bool> editCoverImage(ImageDto image);
 

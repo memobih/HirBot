@@ -12,10 +12,10 @@ namespace User.Api.Controllers.Portfolio
 
     [Route("api/[controller]")]
     [ApiController]
-    public  class Porofile : ApiControllerBase
+    public  class PorofileController : ApiControllerBase
     {  
        private readonly IPorofileService _profileService; 
-        public Porofile (IPorofileService pofileService)
+        public PorofileController (IPorofileService pofileService)
         {
             _profileService = pofileService;
         }

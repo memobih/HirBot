@@ -18,10 +18,10 @@ namespace User.Api.Controllers.Portfolio
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonalInformation : ApiControllerBase
+    public class PersonalInformationController : ApiControllerBase
     {
         private readonly IPersonalInformationService _personalInformationService; 
-        public PersonalInformation(IPersonalInformationService personalInformationService)
+        public PersonalInformationController(IPersonalInformationService personalInformationService)
         {
             _personalInformationService= personalInformationService;
         }

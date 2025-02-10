@@ -1,5 +1,7 @@
 ﻿using HirBot.Comman.Helpers;
+using HirBot.Comman.Idenitity;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,27 +15,13 @@ namespace User.Services.Implemntation
     public class ImageService :IIamge
     {
         private readonly Project.Services.Interfaces.IAuthenticationService _authenticationService;
-        public ImageService(Project.Services.Interfaces.IAuthenticationService authenticationService) { 
+        private readonly UserManager<ApplicationUser> _userManager; 
+        public ImageService(Project.Services.Interfaces.IAuthenticationService authenticationService , UserManager<ApplicationUser> userManager) { 
             _authenticationService = authenticationService;
+            _userManager = userManager; 
        
         }
 
-        public async Task<bool>  addProfileImage(ImageDto image)
-        {
-            
-            var user =  await _authenticationService.GetCurrentUserAsync(); 
-            if (user == null) return false;
-            try
-            {
-                user.ImagePath = await FileHelper.UploadFileAsync(image.base64Data, "profile" + user.Id);
-                return true;
-
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
         public async Task<bool> editProfileImage(ImageDto image)
         {
 
@@ -42,6 +30,7 @@ namespace User.Services.Implemntation
             try
             {
                 user.ImagePath = await FileHelper.UpdateFileAsync(image.base64Data, "profile" + user.Id);
+               await  _userManager.UpdateAsync(user);
                 return true;
 
             }
@@ -55,26 +44,14 @@ namespace User.Services.Implemntation
 
             var user = await _authenticationService.GetCurrentUserAsync();
             if (user == null) return false;
-                  var result = await FileHelper.DeleteFileAsync("profile" + user.Id);
-            return false;
+                  var result = await FileHelper.DeleteFileAsync("profile" + user.Id); 
+           if(!result) return false;
+           user.ImagePath = null; 
+            await _userManager.UpdateAsync(user);
+             return true ;
         }
-        public async Task<bool> addCoverImage(ImageDto image)
-        {
-
-            var user = await _authenticationService.GetCurrentUserAsync();
-            if (user == null) return false;
-            try
-            {
-                user.CoverPath = await FileHelper.UploadFileAsync(image.base64Data, "cover" + user.Id);
-                return true;
-
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-
-        }
+       
+        
         public async Task<bool> deleteCoverImage()
         {
 
@@ -82,7 +59,9 @@ namespace User.Services.Implemntation
             if (user == null) return false;
         
                 var result = await FileHelper.DeleteFileAsync("cover" + user.Id);
-                return result;
+            user.CoverPath = null;
+            await _userManager.UpdateAsync(user);
+            return result;
 
         }
         public async Task<bool> editCoverImage(ImageDto image)
@@ -93,6 +72,7 @@ namespace User.Services.Implemntation
             try
             {
                 user.CoverPath = await FileHelper.UpdateFileAsync(image.base64Data, "cover" + user.Id);
+                await _userManager.UpdateAsync(user);
                 return true;
 
             }

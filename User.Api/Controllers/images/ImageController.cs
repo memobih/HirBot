@@ -27,16 +27,8 @@ namespace User.Api.Controllers.images
         }
 
 
-        [HttpPost("addProfileImage")]
-        [Authorize] 
-        public async Task <IActionResult> addProfileImage (ImageDto image)
-        { 
-            bool result= await _image.addProfileImage(image);
-            if (result) return Ok(); 
-            else return BadRequest();
-        }
         [HttpPost("editProfileImage")]
-        [Authorize]
+        [Authorize] 
         public async Task<IActionResult> editProfileImage(ImageDto image)
         {
             bool result = await _image.editProfileImage(image);
@@ -52,14 +44,6 @@ namespace User.Api.Controllers.images
             else return BadRequest();
         }
 
-        [HttpPost("addCoverImage")]
-        [Authorize]
-        public async Task<IActionResult> addCoverImage(ImageDto image)
-        {
-            bool result = await _image.addCoverImage(image);
-            if (result) return Ok();
-            else return BadRequest();
-        }
         [HttpPost("editCoverImage")]
         [Authorize]
         public async Task<IActionResult> editCoverImage(ImageDto image)
