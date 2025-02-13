@@ -21,9 +21,15 @@ namespace HirBot.Comman.Idenitity
         public int ?VerificationCode {  get; set; } 
          public DateTime ? Code_Send_at { get; set; }
         public bool ?IsVerified { get; set; }
-        public List<RefreshToken> refreshTokens { get; set; }
+        public List<RefreshToken> ? refreshTokens { get; set; }
         [InverseProperty("User")]
         public virtual  Portfolio  ?  Portfolio { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<Experience> ?  experiences { get; set; }
+        [ForeignKey("CurentJop")]
+        public int? CurentJopID { get; set; }
+        public virtual Experience ?  CurentJop { get; set; }
+
 
     }
 }

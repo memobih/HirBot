@@ -8,8 +8,10 @@ using User.Services.DataTransferObjects.Profile;
 
 namespace User.Services.Interfaces
 {
-    public  interface IPorofileService
+    public  interface IExperienceServices
     {
-        public Task<APIOperationResponse<ProfileDto>> GetPorofileAync(); 
+        public Task<APIOperationResponse<object>> AddExperienceAsync(ExperienceDto experience);
+        public Task<APIOperationResponse<object>> GetExperienceAsync();
+
     }
 }

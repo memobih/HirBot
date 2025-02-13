@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Project.ResponseHandler.Models;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,11 @@ namespace User.Api.Controllers.Portfolio
         {
             _profileService = pofileService;
         }
-        [HttpGet("{id}")] 
-        public async Task<IActionResult> GetPorofile(string id)
+        [Authorize]
+        [HttpGet] 
+        public async Task<IActionResult> GetPorofile()
         {
-            var respon=await _profileService.GetPorofileAync(id);
+            var respon=await _profileService.GetPorofileAync();
             if(respon.StatusCode==200) 
                 return Ok(new { status = true, respon.Data } );
             else 

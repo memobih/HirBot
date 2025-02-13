@@ -22,6 +22,8 @@ namespace User.Services
             service.AddScoped<IPersonalInformationService , PersonalInformationService>();
             service.AddScoped<IPorofileService , ProfoileService>();
             service.AddScoped<ICVService  , CvService >();
+            service.AddScoped<IExperienceServices , ExperienceService>(); 
+            service.AddScoped<IEducationService , EducationService>();
             return service;
         }
     }

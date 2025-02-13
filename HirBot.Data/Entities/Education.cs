@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HirBot.Data.Entities
@@ -21,10 +22,13 @@ namespace HirBot.Data.Entities
         public string ? Start_Date { get; set; } 
         public string? End_Date { get;set; }
         public string  ? degree { get; set; }
-  
-        public bool privacy { get; set; }
+        public bool HighScool { get; set; }
+        public bool Privacy { get; set; }
+
         [ForeignKey("User")]
-        public string UserID { get; set; } 
+        [JsonIgnore]
+        public string UserID { get; set; }
+        [JsonIgnore]
         public virtual ApplicationUser User { get; set; }
     }
 }

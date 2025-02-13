@@ -1,4 +1,4 @@
-/*using HirBot.EntityFramework.DataBaseContext;
+using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +12,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("/mnt/mahmoud/gr/HirBot/HIrBot/appsettings.json")
+            .AddJsonFile("C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HIrBot\\appsettings.json")
             .Build();
 
         // Configure DbContextOptions
@@ -24,4 +24,3 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     }
 }
 
-*/

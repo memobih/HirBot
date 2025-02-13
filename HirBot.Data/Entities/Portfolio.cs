@@ -26,7 +26,7 @@ namespace HirBot.Data.Entities
         public bool Visibility { get; set; }
         public bool IsAutoAplly { get; set; }
         [ForeignKey("User")]
-        public string UserID { get; set; }
+        public string   UserID { get; set; }
        
         public virtual ApplicationUser User {get; set; }
     }

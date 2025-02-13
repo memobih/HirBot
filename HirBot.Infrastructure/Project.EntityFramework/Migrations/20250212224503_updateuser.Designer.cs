@@ -4,6 +4,7 @@ using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250212224503_updateuser")]
+    partial class updateuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,9 +239,6 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("FieldOfStudy")
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("HighScool")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("InstituationName")
                         .HasColumnType("longtext");
 
@@ -247,9 +247,6 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("Privacy")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Start_Date")
                         .HasColumnType("longtext");
@@ -260,6 +257,9 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<string>("degree")
                         .HasColumnType("longtext");
+
+                    b.Property<bool>("privacy")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("ID");
 
@@ -343,6 +343,7 @@ namespace HirBot.EntityFramework.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserID")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("employeeType")
@@ -992,7 +993,9 @@ namespace HirBot.EntityFramework.Migrations
                 {
                     b.HasOne("HirBot.Comman.Idenitity.ApplicationUser", "User")
                         .WithMany("experiences")
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

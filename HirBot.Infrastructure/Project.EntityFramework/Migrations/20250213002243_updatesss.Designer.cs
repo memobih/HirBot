@@ -4,6 +4,7 @@ using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250213002243_updatesss")]
+    partial class updatesss
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,9 +250,6 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("Privacy")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Start_Date")
                         .HasColumnType("longtext");

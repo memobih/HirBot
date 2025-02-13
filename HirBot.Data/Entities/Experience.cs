@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HirBot.Data.Entities
@@ -17,14 +18,17 @@ namespace HirBot.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string Title { get; set; }
-        public EmployeeType employeeType { get; set; }
-        public LocationType Location {  get; set; }
+        public string employeeType { get; set; }
+        public string  Location {  get; set; }
         public string? Start_Date { get; set; }
         public string? End_Date { get; set; }
+          public bool privacy { get; set; }
         [ForeignKey("User")]
-        public string UserID { get; set; }
-         
-        public virtual ApplicationUser User { get; set; }
+        [JsonIgnore]
+
+        public string ?  UserID { get; set; }
+        [JsonIgnore]
+        public virtual ApplicationUser ?  User { get; set; }
     } 
 
 }

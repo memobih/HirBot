@@ -4,6 +4,7 @@ using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250212221034_UpdateExperience")]
+    partial class UpdateExperience
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,9 +45,6 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<string>("CoverPath")
                         .HasColumnType("longtext");
-
-                    b.Property<int?>("CurentJopID")
-                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -107,8 +107,6 @@ namespace HirBot.EntityFramework.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyID");
-
-                    b.HasIndex("CurentJopID");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -236,9 +234,6 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("FieldOfStudy")
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("HighScool")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("InstituationName")
                         .HasColumnType("longtext");
 
@@ -247,9 +242,6 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("Privacy")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Start_Date")
                         .HasColumnType("longtext");
@@ -260,6 +252,9 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<string>("degree")
                         .HasColumnType("longtext");
+
+                    b.Property<bool>("privacy")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("ID");
 
@@ -343,6 +338,7 @@ namespace HirBot.EntityFramework.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserID")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("employeeType")
@@ -910,10 +906,6 @@ namespace HirBot.EntityFramework.Migrations
                         .WithMany()
                         .HasForeignKey("CompanyID");
 
-                    b.HasOne("HirBot.Data.Entities.Experience", "CurentJop")
-                        .WithMany()
-                        .HasForeignKey("CurentJopID");
-
                     b.OwnsMany("HirBot.Comman.Idenitity.RefreshToken", "refreshTokens", b1 =>
                         {
                             b1.Property<string>("ApplicationUserId")
@@ -941,8 +933,6 @@ namespace HirBot.EntityFramework.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ApplicationUserId");
                         });
-
-                    b.Navigation("CurentJop");
 
                     b.Navigation("refreshTokens");
                 });
@@ -991,8 +981,10 @@ namespace HirBot.EntityFramework.Migrations
             modelBuilder.Entity("HirBot.Data.Entities.Experience", b =>
                 {
                     b.HasOne("HirBot.Comman.Idenitity.ApplicationUser", "User")
-                        .WithMany("experiences")
-                        .HasForeignKey("UserID");
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1175,8 +1167,6 @@ namespace HirBot.EntityFramework.Migrations
             modelBuilder.Entity("HirBot.Comman.Idenitity.ApplicationUser", b =>
                 {
                     b.Navigation("Portfolio");
-
-                    b.Navigation("experiences");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Application", b =>

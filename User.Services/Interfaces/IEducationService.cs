@@ -8,8 +8,10 @@ using User.Services.DataTransferObjects.Profile;
 
 namespace User.Services.Interfaces
 {
-    public  interface IPorofileService
+    public  interface IEducationService
     {
-        public Task<APIOperationResponse<ProfileDto>> GetPorofileAync(); 
+        public Task<APIOperationResponse<object>> GetAllEducationAsync();
+        public Task<APIOperationResponse<object>> AddEducationAsync(EducationDto education );
+
     }
 }
