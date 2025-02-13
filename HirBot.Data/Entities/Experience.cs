@@ -22,13 +22,18 @@ namespace HirBot.Data.Entities
         public string  Location {  get; set; }
         public string? Start_Date { get; set; }
         public string? End_Date { get; set; }
-          public bool privacy { get; set; }
+        public bool privacy { get; set; }
+        [ForeignKey("Company")]
+        public string ? CompanyID { get; set; } 
+         public int rate { get; set; }
         [ForeignKey("User")]
         [JsonIgnore]
 
         public string ?  UserID { get; set; }
         [JsonIgnore]
         public virtual ApplicationUser ?  User { get; set; }
+       
+        public virtual Company ?  Company { get; set; }
     } 
 
 }

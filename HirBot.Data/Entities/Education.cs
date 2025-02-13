@@ -1,4 +1,5 @@
 ﻿using HirBot.Comman.Idenitity;
+using HirBot.Data.Enums;
 using Moujam.Casiher.Comman.Base;
 using System;
 using System.Collections.Generic;
@@ -22,13 +23,12 @@ namespace HirBot.Data.Entities
         public string ? Start_Date { get; set; } 
         public string? End_Date { get;set; }
         public string  ? degree { get; set; }
-        public bool HighScool { get; set; }
+        public EducationType ?  Type { get; set; }
         public bool Privacy { get; set; }
-
         [ForeignKey("User")]
         [JsonIgnore]
         public string UserID { get; set; }
-        [JsonIgnore]
+        [JsonIgnore]  
         public virtual ApplicationUser User { get; set; }
     }
 }

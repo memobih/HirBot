@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 // Set absolute paths for Linux compatibility
 var isWindows = System.Runtime.InteropServices.RuntimeInformation
@@ -35,7 +36,10 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+}); 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });

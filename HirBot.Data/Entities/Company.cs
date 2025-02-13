@@ -32,5 +32,7 @@ namespace HirBot.Data.Entities
 
         public string ? BusinessLicense { get; set; }
 
+        public string ?Logo {  get; set; }
+
     }
 }

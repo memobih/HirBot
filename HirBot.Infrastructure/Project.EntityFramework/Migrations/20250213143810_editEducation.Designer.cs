@@ -4,6 +4,7 @@ using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250213143810_editEducation")]
+    partial class editEducation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,9 +188,6 @@ namespace HirBot.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Logo")
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime(6)");
 
@@ -319,9 +319,6 @@ namespace HirBot.EntityFramework.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("CompanyID")
-                        .HasColumnType("varchar(200)");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
 
@@ -358,12 +355,7 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<bool>("privacy")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("rate")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
-
-                    b.HasIndex("CompanyID");
 
                     b.HasIndex("UserID");
 
@@ -1001,15 +993,9 @@ namespace HirBot.EntityFramework.Migrations
 
             modelBuilder.Entity("HirBot.Data.Entities.Experience", b =>
                 {
-                    b.HasOne("HirBot.Data.Entities.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyID");
-
                     b.HasOne("HirBot.Comman.Idenitity.ApplicationUser", "User")
                         .WithMany("experiences")
                         .HasForeignKey("UserID");
-
-                    b.Navigation("Company");
 
                     b.Navigation("User");
                 });

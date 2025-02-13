@@ -145,6 +145,7 @@ namespace User.Services.Implemntation
                 var newUser = new ApplicationUser();
                 newUser.Email = companyRegisterDto.CompanyEmail;
                 newUser.FullName = companyRegisterDto.CompanyName;
+
                 newUser.UserName = companyRegisterDto.CompanyEmail.Split('@')[0]; ;
                 newUser.PhoneNumber = companyRegisterDto.ContactNumber;
                 newUser.role = UserType.Company;
@@ -179,6 +180,7 @@ namespace User.Services.Implemntation
                 newCompany.SocialMeediaLink= companyRegisterDto.SocialMediaLink;
                 newCompany.CompanyType = companyRegisterDto.CompanyType;
                 newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
+                
                 if (companyRegisterDto.BusinessLicense != null)
                 {
                     try
@@ -195,7 +197,10 @@ namespace User.Services.Implemntation
                     }
                 }
                 await _unitOfWork.Companies.AddAsync(newCompany);
+                newUser.CompanyID = newCompany.ID; 
                 await _userManager.AddToRoleAsync(newUser, "Company");
+                await _unitOfWork.SaveAsync();
+
                 return APIOperationResponse<AuthModel>.Success(respon, " company created successfully.");
             }
             catch (Exception ex)

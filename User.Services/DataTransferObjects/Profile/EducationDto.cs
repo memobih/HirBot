@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HirBot.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,12 +22,10 @@ namespace User.Services.DataTransferObjects.Profile
 
         public string? End_Date { get; set; }
         [Required(ErrorMessage = "this fieled is required")]
-
         public string? degree { get; set; }
+       
         [Required(ErrorMessage = "this fieled is required")]
-
-        public bool HighScool { get; set; } 
-
+        public EducationType Type { get; set; }  
         public bool privacy { get; set; }
     }
 }

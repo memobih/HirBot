@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using User.Services.DataTransferObjects.Profile;
 using User.Services.Interfaces;
+using User.Services.Response;
 
 namespace User.Services.Implemntation
 {
@@ -54,8 +55,29 @@ namespace User.Services.Implemntation
         public async  Task<APIOperationResponse<object>> GetExperienceAsync()
         {
              var user = await authenticationService.GetCurrentUserAsync();
-            var Experiences = await _unitOfWork._context.Experiences.Where(e=>e.UserID==user.Id).ToListAsync(); 
-            return APIOperationResponse<object>.Success(new {Experience = Experiences});
+            var Experiences = await _unitOfWork._context.Experiences.Include(e=>e.Company).Where(e=>e.UserID==user.Id).ToListAsync(); 
+            List<ExperienceResponse> ALL= new List<ExperienceResponse>();
+            foreach (var experience in Experiences)
+            {
+                ExperienceResponse ExperiencesDetails = new ExperienceResponse();
+
+                ExperiencesDetails.privacy = experience.privacy;
+                ExperiencesDetails.Start_Date = experience.Start_Date;
+                ExperiencesDetails.employeeType = experience.employeeType;
+                ExperiencesDetails.End_Date = experience.End_Date;
+                ExperiencesDetails.Title = experience.Title;
+                ExperiencesDetails.Location = experience.Location;
+                ExperiencesDetails.id = experience.ID;
+                if (experience.Company!=null)
+                { 
+                    var name= _unitOfWork._context.users.First(u=>u.CompanyID ==experience.CompanyID).FullName;
+                    ExperiencesDetails.CompanyName = name;
+                    ExperiencesDetails.Logo=experience.Company.Logo;
+                }
+                ALL.Add(ExperiencesDetails);
+            }
+
+            return APIOperationResponse<object>.Success(new {Experiences = ALL });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HirBot.Data.Entities;
+using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
 using Project.Repository.Repository;
 using Project.Services.Interfaces;
@@ -33,7 +34,7 @@ namespace User.Services.Implemntation
                 newEducation.InstituationName=education.InstituationName;
                 newEducation.degree= education.degree;
                 newEducation.End_Date=education.End_Date;
-                newEducation.HighScool=education.HighScool;
+                newEducation.Type=education.Type;
                 newEducation.FieldOfStudy=education.FieldOfStudy;
                 newEducation.UserID = user.Id; 
                await unitOfWork._context.Educations.AddAsync(newEducation);
