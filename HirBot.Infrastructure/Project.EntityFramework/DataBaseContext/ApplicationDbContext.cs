@@ -25,7 +25,11 @@ namespace HirBot.EntityFramework.DataBaseContext
             modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("user_claims");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("User_Logins");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("role_claims");
-            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("user_tokens"); 
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("user_tokens");
+            modelBuilder.Entity<ApplicationUser>()
+           .HasOne(u => u.CurentJop)
+           .WithOne(e=>e.UserJop)
+           .OnDelete(DeleteBehavior.SetNull); // Set to NULL on delete
         } 
           
         public DbSet<ApplicationUser> users { get; set; }

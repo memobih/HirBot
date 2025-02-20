@@ -30,5 +30,7 @@ namespace HirBot.Data.Entities
         public string UserID { get; set; }
         [JsonIgnore]  
         public virtual ApplicationUser User { get; set; }
+        public bool isGraduated { get; set; }
+        public string? logo { get; set; }
     }
 }

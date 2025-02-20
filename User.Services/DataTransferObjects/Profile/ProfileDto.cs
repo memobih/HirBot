@@ -11,14 +11,14 @@ namespace User.Services.DataTransferObjects.Profile
 {
     public  class ProfileDto
     {  
-        public string? Title { get; set; }
-        public string ? ProfileImagePath { get; set; } 
-        public string ? CoverImagePath { get; set; } 
+        public string? title { get; set; }
+        public string ? profileImageSrc { get; set; } 
+        public string ? coverImageSrc { get; set; } 
         public ContactInfoDto ?  ContactInfo { get; set; }
         public string ?  CVUrl { get; set; }
         public string? FullName { get; set; }
         public ExperienceResponse ? CurrentJop { get; set; }
-        public int   FrindsCount {  get; set; }  
+        public int friendsCount {  get; set; }  
 
        
     }

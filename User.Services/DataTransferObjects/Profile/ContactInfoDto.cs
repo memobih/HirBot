@@ -17,7 +17,7 @@ namespace User.Services.DataTransferObjects
         [RegularExpression(@"^\d+$")]
         public string  ? ContactNumber { get; set; }
         [Url(ErrorMessage = "this must be Url")]
-        public string ? GithubUrl { get; set; } 
+        public string ? GithubURL { get; set; } 
         
     }
 }

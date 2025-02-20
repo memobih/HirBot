@@ -36,7 +36,9 @@ namespace User.Services.Implemntation
                 newEducation.End_Date=education.End_Date;
                 newEducation.Type=education.Type;
                 newEducation.FieldOfStudy=education.FieldOfStudy;
-                newEducation.UserID = user.Id; 
+                newEducation.UserID = user.Id;
+                newEducation.isGraduated = education.isGraduated;
+                newEducation.logo = education.logo; 
                await unitOfWork._context.Educations.AddAsync(newEducation);
                 await unitOfWork.SaveAsync();
             return APIOperationResponse<object>.Success(newEducation);

@@ -13,16 +13,18 @@ namespace User.Services.DataTransferObjects.Profile
     public  class ExperienceDto
     {
         [Required(ErrorMessage ="This field is Required")]
-        public string Title { get; set; }
+        public string title { get; set; }
         [Required(ErrorMessage = "This field is Required")]
-        public string employeeType { get; set; }
+        public EmployeeType jobType { get; set; }
         [Required(ErrorMessage = "This field is Required")]
-        public string Location { get; set; }
+        public LocationType workType { get; set; }
         [Required(ErrorMessage = "This field is Required")]
-        public string? Start_Date { get; set; }
+        public string? startDate { get; set; }
         [Required(ErrorMessage = "This field is Required")]
-        public string? End_Date { get; set; }
+        public string? endDate { get; set; }
         [Required(ErrorMessage = "This field is Required")]
-        public bool privacy { get; set; }
+        public PrivacyEnum privacy { get; set; } 
+         
+        public string  ? location { get; set; }
     }
 }

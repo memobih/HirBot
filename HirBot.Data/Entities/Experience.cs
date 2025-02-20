@@ -18,11 +18,12 @@ namespace HirBot.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string Title { get; set; }
-        public string employeeType { get; set; }
-        public string  Location {  get; set; }
+        public EmployeeType employeeType { get; set; }
+        public LocationType workType {  get; set; } 
+        public string  ?  location { get; set; }
         public string? Start_Date { get; set; }
         public string? End_Date { get; set; }
-        public bool privacy { get; set; }
+        public PrivacyEnum privacy { get; set; }
         [ForeignKey("Company")]
         public string ? CompanyID { get; set; } 
          public int rate { get; set; }
@@ -34,6 +35,8 @@ namespace HirBot.Data.Entities
         public virtual ApplicationUser ?  User { get; set; }
        
         public virtual Company ?  Company { get; set; }
+        [InverseProperty("CurentJop")]
+        public virtual  ApplicationUser ? UserJop { get; set; }
     } 
 
 }

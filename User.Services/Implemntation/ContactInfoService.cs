@@ -51,7 +51,7 @@ namespace User.Services.Implemntation
             contact.Location = Portfolio.location;
             contact.PortfolioURL = Portfolio.PortfolioUrl;
             contact.ContactNumber = user.PhoneNumber;
-            contact.GithubUrl = Portfolio.GithubUrl; 
+            contact.GithubURL = Portfolio.GithubUrl; 
             return APIOperationResponse< ContactInfoDto > .Success(contact); 
         }
 
@@ -72,7 +72,7 @@ namespace User.Services.Implemntation
             portfolio.location = contactInfoDto.Location;
             portfolio.PortfolioUrl = contactInfoDto.PortfolioURL;
             user.PhoneNumber = contactInfoDto.ContactNumber;
-            portfolio.GithubUrl = contactInfoDto.GithubUrl; 
+            portfolio.GithubUrl = contactInfoDto.GithubURL; 
             await _unitOfWork.Users.UpdateAsync(user);
             _unitOfWork._context.Portfolios.Update(portfolio); 
             try

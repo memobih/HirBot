@@ -32,16 +32,18 @@ namespace User.Services.Implemntation
         {
             try
             {
-                var user = await authenticationService.GetCurrentUserAsync();
+                var user = await authenticationService.GetCurrentUserAsync(); 
+                if(user==null) return APIOperationResponse<object>.NotFound("user is not found");
                 var newExperience = new Experience();
                 user = _unitOfWork._context.users.Include(u=>u.experiences).FirstOrDefault(u=>u.Id==user.Id); 
                 newExperience.privacy = experience.privacy;
-                newExperience.Start_Date = experience.Start_Date;
-                newExperience.employeeType = experience.employeeType;
-                newExperience.End_Date = experience.End_Date;
-                newExperience.Title = experience.Title;
-                newExperience.Location = experience.Location;
-                user.experiences.Add(newExperience);
+                newExperience.Start_Date = experience.startDate;
+                newExperience.employeeType = experience.jobType;
+                newExperience.End_Date = experience.endDate;
+                newExperience.Title = experience.title;
+                newExperience.location = experience.location;
+                newExperience.workType = experience.workType; 
+                user.experiences?.Add(newExperience);
                 await _unitOfWork.Users.UpdateAsync(user);
                 await _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success(experience);
@@ -62,17 +64,19 @@ namespace User.Services.Implemntation
                 ExperienceResponse ExperiencesDetails = new ExperienceResponse();
 
                 ExperiencesDetails.privacy = experience.privacy;
-                ExperiencesDetails.Start_Date = experience.Start_Date;
-                ExperiencesDetails.employeeType = experience.employeeType;
-                ExperiencesDetails.End_Date = experience.End_Date;
-                ExperiencesDetails.Title = experience.Title;
-                ExperiencesDetails.Location = experience.Location;
-                ExperiencesDetails.id = experience.ID;
+                ExperiencesDetails.startDate = experience.Start_Date;
+                ExperiencesDetails.jobType = experience.employeeType;
+                ExperiencesDetails.endDate = experience.End_Date;
+                ExperiencesDetails.title = experience.Title;
+                ExperiencesDetails.location = experience.location;
+                ExperiencesDetails.workType=experience.workType;
                 if (experience.Company!=null)
                 { 
-                    var name= _unitOfWork._context.users.First(u=>u.CompanyID ==experience.CompanyID).FullName;
-                    ExperiencesDetails.CompanyName = name;
-                    ExperiencesDetails.Logo=experience.Company.Logo;
+                    var company= _unitOfWork._context.users.First(u=>u.CompanyID ==experience.CompanyID);
+                    ExperiencesDetails.company = new ExpreienceCompany();
+                    ExperiencesDetails.company.id= experience.CompanyID;
+                    ExperiencesDetails.company.name = company.FullName; 
+                    ExperiencesDetails.company.logo=experience.Company.Logo;
                 }
                 ALL.Add(ExperiencesDetails);
             }
