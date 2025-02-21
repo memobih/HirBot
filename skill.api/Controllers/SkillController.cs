@@ -21,7 +21,7 @@ namespace skill.api.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISkillService _skillService;
 
-        public SkillController(ILogger<SkillController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, Project.Services.Interfaces.IAuthenticationService authenticationService, ISkillService skillService)
+        public SkillController(ILogger<SkillController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, ISkillService skillService)
         {
             _logger = logger;
             _signInManager = signInManager;
