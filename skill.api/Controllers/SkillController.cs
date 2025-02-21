@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
 using HirBot.Comman.Idenitity;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,11 +9,14 @@ using skill.services.Interfaces;
 
 namespace skill.api.Controllers
 {
-    [Route("[api/controller]")]
+
+
+    [Route("api/[controller]")]
     [ApiController]
-    public class SkillController : ControllerBase
+
+    public class SkillController : ApiControllerBase
     {
-         private readonly ILogger<SkillController> _logger;
+        private readonly ILogger<SkillController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly Project.Services.Interfaces.IAuthenticationService _authenticationService;
@@ -32,7 +30,7 @@ namespace skill.api.Controllers
             _authenticationService = authenticationService;
             _skillService = skillService;
         }
-        
+
 
         [HttpPost("AddSkill")]
         public async Task<IActionResult> AddSkill(AddSkillDto skill)

@@ -1,13 +1,11 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using HirBot.ResponseHandler.Models;
-//using skill.services.DataTransferObjects;
-//namespace skill.services.Interfaces
-//{
-//    public interface ISkillService
-//    {
-//        public Task<APIOperationResponse<AddSkillDto>> AddSkill(AddSkillDto skill);
-//    }
-//}
+
+using HirBot.ResponseHandler.Models;
+using skill.services.DataTransferObjects;
+
+namespace skill.services.Interfaces
+{
+    public interface ISkillService
+    {
+        public Task<APIOperationResponse<AddSkillDto>> AddSkill(AddSkillDto skill);
+    }
+}
