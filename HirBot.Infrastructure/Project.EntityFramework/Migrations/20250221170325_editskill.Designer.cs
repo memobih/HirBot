@@ -4,6 +4,7 @@ using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250221170325_editskill")]
+    partial class editskill
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,8 +111,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("CompanyID");
 
-                    b.HasIndex("CurentJopID")
-                        .IsUnique();
+                    b.HasIndex("CurentJopID");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -234,6 +236,9 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("End_Date")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("FieldOfStudy")
                         .HasColumnType("longtext");
 
@@ -246,8 +251,11 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Privacy")
-                        .HasColumnType("int");
+                    b.Property<bool>("Privacy")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Start_Date")
+                        .HasColumnType("longtext");
 
                     b.Property<int?>("Type")
                         .HasColumnType("int");
@@ -257,18 +265,6 @@ namespace HirBot.EntityFramework.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("degree")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("endDate")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("isGraduated")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("logo")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("startDate")
                         .HasColumnType("longtext");
 
                     b.HasKey("ID");
@@ -338,6 +334,10 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("End_Date")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime(6)");
 
@@ -354,22 +354,14 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("UserID")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("companyName")
+                    b.Property<string>("employeeType")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("employeeType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("location")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("privacy")
-                        .HasColumnType("int");
+                    b.Property<bool>("privacy")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("rate")
-                        .HasColumnType("int");
-
-                    b.Property<int>("workType")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -941,9 +933,8 @@ namespace HirBot.EntityFramework.Migrations
                         .HasForeignKey("CompanyID");
 
                     b.HasOne("HirBot.Data.Entities.Experience", "CurentJop")
-                        .WithOne("UserJop")
-                        .HasForeignKey("HirBot.Comman.Idenitity.ApplicationUser", "CurentJopID")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .WithMany()
+                        .HasForeignKey("CurentJopID");
 
                     b.OwnsMany("HirBot.Comman.Idenitity.RefreshToken", "refreshTokens", b1 =>
                         {
@@ -1226,11 +1217,6 @@ namespace HirBot.EntityFramework.Migrations
                     b.Navigation("Interviews");
 
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("HirBot.Data.Entities.Experience", b =>
-                {
-                    b.Navigation("UserJop");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Job", b =>

@@ -37,6 +37,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HirBot.Redies", "HirBot.Red
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mailing", "Mailing\Mailing.csproj", "{9C7DDEA4-3B8F-4E7B-BA21-855C4B04166D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "skill.api", "skill.api\skill.api.csproj", "{B9761C74-26E9-4001-BBD2-36E897660920}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "skill.services", "skill.services\skill.services.csproj", "{0354AB20-4DD7-4503-8F5F-B63E665FEF38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,14 @@ Global
 		{9C7DDEA4-3B8F-4E7B-BA21-855C4B04166D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C7DDEA4-3B8F-4E7B-BA21-855C4B04166D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C7DDEA4-3B8F-4E7B-BA21-855C4B04166D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9761C74-26E9-4001-BBD2-36E897660920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9761C74-26E9-4001-BBD2-36E897660920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9761C74-26E9-4001-BBD2-36E897660920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9761C74-26E9-4001-BBD2-36E897660920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0354AB20-4DD7-4503-8F5F-B63E665FEF38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0354AB20-4DD7-4503-8F5F-B63E665FEF38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0354AB20-4DD7-4503-8F5F-B63E665FEF38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0354AB20-4DD7-4503-8F5F-B63E665FEF38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

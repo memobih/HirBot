@@ -15,6 +15,8 @@ namespace HirBot.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string Name { get; set; }
+        public string Status { get; set; }
+        public string ImagePath { get; set; }
         public virtual ICollection<JobRequirment>? JobRequirments { get; set; }
 
         public virtual ICollection<UserSkill> ?UserSkills { get; set; }
