@@ -42,7 +42,8 @@ namespace User.Services.Implemntation
                 newExperience.End_Date = experience.endDate;
                 newExperience.Title = experience.title;
                 newExperience.location = experience.location;
-                newExperience.workType = experience.workType; 
+                newExperience.workType = experience.workType;
+                newExperience.companyName = experience.companyName;
                 user.experiences?.Add(newExperience);
                 await _unitOfWork.Users.UpdateAsync(user);
                 await _unitOfWork.SaveAsync();
@@ -70,13 +71,18 @@ namespace User.Services.Implemntation
                 ExperiencesDetails.title = experience.Title;
                 ExperiencesDetails.location = experience.location;
                 ExperiencesDetails.workType=experience.workType;
+                ExperiencesDetails.company = new ExpreienceCompany();
+
                 if (experience.Company!=null)
                 { 
                     var company= _unitOfWork._context.users.First(u=>u.CompanyID ==experience.CompanyID);
-                    ExperiencesDetails.company = new ExpreienceCompany();
                     ExperiencesDetails.company.id= experience.CompanyID;
                     ExperiencesDetails.company.name = company.FullName; 
                     ExperiencesDetails.company.logo=experience.Company.Logo;
+                }
+                else
+                {
+                    ExperiencesDetails.company.name = experience.companyName;
                 }
                 ALL.Add(ExperiencesDetails);
             }

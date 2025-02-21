@@ -26,7 +26,7 @@ namespace User.Services.DataTransferObjects.Profile
        
         [Required(ErrorMessage = "this fieled is required")]
         public EducationType Type { get; set; }  
-        public bool privacy { get; set; }
+        public PrivacyEnum privacy { get; set; }
        public bool  isGraduated { get; set;  }
         public  string  ? logo { get; set;  }
    

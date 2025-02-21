@@ -30,10 +30,10 @@ namespace User.Services.Implemntation
                 var user=await service.GetCurrentUserAsync(); 
                 Education  newEducation=new Education();
                 newEducation.Privacy = education.privacy;
-                newEducation.Start_Date=education.Start_Date;
+                newEducation.startDate=education.Start_Date;
                 newEducation.InstituationName=education.InstituationName;
                 newEducation.degree= education.degree;
-                newEducation.End_Date=education.End_Date;
+                newEducation.startDate=education.End_Date;
                 newEducation.Type=education.Type;
                 newEducation.FieldOfStudy=education.FieldOfStudy;
                 newEducation.UserID = user.Id;
@@ -56,7 +56,7 @@ namespace User.Services.Implemntation
         {
             var user = await service.GetCurrentUserAsync(); 
             var educations=unitOfWork._context.Educations.Where(e=>e.UserID==user.Id).ToList();
-            return APIOperationResponse<object>.Success(new { education = educations } );
+            return APIOperationResponse<object>.Success(new { educations = educations } );
         }
     }
 }

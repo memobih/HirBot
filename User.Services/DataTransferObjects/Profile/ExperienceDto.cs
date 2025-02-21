@@ -23,8 +23,10 @@ namespace User.Services.DataTransferObjects.Profile
         [Required(ErrorMessage = "This field is Required")]
         public string? endDate { get; set; }
         [Required(ErrorMessage = "This field is Required")]
-        public PrivacyEnum privacy { get; set; } 
-         
+        public PrivacyEnum privacy { get; set; }
+        public string? companyName { get; set; }
+
+
         public string  ? location { get; set; }
     }
 }

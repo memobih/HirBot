@@ -22,7 +22,8 @@ namespace HirBot.Data.Entities
         public LocationType workType {  get; set; } 
         public string  ?  location { get; set; }
         public string? Start_Date { get; set; }
-        public string? End_Date { get; set; }
+        public string? End_Date { get; set; } 
+        public string  ? companyName { get; set; }
         public PrivacyEnum privacy { get; set; }
         [ForeignKey("Company")]
         public string ? CompanyID { get; set; } 

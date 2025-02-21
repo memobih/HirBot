@@ -20,11 +20,11 @@ namespace HirBot.Data.Entities
         public string ? InstituationName {  get; set; }
          public string ? FieldOfStudy { get; set; } 
          
-        public string ? Start_Date { get; set; } 
-        public string? End_Date { get;set; }
+        public string ? startDate { get; set; } 
+        public string? endDate { get;set; }
         public string  ? degree { get; set; }
         public EducationType ?  Type { get; set; }
-        public bool Privacy { get; set; }
+        public PrivacyEnum Privacy { get; set; }
         [ForeignKey("User")]
         [JsonIgnore]
         public string UserID { get; set; }
