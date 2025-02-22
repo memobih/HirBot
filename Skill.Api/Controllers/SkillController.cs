@@ -1,5 +1,7 @@
 ﻿
 using HirBot.Comman.Idenitity;
+using HirBot.ResponseHandler.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,11 +33,30 @@ namespace skill.api.Controllers
 
 
         [HttpPost("AddSkill")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddSkill(AddSkillDto skill)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+               .SelectMany(v => v.Errors)
+               .Select(e => e.ErrorMessage)
+               .ToList();
+                return BadRequest(new APIOperationResponse<AddSkillDto>
+                {
+                    Message = "Invalid model state",
+                    Succeeded = false,
+                    Errors = errors,
+                    Data = skill
+                });
+            }
+            
             var result = await _skillService.AddSkill(skill);
-            if (result.Succeeded) return Ok(result);
-            return BadRequest(result);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
     }
 }

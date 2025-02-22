@@ -1,6 +1,7 @@
 
 using HirBot.Comman.Idenitity;
 using HirBot.Data.Entities;
+using HirBot.Data.Interfaces;
 using HirBot.ResponseHandler.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,12 +17,14 @@ namespace skill.services.Implementation
         private readonly UnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public SkillService(UserManager<ApplicationUser> userManager, UnitOfWork unitOfWork, IHttpContextAccessor contextAccessor, SignInManager<ApplicationUser> signInManager)
+        private readonly IImageHandler _imageHandler;
+        public SkillService(UserManager<ApplicationUser> userManager, UnitOfWork unitOfWork, IHttpContextAccessor contextAccessor, SignInManager<ApplicationUser> signInManager, IImageHandler imageHandler)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _contextAccessor = contextAccessor;
             _signInManager = signInManager;
+            _imageHandler = imageHandler;
         }
         public Task<APIOperationResponse<AddSkillDto>> AddSkill(AddSkillDto skill)
         {
@@ -34,12 +37,39 @@ namespace skill.services.Implementation
                     Succeeded = false
                 });
             }
+           var skillExist = _unitOfWork._context.Skills.FirstOrDefault(x => x.Name == skill.Name);
+            if (skillExist != null)
+            {
+                return Task.FromResult(new APIOperationResponse<AddSkillDto>
+                {
+                    Message = "Skill already exist",
+                    Succeeded = false
+                });
+            }
+            if(skill.ImagePath == null)
+            {
+                return Task.FromResult(new APIOperationResponse<AddSkillDto>
+                {
+                    Message = "Image is required",
+                    Succeeded = false
+                });
+            }
+            var image = _imageHandler.UploadImageAsync(skill.ImagePath,"Skills").Result;
+            if (!image.IsSuccess)
+            {
+                return Task.FromResult(new APIOperationResponse<AddSkillDto>
+                {
+                    Message = image.ErrorMessage,
+                    Succeeded = false
+                });
+            }
+            string imagePath = image.FilePath;
             var skillModel = new Skill
             {
                 Name = skill.Name,
                 Status = skill.Status,
-                ImagePath = skill.ImagePath,
-                CreatedBy = user.FullName,
+                ImagePath = imagePath,
+               // CreatedBy = user.FullName,
                 CreationDate = DateTime.Now,
             };
             _unitOfWork._context.Skills.Add(skillModel);
@@ -49,7 +79,8 @@ namespace skill.services.Implementation
                 return Task.FromResult(new APIOperationResponse<AddSkillDto>
                 {
                     Message = "Skill added successfully",
-                    Succeeded = true
+                    Succeeded = true,
+                    Data = skill
                 });
             }
             catch (Exception e)

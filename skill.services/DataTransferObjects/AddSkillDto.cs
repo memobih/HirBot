@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace skill.services.DataTransferObjects
 {
@@ -18,7 +19,7 @@ namespace skill.services.DataTransferObjects
         [MinLength(3, ErrorMessage = "Status length can't be less than 3.")]
         [RegularExpression(@"^[a-zA-Z''-'\s]{1,40}$", ErrorMessage = "Special characters are not allowed.")]
         public string Status { get; set; }
-        public string? ImagePath { get; set; }
+        public IFormFile? ImagePath { get; set; }
         
     }
 }
