@@ -59,7 +59,7 @@ namespace skill.api.Controllers
             return Ok(result);
         }
         [HttpGet("GetAllSkills")]
-       // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllSkills()
         {
             var result = await _skillService.GetAllSkills();
@@ -69,5 +69,54 @@ namespace skill.api.Controllers
             }
             return Ok(result);
         }
+        [HttpDelete("DeleteSkill/{id}")]
+        [Authorize(Roles = "Admin")]
+
+        public async Task<IActionResult> DeleteSkill(int id)
+        {
+            var result = await _skillService.DeleteSkill(id);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPost("GetSkill/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetSkill(int id)
+        {
+            var result = await _skillService.GetSkill(id);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPut("UpdateSkill")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateSkill(UpdateSkillDto skill)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+               .SelectMany(v => v.Errors)
+               .Select(e => e.ErrorMessage)
+               .ToList();
+                return BadRequest(new APIOperationResponse<UpdateSkillDto>
+                {
+                    Message = "Invalid model state",
+                    Succeeded = false,
+                    Errors = errors,
+                    Data = skill
+                });
+            }
+            var result = await _skillService.UpdateSkill(skill);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+    
     }
 }

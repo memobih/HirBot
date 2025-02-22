@@ -10,7 +10,7 @@ namespace HirBot.Data.Interfaces
     {
         
     public  Task<(bool IsSuccess, string FilePath, string ErrorMessage)> UploadImageAsync(IFormFile file, string folderName);
-    public Task<bool> DeleteImage(string filePath);
+    public Task<(bool,string)> DeleteImage(string filePath);
     public Task<(bool IsSuccess, string FilePath, string ErrorMessage)> UpdateImageAsync(IFormFile newFile, string existingFilePath, string folderName);
     public Task<string> GetImageUrl(string filePath);
     }

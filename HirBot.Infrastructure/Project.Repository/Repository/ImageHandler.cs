@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using HirBot.Data.Interfaces;
 using Microsoft.AspNetCore.Hosting;
@@ -57,7 +58,7 @@ namespace Project.Repository.Repository
     }
 
     // 🔴 DELETE: Remove Image
-    public Task<bool> DeleteImage(string filePath)
+    public async Task<(bool,string)> DeleteImage(string filePath)
     {
         try
         {
@@ -65,13 +66,13 @@ namespace Project.Repository.Repository
             if (File.Exists(fullPath))
             {
                 File.Delete(fullPath);
-                return Task.FromResult(true);
+                return (true, null);
             }
-            return Task.FromResult(false);
+            return (false, "File not found!");
         }
-        catch
+        catch (Exception ex)
         {
-            return Task.FromResult(false);
+            return (false, $"Error: {ex.Message}");
         }
     }
 
