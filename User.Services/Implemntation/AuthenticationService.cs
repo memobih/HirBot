@@ -26,8 +26,9 @@ using System.Web;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.IO;
-using HirBot.Comman.Helpers;
 using Microsoft.VisualBasic;
+using HirBot.Common.Helpers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace User.Services.Implemntation
 {
@@ -181,11 +182,23 @@ namespace User.Services.Implemntation
                 newCompany.CompanyType = companyRegisterDto.CompanyType;
                 newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
                 
-                if (companyRegisterDto.BusinessLicense != null)
+                if (companyRegisterDto.BusinessLicense != null && (companyRegisterDto.BusinessLicense.Length > 0) ) 
                 {
                     try
-                    {
-                        string fileUrl = await FileHelper.UploadFileAsync(companyRegisterDto.BusinessLicense, newUser.UserName+ "BusinessLicense");
+                    { 
+
+                         string[] AllowedExtensions = { ".pdf", ".docx" }; 
+                         string extension= Path.GetExtension (companyRegisterDto.BusinessLicense.FileName).ToLower();
+                        if (!AllowedExtensions.Contains(extension)) {
+
+                            return APIOperationResponse<AuthModel>.BadRequest("can not uplode the file", new
+                            {
+                                BusinessLicense = "can not uplode the file"
+                            });
+                        }
+                        using var stream = companyRegisterDto.BusinessLicense.OpenReadStream();
+
+                        string fileUrl = await FileHelper.UploadFileAsync(stream, newUser.UserName+ "BusinessLicense"+ extension, "company");
                         newCompany.BusinessLicense = fileUrl;
                     }
                     catch (Exception ex)
@@ -195,7 +208,8 @@ namespace User.Services.Implemntation
                             BusinessLicense = "can not uplode the file"
                         });
                     }
-                }
+                } 
+
                 await _unitOfWork.Companies.AddAsync(newCompany);
                 newUser.CompanyID = newCompany.ID; 
                 await _userManager.AddToRoleAsync(newUser, "Company");

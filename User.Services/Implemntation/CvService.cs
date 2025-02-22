@@ -1,4 +1,6 @@
-﻿using HirBot.Comman.Helpers;
+﻿using Google.Protobuf;
+using HirBot.Common.Helpers;
+using HirBot.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx.Crud;
 using Project.Repository.Repository;
@@ -11,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using User.Services.DataTransferObjects.images;
 using User.Services.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace User.Services.Implemntation
 {
@@ -27,15 +30,30 @@ namespace User.Services.Implemntation
 
         public async Task<bool> UpdateCv(ImageDto cv)
         {
+
             var user = await _authenticationService.GetCurrentUserAsync();
             if (user == null ) return false;
             user = _unitOfWork._context.users.Include(U => U.Portfolio).First(u => u.Id == user.Id);
             if (user.Portfolio == null) user.Portfolio = new HirBot.Data.Entities.Portfolio();
-            string name = "cv" + user.Id; 
-            user.Portfolio.CVUrl = await FileHelper.UpdateFileAsync(cv.base64Data ,name );
-            _unitOfWork._context.users.Update(user);
-            _unitOfWork._context.SaveChanges(); 
-            return true ;  
+            if (cv.image !=null && cv.image.Length > 0)
+            {
+                string extension = Path.GetExtension(cv.image.FileName);
+                if(extension!=".pdf") return false;
+                try
+                {
+                    using var stream = cv.image.OpenReadStream();
+
+                    user.Portfolio.CVUrl = await FileHelper.UpdateFileAsync(stream, user.Portfolio.CVUrl, user.Id + "CV" + extension, "cvs");
+                    _unitOfWork._context.users.Update(user);
+                    _unitOfWork._context.SaveChanges();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+            return false;
         }
         public async Task<bool> DeleteCv()
         {
@@ -43,13 +61,17 @@ namespace User.Services.Implemntation
             if (user == null) return false;
             user = _unitOfWork._context.users.Include(U => U.Portfolio).First(u => u.Id == user.Id);
             if (user.Portfolio == null) user.Portfolio = new HirBot.Data.Entities.Portfolio();
-            string name = "cv" + user.Id;
-            var result=  await FileHelper.DeleteFileAsync (name);
-            if (result == false) return result;
-            user.Portfolio.CVUrl = null; 
-            _unitOfWork._context.users.Update(user);
-            _unitOfWork._context.SaveChanges();
-
+            try
+            {
+                var result = await FileHelper.DeleteFileAsync(user.Portfolio.CVUrl , "cvs");
+                if (result == false) return result;
+                user.Portfolio.CVUrl = null;
+                _unitOfWork._context.users.Update(user);
+                _unitOfWork._context.SaveChanges();
+            } 
+            catch (Exception ex) {
+                return false;    
+                }
             return true;
         }
     }

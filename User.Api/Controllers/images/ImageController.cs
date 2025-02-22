@@ -1,5 +1,4 @@
-﻿using HirBot.Comman.Helpers;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Project.ResponseHandler.Models;
@@ -29,7 +28,7 @@ namespace User.Api.Controllers.images
 
         [HttpPost("editProfileImage")]
         [Authorize] 
-        public async Task<IActionResult> editProfileImage(ImageDto image)
+        public async Task<IActionResult> editProfileImage([FromForm] ImageDto image)
         {
             bool result = await _image.editProfileImage(image);
             if (result) return Ok();
@@ -46,7 +45,7 @@ namespace User.Api.Controllers.images
 
         [HttpPost("editCoverImage")]
         [Authorize]
-        public async Task<IActionResult> editCoverImage(ImageDto image)
+        public async Task<IActionResult> editCoverImage([FromForm] ImageDto image)
         {
             bool result = await _image.editCoverImage(image);
             if (result) return Ok();

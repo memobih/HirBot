@@ -68,7 +68,7 @@ namespace User.Services.DataTransferObjects.Authencation
 
         public string? AdditionalInformation { get; set; }
 
-        public string ? BusinessLicense { get; set; }
+        public IFormFile? BusinessLicense { get; set; }
 
     }
 }
