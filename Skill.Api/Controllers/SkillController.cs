@@ -33,7 +33,7 @@ namespace skill.api.Controllers
 
 
         [HttpPost("AddSkill")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")] 
         public async Task<IActionResult> AddSkill(AddSkillDto skill)
         {
             if (!ModelState.IsValid)
@@ -52,6 +52,17 @@ namespace skill.api.Controllers
             }
             
             var result = await _skillService.AddSkill(skill);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet("GetAllSkills")]
+       // [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllSkills()
+        {
+            var result = await _skillService.GetAllSkills();
             if (!result.Succeeded)
             {
                 return BadRequest(result);

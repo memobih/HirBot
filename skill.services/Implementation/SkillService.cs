@@ -27,6 +27,7 @@ namespace skill.services.Implementation
             _imageHandler = imageHandler;
         }
         public Task<APIOperationResponse<AddSkillDto>> AddSkill(AddSkillDto skill)
+
         {
             var user = GetCurrentUserAsync().Result;
             if (user == null)
@@ -97,6 +98,37 @@ namespace skill.services.Implementation
         {
             var currentUser = _contextAccessor.HttpContext.User;
             return await _userManager.GetUserAsync(currentUser);
+        }
+   
+        public Task<APIOperationResponse<List<GettingAllSkillsDto>>> GetAllSkills()
+        {
+            var skills = _unitOfWork._context.Skills.ToList();
+            if (skills.Count == 0)
+            {
+                return Task.FromResult(new APIOperationResponse<List<GettingAllSkillsDto>>
+                {
+                    Message = "No skills found",
+                    Succeeded = false
+                });
+            }
+            var skillsDto = new List<GettingAllSkillsDto>();
+            foreach (var skill in skills)
+            {
+                var totalUsers = _unitOfWork._context.UserSkills.Count(x => x.SkillID == skill.ID);
+                skillsDto.Add(new GettingAllSkillsDto
+                {
+                    ID = skill.ID,
+                    Name = skill.Name,
+                    ImagePath = skill.ImagePath,
+                    TotalUsers = totalUsers,
+                    CreatedAt = skill.CreationDate
+                });
+            }
+            return Task.FromResult(new APIOperationResponse<List<GettingAllSkillsDto>>
+            {
+                Data = skillsDto,
+                Succeeded = true
+            });
         }
     }
 }

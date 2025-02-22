@@ -7,5 +7,7 @@ namespace skill.services.Interfaces
     public interface ISkillService
     {
         public Task<APIOperationResponse<AddSkillDto>> AddSkill(AddSkillDto skill);
+        public Task<APIOperationResponse<List<GettingAllSkillsDto>>> GetAllSkills();
+        
     }
 }
