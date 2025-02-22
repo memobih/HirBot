@@ -62,7 +62,8 @@ namespace Project.Repository.Repository
     {
         try
         {
-            string fullPath = Path.Combine(_uploadrootPath, filePath.TrimStart('/'));
+            string relativePath = filePath.Replace("/uploads/", "").TrimStart('/');
+            string fullPath = Path.Combine(_uploadrootPath, relativePath);
             if (File.Exists(fullPath))
             {
                 File.Delete(fullPath);
