@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using skill.services;
+using Jop.Services;
 // Set absolute paths for Linux compatibility
 var isWindows = System.Runtime.InteropServices.RuntimeInformation
     .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
@@ -94,7 +95,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region Dependency Injection
-builder.Services.AddInfrastructureServices().AddUsersServices().AddSkillServices();
+builder.Services.AddInfrastructureServices().AddUsersServices().AddSkillServices().AddJopServices();
 #endregion
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
