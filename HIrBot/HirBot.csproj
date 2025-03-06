@@ -21,6 +21,7 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\HirBot.Infrastructure\Project.EntityFramework\HirBot.EntityFramework.csproj" />
+	  <ProjectReference Include="..\Job.APi\Job.Api.csproj" />
 	  <ProjectReference Include="..\Skill.Api\Skill.Api.csproj" />
 	  <ProjectReference Include="..\Test.Api\Test.Api.csproj" />
 	  <ProjectReference Include="..\User.Api\User.Api.csproj" />
