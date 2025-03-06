@@ -33,6 +33,7 @@ namespace User.Services.Implemntation
             user = await _unitOfWork._context.users.Include(U => U.Portfolio).FirstOrDefaultAsync(u => u.Id == user.Id);
             if (user.Portfolio == null) user.Portfolio = new Portfolio();
             user.Portfolio.Title = personalInfoDto.Title;
+            user.Portfolio.location = personalInfoDto.Location;
             user.FullName = personalInfoDto.FullName;
             try
             {
@@ -55,6 +56,7 @@ namespace User.Services.Implemntation
             PersonalInfoDto personalInfoDto = new PersonalInfoDto(); 
             personalInfoDto.Title=user.Portfolio.Title;
             personalInfoDto.FullName = user.FullName;
+            personalInfoDto.Location=user.Portfolio.location;
            return APIOperationResponse<PersonalInfoDto>.Success(personalInfoDto);
         }
 

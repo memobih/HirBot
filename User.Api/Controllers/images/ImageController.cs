@@ -31,16 +31,16 @@ namespace User.Api.Controllers.images
         public async Task<IActionResult> editProfileImage([FromForm] ImageDto image)
         {
             bool result = await _image.editProfileImage(image);
-            if (result) return Ok();
-            else return BadRequest();
+            if (result) return Ok(new { status = true, message = "the image uploded sucsseful" });
+            else return BadRequest(new { status = true, message = "there are error accured" });
         }
         [HttpDelete("deleteProfileImage")]
         [Authorize]
         public async Task<IActionResult> deleteProfileImage()
         {
             bool result = await _image.deleteProfileImage();
-            if (result) return Ok();
-            else return BadRequest();
+            if (result) return Ok(new { status = true, message = "the image deleted sucsseful" });
+            else return BadRequest(new { status = false, message = "there are error accured" });
         }
 
         [HttpPost("editCoverImage")]
@@ -48,16 +48,16 @@ namespace User.Api.Controllers.images
         public async Task<IActionResult> editCoverImage([FromForm] ImageDto image)
         {
             bool result = await _image.editCoverImage(image);
-            if (result) return Ok();
-            else return BadRequest();
+            if (result) return Ok(new { status = true, message = "the image uploded sucsseful" });
+            else return BadRequest(new { status = false, message = "there are error accured" });
         }
         [HttpDelete("deleteCoverImage")]
         [Authorize]
         public async Task<IActionResult> deleteCoverImage()
         {
             bool result = await _image.deleteCoverImage();
-            if (result) return Ok();
-            else return BadRequest();
+            if (result) return Ok(new { status = true, message = "the image deleted sucsseful" });
+            else return BadRequest(new { status = false, message = "there are error accured" });
         }
     }
 }

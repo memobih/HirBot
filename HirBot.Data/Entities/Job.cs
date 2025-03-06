@@ -16,8 +16,9 @@ namespace HirBot.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         public string Title { get; set; }
-        public string ? Description { get; set; } 
-         
+        public string ? Description { get; set; }
+
+        public int  ?  Salary { get; set; }
         public LocationType LocationType { get; set; }
         public EmployeeType EmployeeType { get; set; }
         public bool status {  get; set; }
@@ -27,7 +28,9 @@ namespace HirBot.Data.Entities
         [InverseProperty("Job")]
         public virtual ICollection<Application> ?Applications { get; set; } 
 
-        public virtual ICollection<JobRequirment>? JobRequirments { get; set; }
+        public virtual ICollection<JobRequirment>? JobRequirments { get; set; } 
+
+        public string  ? Experience {  get; set; }
     } 
 
 }

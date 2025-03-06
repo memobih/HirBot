@@ -181,7 +181,7 @@ namespace User.Services.Implemntation
                 newCompany.SocialMeediaLink= companyRegisterDto.SocialMediaLink;
                 newCompany.CompanyType = companyRegisterDto.CompanyType;
                 newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
-                
+                newCompany.UserID= newUser.Id;
                 if (companyRegisterDto.BusinessLicense != null && (companyRegisterDto.BusinessLicense.Length > 0) ) 
                 {
                     try
@@ -211,8 +211,8 @@ namespace User.Services.Implemntation
                 } 
 
                 await _unitOfWork.Companies.AddAsync(newCompany);
-                newUser.CompanyID = newCompany.ID; 
-                await _userManager.AddToRoleAsync(newUser, "Company");
+                //newUser.CompanyID = newCompany.ID; 
+                 //await _userManager.AddToRoleAsync(newUser, "Company");
                 await _unitOfWork.SaveAsync();
 
                 return APIOperationResponse<AuthModel>.Success(respon, " company created successfully.");

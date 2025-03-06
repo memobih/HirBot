@@ -12,14 +12,21 @@ namespace Project.Repository.Repository
 
         public IGeneralRepository<ApplicationUser> Users { get; private set; }
         private IGeneralRepository<RefreshToken> refreshs { get; set; }
-        public IGeneralRepository<Company> Companies { get;   private set ;}
-        
+        public IGeneralRepository<Company> Companies { get;   private set ;} 
+        public IGeneralRepository<Education> Educations { get; private set; }
+         
+        public IGeneralRepository<Experience> Experiences { get; private set; } 
+
+        public IGeneralRepository<Job> Jobs { get; private set; }
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             refreshs =new GeneralRepository<RefreshToken> (_context);
             Users = new GeneralRepository<ApplicationUser>(_context);
             Companies=new GeneralRepository<Company>(_context);
+            Educations=new GeneralRepository<Education>(_context); 
+            Experiences =new GeneralRepository<Experience>(_context); 
+            Jobs=new GeneralRepository<Job>(_context);
         }
         public async Task<bool> SaveAsync()
         {

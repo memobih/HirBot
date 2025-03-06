@@ -12,7 +12,7 @@ namespace User.Services.DataTransferObjects
         [Url (ErrorMessage ="this must be Url")]
         public string ?  PortfolioURL { get; set; }
         
-         public string ?  Location { get; set; }
+         //public string ?  Location { get; set; }
         [MaxLength(11)]
         [RegularExpression(@"^\d+$")]
         public string  ? ContactNumber { get; set; }

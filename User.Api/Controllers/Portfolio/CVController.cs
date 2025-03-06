@@ -25,16 +25,16 @@ namespace User.Api.Controllers.Portfolio
         public async  Task<IActionResult> UpdateCV(ImageDto CV)
         {
             var result=await _cvService.UpdateCv(CV);
-            if (result) return Ok(); 
-            return BadRequest() ;
+            if (result) return Ok(new { status = true, massage = "the cv updated sucsseful" });
+            else return BadRequest(new { status = false, massage = "there are error accured" });
         }
         [HttpDelete("DeleteCV")]
         [Authorize]
         public async Task<IActionResult> DeleteCV()
         {
             var result = await _cvService.DeleteCv();
-            if (result) return Ok();
-            return BadRequest();
+            if (result) return Ok(new { status = true, massage = "the cv deleted sucsseful" });
+            else return BadRequest(new { status = false, massage = "there are error accured" });
         }
     }
 }

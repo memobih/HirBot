@@ -9,6 +9,9 @@ namespace HirBot.Data.IGenericRepository_IUOW
 
         public IGeneralRepository<Company> Companies {  get; }
         public IGeneralRepository<ApplicationUser> Users { get; }
+        public IGeneralRepository<Education> Educations { get; } 
+        public IGeneralRepository<Experience> Experiences { get; } 
+        public IGeneralRepository <Job> Jobs { get; }
         Task<bool> SaveAsync();
     }
 }

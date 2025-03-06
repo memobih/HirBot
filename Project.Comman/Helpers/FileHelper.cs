@@ -16,7 +16,7 @@ namespace HirBot.Common.Helpers
             {
                 BlobServiceClient blobServiceClient = new BlobServiceClient(ConnectionString);
                 BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
-                BlobClient blobClient = containerClient.GetBlobClient(fileName);
+                BlobClient blobClient = containerClient.GetBlobClient(Guid.NewGuid() + fileName);
 
                 await blobClient.UploadAsync(fileStream, overwrite: true);
                 return blobClient.Uri.ToString(); // Return the file name as confirmation

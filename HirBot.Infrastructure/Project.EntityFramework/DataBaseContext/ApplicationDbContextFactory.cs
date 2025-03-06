@@ -12,7 +12,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("/mnt/mahmoud/gr/HirBot/HIrBot/appsettings.json")
+            .AddJsonFile("C:\\Users\\ahmed\\Source\\Repos\\memobih\\HirBot\\HIrBot\\appsettings.json")
             .Build();
 
         // Configure DbContextOptions

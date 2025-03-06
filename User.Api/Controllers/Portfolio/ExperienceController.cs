@@ -27,14 +27,17 @@ namespace User.Api.Controllers.Portfolio
         public async  Task<IActionResult> index( )
         {
             var respon = await experienceServices.GetExperienceAsync();
-            return Ok(new { status = 200, data = respon.Data } );
+            return Ok(new { status = true, data = respon.Data } );
         }
-        //[Authorize]
-        //[Route("update/{id}")]
-        //public Task<IActionResult> update(string id)
-        //{
-        //    return Ok();
-        //}
+        [Authorize]
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> update(int id , ExperienceDto experience)
+        {
+            var response = await experienceServices.EditExperienceAsync(id , experience);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, message = "experience is updated successuful" });
+            return StatusCode(response.StatusCode, new { status = false,message= response.Message });
+        }
         [Authorize]
         [HttpPost("AddExperience")]
         public async  Task<IActionResult> create(ExperienceDto experience)
@@ -42,12 +45,25 @@ namespace User.Api.Controllers.Portfolio
             var respon = await experienceServices.AddExperienceAsync(experience);
             return StatusCode(respon.StatusCode); 
         }
-        //[Authorize]
-        //[Route("delete/{id}")]
-        //public Task<IActionResult> delete(string id)
-        //{
-        //    return Ok();
-        //}
+        [Authorize]
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> delete(int id )
+        { 
+            var response = await experienceServices.DeleteExperienceAsync(id );
+            if (response.StatusCode == 200)
+                return Ok(new {status=true , message ="experience is delted successuful"});
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> show(int id)
+        {
+            var response = await experienceServices.GetExperienceAsyncByid(id);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
+
 
 
     }

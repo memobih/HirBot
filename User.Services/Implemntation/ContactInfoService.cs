@@ -48,7 +48,7 @@ namespace User.Services.Implemntation
                 Portfolio=user.Portfolio;
             }
             ContactInfoDto contact = new ContactInfoDto();
-            contact.Location = Portfolio.location;
+            // contact.Location = Portfolio.location;
             contact.PortfolioURL = Portfolio.PortfolioUrl;
             contact.ContactNumber = user.PhoneNumber;
             contact.GithubURL = Portfolio.GithubUrl; 
@@ -69,7 +69,6 @@ namespace User.Services.Implemntation
                 await _userManager.UpdateAsync(user);
                 portfolio = user.Portfolio;
             }
-            portfolio.location = contactInfoDto.Location;
             portfolio.PortfolioUrl = contactInfoDto.PortfolioURL;
             user.PhoneNumber = contactInfoDto.ContactNumber;
             portfolio.GithubUrl = contactInfoDto.GithubURL; 

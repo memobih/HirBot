@@ -10,7 +10,8 @@ namespace User.Services.DataTransferObjects.Authencation.ProfileDto
     {
         [Required(ErrorMessage ="full name is required")]
         [MaxLength(100)]
-        public string  FullName { get; set; }
+        public string  FullName { get; set; } 
+        public string  ? Location { get; set; }
         [MaxLength(70)]
         public string ?  Title { get; set; }
         

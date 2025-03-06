@@ -14,11 +14,7 @@ namespace HirBot.EntityFramework.DataBaseContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<ApplicationUser>()
-                   .HasOne<Company>() // No navigation property in Order
-                   .WithMany()          // No collection in Customer
-                   .HasForeignKey(o => o.CompanyID)
-                   .IsRequired(false); // Specify the foreign key
+           // Specify the foreign key
             modelBuilder.Entity<ApplicationUser>().ToTable("users");
             modelBuilder.Entity<IdentityRole>().ToTable("roles");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("user_roles");

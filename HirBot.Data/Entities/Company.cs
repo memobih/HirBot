@@ -1,8 +1,10 @@
-﻿using HirBot.Data.Enums;
+﻿using HirBot.Comman.Idenitity;
+using HirBot.Data.Enums;
 using Moujam.Casiher.Comman.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -33,6 +35,10 @@ namespace HirBot.Data.Entities
         public string ? BusinessLicense { get; set; }
 
         public string ?Logo {  get; set; }
+        [ForeignKey("account")]
+        public string UserID { get; set; } 
+
+        public virtual ApplicationUser account { get; set; }
 
     }
 }

@@ -26,8 +26,8 @@ namespace User.Services.Implemntation
             if (user == null )
                 return APIOperationResponse<ProfileDto>.NotFound("NotFound");
             user = await _unitOfWork._context.users.Include(U => U.Portfolio).FirstOrDefaultAsync(u => u.Id == user.Id);
-            ProfileDto profile = new ProfileDto(); 
-            ContactInfoDto contactInfo=new ContactInfoDto();
+            ProfileDto profile = new ProfileDto();
+            ContactInfo contactInfo =new ContactInfo();
             if (user.Portfolio!=null)
             {
                 contactInfo.PortfolioURL= user.Portfolio.PortfolioUrl;
@@ -48,11 +48,12 @@ namespace User.Services.Implemntation
                 CurrentJop.title = experience.Title;
                 CurrentJop.workType = experience.workType;
                 CurrentJop.location = experience.location;
+                CurrentJop.id = experience.ID;
                 if (experience.Company != null)
                 {
                     CurrentJop.company = new ExpreienceCompany();
 
-                    var name = _unitOfWork._context.users.First(u => u.CompanyID == experience.CompanyID).FullName;
+                    var name = _unitOfWork._context.Companies.Include(C => C.account).First(c => c.ID == experience.CompanyID).account.FullName;
                     CurrentJop.company.name = name;
                     CurrentJop.company.id = experience.CompanyID;
                     CurrentJop.company.logo = experience.Company.Logo;

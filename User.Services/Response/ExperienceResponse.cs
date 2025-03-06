@@ -10,6 +10,7 @@ namespace User.Services.Response
 {
     public class ExperienceResponse
     {
+        public int id { get; set;  }
         public string title { get; set; }
         public EmployeeType jobType { get; set; }
         public LocationType workType { get; set; }

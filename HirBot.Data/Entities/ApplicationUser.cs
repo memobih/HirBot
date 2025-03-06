@@ -17,7 +17,8 @@ namespace HirBot.Comman.Idenitity
         public UserType role { get; set; }
         public string ? ImagePath { get; set; } 
         public string  ?CoverPath { get; set; }
-         public string ? CompanyID { get; set; }
+       
+        //public string ? CompanyID { get; set; }
         public int ?VerificationCode {  get; set; } 
          public DateTime ? Code_Send_at { get; set; }
         public bool ?IsVerified { get; set; }
@@ -30,6 +31,8 @@ namespace HirBot.Comman.Idenitity
         public int? CurentJopID { get; set; }
         public virtual Experience ?  CurentJop { get; set; }
 
-
+        [InverseProperty("account")]
+        public  virtual Company ?  Company { get; set; }
+       
     }
 }

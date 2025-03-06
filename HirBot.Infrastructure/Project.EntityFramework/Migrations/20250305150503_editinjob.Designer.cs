@@ -4,6 +4,7 @@ using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250305150503_editinjob")]
+    partial class editinjob
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,9 +239,6 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("End_Date")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("FieldOfStudy")
                         .HasColumnType("longtext");
 
@@ -254,9 +254,6 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int>("Privacy")
                         .HasColumnType("int");
 
-                    b.Property<string>("Start_Date")
-                        .HasColumnType("longtext");
-
                     b.Property<int?>("Type")
                         .HasColumnType("int");
 
@@ -267,10 +264,16 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("degree")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("endDate")
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("isGraduated")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("logo")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("startDate")
                         .HasColumnType("longtext");
 
                     b.HasKey("ID");
