@@ -146,7 +146,7 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        public async Task<APIOperationResponse<object>> getAllJobs(string? search = null, JobStatus? status = null, LocationType? locationType = null, EmployeeType? JobType = null, int page = 1, int perpage = 10 , string? sort = "salary", string sortDirection = null)
+        public async Task<APIOperationResponse<object>> getAllJobs(string? search = null, JobStatus? status = null, LocationType? locationType = null, EmployeeType? JobType = null, int page = 1, int perpage = 10, string? sort = "salary", string sortDirection = null)
         {
             try
             {
@@ -154,8 +154,12 @@ namespace Jop.Services.Implemntations
                 if (user.role != UserType.Company)
                     return APIOperationResponse<object>.UnOthrized("this user is not a company");
                 var company = await unitOfWork._context.Companies.Include(C => C.jobs).
-                    ThenInclude(j => j.JobRequirments).ThenInclude(r => r.Skill).
-                    FirstOrDefaultAsync(c => c.UserID == user.Id);
+                     ThenInclude(j => j.JobRequirments).
+                     ThenInclude(r => r.Skill)
+                     .Include(c => c.jobs)
+                     .ThenInclude(j => j.JobRequirments)
+                     .ThenInclude(r => r.Level).
+                     FirstOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this company is not accepted yet");
                 List<JobListResponse> jobs = new List<JobListResponse>();
@@ -181,14 +185,14 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { Skill = skill.Skill.Name });
+                                    added.Skills.Add(new Skills { name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
-                            added.ApplicantNumber =100;
+                            added.ApplicantNumber = 100;
                             jobs.Add(added);
                         }
                     }
-                Filter(ref jobs, search, status, locationType, JobType, page, perpage , sort , sortDirection);
+                Filter(ref jobs, search, status, locationType, JobType, page, perpage, sort, sortDirection);
 
                 return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (jobs.Count() / perpage) + 1, pageSize = perpage, totalRecords = jobs.Count(), data = Paginate(jobs, page, perpage) });
             }
@@ -198,7 +202,7 @@ namespace Jop.Services.Implemntations
             }
 
         }
-        public async Task<APIOperationResponse<object>> getAllDraftedJobs(string? search = null, JobStatus? status = null, LocationType? locationType = null, EmployeeType? JobType = null, int page = 1, int perpage = 10 , string? sort = "salary", string sortDirection = null)
+        public async Task<APIOperationResponse<object>> getAllDraftedJobs(string? search = null, JobStatus? status = null, LocationType? locationType = null, EmployeeType? JobType = null, int page = 1, int perpage = 10, string? sort = "salary", string sortDirection = null)
         {
             try
             {
@@ -206,7 +210,11 @@ namespace Jop.Services.Implemntations
                 if (user.role != UserType.Company)
                     return APIOperationResponse<object>.UnOthrized("this user is not a company");
                 var company = await unitOfWork._context.Companies.Include(C => C.jobs).
-                    ThenInclude(j => j.JobRequirments).ThenInclude(r => r.Skill).
+                    ThenInclude(j => j.JobRequirments).
+                    ThenInclude(r => r.Skill)
+                    .Include(c => c.jobs)
+                    .ThenInclude(j => j.JobRequirments)
+                    .ThenInclude(r => r.Level).
                     FirstOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this company is not accepted yet");
@@ -233,16 +241,16 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { Skill = skill.Skill.Name });
+                                    added.Skills.Add(new Skills { name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
                             jobs.Add(added);
                         }
                     }
-              
 
-                      Filter(ref jobs, search, status, locationType, JobType, page, perpage, sort, sortDirection);
-                return APIOperationResponse<object>.Success( new {  currentPage = page, totalPages = (jobs.Count() / perpage)+1, pageSize = perpage, totalRecords = jobs.Count()  , data = Paginate(jobs, page, perpage) });
+
+                Filter(ref jobs, search, status, locationType, JobType, page, perpage, sort, sortDirection);
+                return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (jobs.Count() / perpage) + 1, pageSize = perpage, totalRecords = jobs.Count(), data = Paginate(jobs, page, perpage) });
             }
             catch (Exception ex)
             {
@@ -262,30 +270,30 @@ namespace Jop.Services.Implemntations
                     return APIOperationResponse<object>.NotFound("this job is not found");
                 if (user == null || job == null ||
                   ((job.status == JobStatus.drafted || job.status == JobStatus.closed) && (company == null || job.CompanyID != company.ID)))
-                    return APIOperationResponse<object>.UnOthrized("this user is un outhorized to show this job" );
+                    return APIOperationResponse<object>.UnOthrized("this user is un outhorized to show this job");
 
                 JobDetailsResponse response = new JobDetailsResponse();
-                response.Title= job.Title;
-                response.Description= job.Description;
-                response.location  =job.location;
+                response.Title = job.Title;
+                response.Description = job.Description;
+                response.location = job.location;
                 response.status = job.status;
-                response.LocationType=job.LocationType;
+                response.LocationType = job.LocationType;
                 response.EmployeeType = job.EmployeeType;
                 response.Experience = job.Experience;
                 response.Salary = job.Salary;
-                response.ID= job.ID;
+                response.ID = job.ID;
                 if (job.JobRequirments != null)
                 {
                     response.requiremnts = new List<Requiremnts>();
                     foreach (var requirment in job.JobRequirments)
                     {
-                       response.requiremnts.Add(new Requiremnts { Skill = requirment.Skill.Name ,level=requirment.Level.Name  });
+                        response.requiremnts.Add(new Requiremnts { Skill = requirment.Skill.Name, level = requirment.Level.Name });
                     }
                 }
-               return APIOperationResponse<object>.Success(response);
+                return APIOperationResponse<object>.Success(response);
             }
             catch (Exception ex) {
-               return APIOperationResponse<object>.ServerError("there are error accured");
+                return APIOperationResponse<object>.ServerError("there are error accured");
             }
         }
 
@@ -295,9 +303,9 @@ namespace Jop.Services.Implemntations
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
-                var jobs = unitOfWork._context.Jobs.Where(j=>ids.Contains(j.ID)).Where(j=>j.CompanyID== company.ID).ToList();
+                var jobs = unitOfWork._context.Jobs.Where(j => ids.Contains(j.ID)).Where(j => j.CompanyID == company.ID).ToList();
                 unitOfWork._context.Jobs.RemoveRange(jobs);
-               await unitOfWork.SaveAsync();
+                await unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success("the jobs deleted succefuly");
             }
             catch (Exception e)
@@ -306,7 +314,7 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        public  async Task<APIOperationResponse<object>> GetJosRecomendations(string? search = null, string? experience = null, string? location = null, List<LocationType>? locationType = null, List<EmployeeType>? JobType = null, int page = 1, int perpage = 10, int? minSalary = null, int? maxSalary = null)
+        public async Task<APIOperationResponse<object>> GetJosRecomendations(string? search = null, string? experience = null, string? location = null, List<LocationType>? locationType = null, List<EmployeeType>? JobType = null, int page = 1, int perpage = 10, int? minSalary = null, int? maxSalary = null)
         {
             try
             {
@@ -336,20 +344,38 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { Skill = skill.Skill.Name });
+                                    added.Skills.Add(new Skills { name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
                             jobs.Add(added);
                         }
                     }
-                FilterRecomendationsJobs(ref jobs, search,experience , location , locationType , JobType , page , perpage , minSalary , maxSalary);
+                FilterRecomendationsJobs(ref jobs, search, experience, location, locationType, JobType, page, perpage, minSalary, maxSalary);
                 return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (jobs.Count() / perpage) + 1, pageSize = perpage, totalRecords = jobs.Count(), jobs = Paginate(jobs, page, perpage) });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return APIOperationResponse<object>.ServerError("ther are error accured");
             }
         }
+        public async Task<APIOperationResponse<object>> EditJobStatus(int id, EditStatusDto status)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                var job = await unitOfWork.Jobs.GetLastOrDefaultAsync(j => j.ID == id);
+                if (company == null || company.status != CompanyStatus.accepted || company.ID != job.CompanyID)
+                    return APIOperationResponse<object>.UnOthrized("this user is not uthorized to edit this job");
+                job.status = status.status;
+                await unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("status updated successful ", "status updated successful ");
+            }
+            catch (Exception ex) {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
+
 
         #region Helper 
         private List<T> Paginate<T>(List<T> source, int page, int pageSize)
@@ -416,6 +442,7 @@ namespace Jop.Services.Implemntations
           
         }
 
+     
 
         #endregion
 

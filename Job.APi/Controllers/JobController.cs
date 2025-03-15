@@ -87,6 +87,15 @@ namespace Job.Api.Controllers
                 return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
+        [Authorize]
+        [HttpPut("status/{id}")]
+        public async Task<IActionResult> EditJobStatus(int id, EditStatusDto status)
+        {
+            var response = await _jobService.EditJobStatus(id, status);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, massage = response.Message });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
 
     }
 }

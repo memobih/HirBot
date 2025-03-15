@@ -21,6 +21,8 @@ namespace Project.Repository.Repository
 
         public IGeneralRepository<Level> Levels { get; private set; }
         public IGeneralRepository<Job> Jobs { get; private set; }
+        public IGeneralRepository<Application> Applications { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -32,6 +34,7 @@ namespace Project.Repository.Repository
             Jobs=new GeneralRepository<Job>(_context); 
             Levels = new GeneralRepository<Level>(_context);
             Skills = new GeneralRepository<Skill>(_context);
+            Applications=new GeneralRepository<Application>(_context); ;
         }
         public async Task<bool> SaveAsync()
         {

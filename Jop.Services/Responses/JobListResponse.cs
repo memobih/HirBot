@@ -25,7 +25,8 @@ namespace Jop.Services.Responses
     }
     public class Skills
     {
-        public string Skill {  get; set; }
+        public string name {  get; set; } 
+        public string evaluation { get; set; }
 
     }
 }
