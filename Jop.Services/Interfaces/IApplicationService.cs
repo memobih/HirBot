@@ -1,4 +1,5 @@
 ﻿using HirBot.Data.Entities;
+using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,7 @@ namespace Jop.Services.Interfaces
     public  interface IApplicationService
     {
         public Task<APIOperationResponse<object>> ApplicateOnJob(int jobId);
-        public Task<APIOperationResponse<object>> GetALLAplications();
-        public Task<APIOperationResponse<object>> GetALLAplications(int jobid);
+        public Task<APIOperationResponse<object>> GetALLAplications(int jobid, string? search = null, ApplicationStatus? status = null, string? sort = null, int page = 1, int perpage = 10);
 
     }
 }

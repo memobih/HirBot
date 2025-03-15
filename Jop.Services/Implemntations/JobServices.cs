@@ -158,7 +158,7 @@ namespace Jop.Services.Implemntations
                      ThenInclude(r => r.Skill)
                      .Include(c => c.jobs)
                      .ThenInclude(j => j.JobRequirments)
-                     .ThenInclude(r => r.Level).
+                     .ThenInclude(r => r.Level).OrderByDescending(j => j.CreationDate).
                      FirstOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this company is not accepted yet");
@@ -178,6 +178,7 @@ namespace Jop.Services.Implemntations
                                 ID = jop.ID,
                                 status = jop.status,
                                 Title = jop.Title,
+                                created_at = jop.CreationDate,
                                 LocationType = jop.LocationType
                             };
                             if (jop.JobRequirments != null)
@@ -214,7 +215,7 @@ namespace Jop.Services.Implemntations
                     ThenInclude(r => r.Skill)
                     .Include(c => c.jobs)
                     .ThenInclude(j => j.JobRequirments)
-                    .ThenInclude(r => r.Level).
+                    .ThenInclude(r => r.Level).OrderByDescending(j => j.CreationDate).
                     FirstOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this company is not accepted yet");
@@ -234,6 +235,8 @@ namespace Jop.Services.Implemntations
                                 ID = jop.ID,
                                 status = jop.status,
                                 Title = jop.Title,
+                                created_at = jop.CreationDate,
+
                                 LocationType = jop.LocationType
                             };
                             if (jop.JobRequirments != null)
@@ -265,7 +268,7 @@ namespace Jop.Services.Implemntations
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
                 var job = await unitOfWork._context.Jobs.Include(j => j.JobRequirments).
-                    ThenInclude(r => r.Level).Include(j => j.JobRequirments).ThenInclude(r => r.Skill).FirstOrDefaultAsync(j => j.ID == id);
+                    ThenInclude(r => r.Level).Include(j => j.JobRequirments).ThenInclude(r => r.Skill).OrderByDescending(j=>j.CreationDate).FirstOrDefaultAsync(j => j.ID == id);
                 if (job == null)
                     return APIOperationResponse<object>.NotFound("this job is not found");
                 if (user == null || job == null ||
@@ -337,6 +340,7 @@ namespace Jop.Services.Implemntations
                                 ID = jop.ID,
                                 status = jop.status,
                                 Title = jop.Title,
+                                created_at = jop.CreationDate,
                                 LocationType = jop.LocationType
                             };
                             if (jop.JobRequirments != null)
@@ -428,16 +432,12 @@ namespace Jop.Services.Implemntations
                 jobs = jobs.Where(j => j.LocationType == locationType).ToList();
             if (JobType != null)
                 jobs = jobs.Where(j => j.EmployeeType == JobType).ToList();
-
-            if(sortDirection!=null)
+            jobs.Reverse();
+            if (sortDirection!=null)
             {
-
                 if (sortDirection != "asc")
                     jobs = jobs.OrderByDescending(j => j.Salary).ToList();
                 else jobs = jobs.OrderBy(j => j.Salary).ToList();
-
-
-
             }
           
         }

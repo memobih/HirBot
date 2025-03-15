@@ -20,7 +20,10 @@ namespace Jop.Services.Responses
         public JobStatus status { get; set; }
         public string Experience {get ; set; }   
 
-      public int ApplicantNumber {  get; set; }
+      public int ApplicantNumber {  get; set; } 
+
+        public DateTime created_at { get; set; }
+
         public List<Skills>  ? Skills { get; set; }
     }
     public class Skills

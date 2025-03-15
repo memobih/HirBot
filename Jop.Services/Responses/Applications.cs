@@ -14,6 +14,7 @@ namespace Jop.Services.Responses
         public string email { get; set; }
         public int Score { get; set; }
         public ApplicationStatus status { get; set; }
-        public string ?  CVLink {get; set; }
+        public string ?  CVLink {get; set; } 
+        public DateTime created_at { get; set; }
     }
 }

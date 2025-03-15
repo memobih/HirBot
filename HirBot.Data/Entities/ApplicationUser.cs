@@ -24,7 +24,7 @@ namespace HirBot.Comman.Idenitity
         public bool ?IsVerified { get; set; }
         public List<RefreshToken> ? refreshTokens { get; set; }
         [InverseProperty("User")]
-        public virtual  Portfolio  ?  Portfolio { get; set; }
+        public virtual Portfolio? Portfolio { get; set; } 
         [InverseProperty("User")]
         public virtual ICollection<Experience> ?  experiences { get; set; }
         [ForeignKey("CurentJop")]

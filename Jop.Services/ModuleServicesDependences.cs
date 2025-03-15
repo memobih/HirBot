@@ -14,6 +14,7 @@ namespace Jop.Services
         public static IServiceCollection AddJopServices(this IServiceCollection service)
         {
             service.AddTransient<IJobService, JobServices>();
+            service.AddTransient<IApplicationService, ApplicationService>();
 
             return service; 
         }
