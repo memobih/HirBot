@@ -18,17 +18,20 @@ namespace HirBot.Data.Entities
         public string Title { get; set; }
         public string ? Description { get; set; }
 
-        public int  ?  Salary { get; set; }
+        public string location { get; set; }
+        public int ?   Salary { get; set; }
         public LocationType LocationType { get; set; }
         public EmployeeType EmployeeType { get; set; }
-        public bool status {  get; set; }
+        public JobStatus status {  get; set; }
+
         [ForeignKey("Company")]
          public string CompanyID { get; set; }
         public virtual Company Company { get; set; }
         [InverseProperty("Job")]
         public virtual ICollection<Application> ?Applications { get; set; } 
-
-        public virtual ICollection<JobRequirment>? JobRequirments { get; set; } 
+         
+        
+        public virtual List<JobRequirment>? JobRequirments { get; set; } 
 
         public string  ? Experience {  get; set; }
     } 

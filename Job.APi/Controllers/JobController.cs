@@ -1,4 +1,5 @@
-﻿using Jop.Services.DataTransferObjects;
+﻿using HirBot.Data.Enums;
+using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,51 @@ namespace Job.Api.Controllers
             var response = await _jobService.edit(id , job);
             if (response.StatusCode == 200)
                 return Ok(new { status = true, massage = response.Message });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> getALLJop(string? search = null, JobStatus? status = null, LocationType? locationType = null, EmployeeType? JobType = null, int page = 1, int perPage = 10, string? sort = "salary", string sortDirection=null)
+        {
+            var response = await _jobService.getAllJobs(search , status , locationType , JobType , page , perPage , sort , sortDirection);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpGet("drafted")]
+        public async Task<IActionResult> getALLdraftedJob(string? search = null, JobStatus? status = null, LocationType? locationType = null, EmployeeType? JobType = null, int page = 1, int perPage = 10 , string? sort = "salary", string sortDirection = null)
+        {
+            var response = await _jobService.getAllDraftedJobs(search, status, locationType, JobType, page, perPage, sort, sortDirection);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetJobByID(int id)
+        {
+            var response = await _jobService.JobDetails( id);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRanges(List<int> ids)
+        {
+            var response = await _jobService.DeleteJobs(ids);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true , response.Message });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpGet("recomendation")]
+        public async Task<IActionResult> GetRecemoendationJobs(string? search = null, string? experience = null, string? location = null, [FromQuery] List<LocationType>? locationType = null, [FromQuery] List<EmployeeType>? JobType = null, int page = 1, int perpage = 10, int? minSalary = null, int? maxSalary = null)
+        {
+            var response = await _jobService.GetJosRecomendations(search, experience, location, locationType, JobType, page, perpage, minSalary, maxSalary);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
 

@@ -19,13 +19,9 @@ namespace HirBot.Data.Entities
         [ForeignKey("Skill")]
         public int SkillID { get; set; }
         [ForeignKey("Level")]
-        public int LevelID { get; set; } 
-
-        public int Rate { get; set; } 
-
-        public virtual Job Jop { get; set; }
+        public int LevelID { get; set; }
+        public  Job Jop { get; set; }
         public virtual Skill Skill { get; set; }
-
         public virtual Level Level { get; set; }
     }
 }

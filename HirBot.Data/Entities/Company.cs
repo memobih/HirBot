@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HirBot.Data.Entities
@@ -36,9 +37,11 @@ namespace HirBot.Data.Entities
 
         public string ?Logo {  get; set; }
         [ForeignKey("account")]
-        public string UserID { get; set; } 
-
-        public virtual ApplicationUser account { get; set; }
+        [JsonIgnore]
+        public string UserID { get; set; }
+        [JsonIgnore]
+        public virtual ApplicationUser account { get; set; } 
+        public virtual  List<Job> ? jobs { get; set; }
 
     }
 }

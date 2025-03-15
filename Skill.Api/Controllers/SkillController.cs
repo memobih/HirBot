@@ -30,7 +30,7 @@ namespace skill.api.Controllers
             _userManager = userManager;
             _skillService = skillService;
         }
-
+        #region by admin 
 
         [HttpPost("AddSkill")]
         [Authorize(Roles = "Admin")] 
@@ -67,6 +67,7 @@ namespace skill.api.Controllers
             {
                 return BadRequest(result);
             }
+            
             return Ok(result);
         }
         [HttpDelete("DeleteSkill/{id}")]
@@ -117,6 +118,20 @@ namespace skill.api.Controllers
             }
             return Ok(result);
         }
-    
+        #endregion
+
+        #region BY User 
+        [HttpGet]
+        public async Task<IActionResult> GetAllSkillsFORUser()
+        { 
+            var result= await _skillService.GetALLSkillForUsers();    
+            if(result.StatusCode==200) 
+                return Ok(new {status=true , result.Data , result.Message});
+            return StatusCode(result.StatusCode , new { status = false, result.Message });
+        }
+
+        #endregion
+
+
     }
 }

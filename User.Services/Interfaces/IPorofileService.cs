@@ -10,6 +10,8 @@ namespace User.Services.Interfaces
 {
     public  interface IPorofileService
     {
-        public Task<APIOperationResponse<ProfileDto>> GetPorofileAync(); 
+        public Task<APIOperationResponse<ProfileDto>> GetPorofileAync();
+        public Task<APIOperationResponse<object>> GetCompanyProfileAsync(); 
+
     }
 }

@@ -30,5 +30,15 @@ namespace User.Api.Controllers.Portfolio
             else 
                 return StatusCode(respon.StatusCode ,new {status=false , massage="User not found"});
         }
+        [Authorize]
+        [HttpGet("Company")]
+        public async Task<IActionResult> GetCompanyProfile()
+        {
+            var respon = await _profileService.GetCompanyProfileAsync();
+            if (respon.StatusCode == 200)
+                return Ok(new { status = true, respon.Data });
+            else
+                return StatusCode(respon.StatusCode, new { status = false, respon.Message } );
+        }
     }
 }

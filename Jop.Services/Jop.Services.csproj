@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Responses\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\HirBot.Data\HirBot.Data.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
     <ProjectReference Include="..\User.Services\User.Services.csproj" />

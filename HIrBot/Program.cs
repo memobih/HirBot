@@ -11,7 +11,6 @@ using HirBot.Repository;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using User.Services;
 using HirBot.EntityFramework.DataBaseContext;
 using Mailing;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,6 +21,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using skill.services;
 using Jop.Services;
+using User.Services.Implemntation;
 // Set absolute paths for Linux compatibility
 var isWindows = System.Runtime.InteropServices.RuntimeInformation
     .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);

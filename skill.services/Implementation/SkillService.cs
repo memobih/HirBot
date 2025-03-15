@@ -65,7 +65,7 @@ namespace skill.services.Implementation
                 });
             }
             string imagePath = image.FilePath;
-            var skillModel = new Skill
+            var skillModel = new HirBot.Data.Entities.Skill
             {
                 Name = skill.Name,
                 Status = skill.Status,
@@ -240,6 +240,19 @@ namespace skill.services.Implementation
                     Message = e.Message,
                     Succeeded = false
                 });
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> GetALLSkillForUsers()
+        {
+            try
+            {
+                var skills = await _unitOfWork.Skills.GetAllAsync();
+                return APIOperationResponse<Object>.Success(skills , "ALL skills ");
+            }
+            catch (Exception e)
+            {
+                return APIOperationResponse<Object>.ServerError("there are error accured");
             }
         }
     }

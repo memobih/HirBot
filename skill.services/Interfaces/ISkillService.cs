@@ -11,5 +11,7 @@ namespace skill.services.Interfaces
         public Task<APIOperationResponse<bool>> DeleteSkill(int id);
         public Task<APIOperationResponse<GettingAllSkillsDto>> GetSkill(int id);
         public Task<APIOperationResponse<UpdateSkillDto>> UpdateSkill(UpdateSkillDto skill);
+
+        public Task<APIOperationResponse<object>> GetALLSkillForUsers();
     }
 }

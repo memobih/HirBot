@@ -13,7 +13,8 @@ namespace Jop.Services.DataTransferObjects
     public  class AddJobDto
     {
         [Required(ErrorMessage ="this field is required")]
-        public string Title { get; set; }  
+        public string Title { get; set; }
+        [Required(ErrorMessage = "this field is required")]
 
         public string ? Description { get; set; }
         [Required(ErrorMessage = "this field is required")]
@@ -29,10 +30,13 @@ namespace Jop.Services.DataTransferObjects
          
         public int   ? Salary { get; set; }
 
-        public bool status { get; set; }
+        public JobStatus status { get; set; }
+        [Required(ErrorMessage = "this field is required")]
+
+        public string location { get; set; }
 
 
-        public virtual ICollection<Requirment> ? Requirments { get; set; }
+        public virtual List<Requirment> ? Requirments { get; set; }
 
     }
     public class Requirment
@@ -42,7 +46,6 @@ namespace Jop.Services.DataTransferObjects
       
         public int LevelID { get; set; }
 
-        public int Rate { get; set; }
     }
    
 }
