@@ -10,7 +10,7 @@ namespace User.Services.Interfaces
 {
     public  interface ICVService
     {
-        public Task<bool> UpdateCv(ImageDto cv);
+        public Task<bool> UpdateCv(FileDto cv);
         public Task<bool> DeleteCv();
 
     }

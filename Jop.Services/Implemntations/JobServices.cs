@@ -267,8 +267,10 @@ namespace Jop.Services.Implemntations
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
-                var job = await unitOfWork._context.Jobs.Include(j => j.JobRequirments).
-                    ThenInclude(r => r.Level).Include(j => j.JobRequirments).ThenInclude(r => r.Skill).OrderByDescending(j=>j.CreationDate).FirstOrDefaultAsync(j => j.ID == id);
+                var job = await unitOfWork._context.Jobs
+                    .Include(j => j.JobRequirments).
+                    ThenInclude(r => r.Level).
+                    Include(j => j.JobRequirments).ThenInclude(r => r.Skill).OrderByDescending(j=>j.CreationDate).FirstOrDefaultAsync(j => j.ID == id);
                 if (job == null)
                     return APIOperationResponse<object>.NotFound("this job is not found");
                 if (user == null || job == null ||
@@ -280,11 +282,15 @@ namespace Jop.Services.Implemntations
                 response.Description = job.Description;
                 response.location = job.location;
                 response.status = job.status;
+
                 response.LocationType = job.LocationType;
                 response.EmployeeType = job.EmployeeType;
                 response.Experience = job.Experience;
                 response.Salary = job.Salary;
                 response.ID = job.ID;
+                var JobCompany = await unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.ID == job.CompanyID,c=>c.account );
+                response.Company.name = JobCompany.account.FullName;
+                response.Company.logo = JobCompany.account.ImagePath;
                 if (job.JobRequirments != null)
                 {
                     response.requiremnts = new List<Requiremnts>();
@@ -322,15 +328,18 @@ namespace Jop.Services.Implemntations
             try
             {
                 var all = unitOfWork._context.Jobs.Include(j => j.JobRequirments)
-                    .ThenInclude(r => r.Skill).
+                    .ThenInclude(r => r.Skill).Include(j => j.JobRequirments).ThenInclude(r => r.Level).
                     Where(j => j.status == JobStatus.published).ToList();
-                List<JobListResponse> jobs = new List<JobListResponse>();
+                List<JobRecomendations> jobs = new List<JobRecomendations>();
+                var user = await _authenticationService.GetCurrentUserAsync();
                 if (all != null)
                     foreach (var jop in all)
                     {
                         if (jop.status == JobStatus.published)
-                        {
-                            var added = new JobListResponse
+                        { 
+
+
+                            var added = new JobRecomendations
                             {
                                 Description = jop.Description,
                                 EmployeeType = jop.EmployeeType,
@@ -351,11 +360,23 @@ namespace Jop.Services.Implemntations
                                     added.Skills.Add(new Skills { name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
+                            var company = unitOfWork._context.Companies.Include(c=>c.account).FirstOrDefault(c=>c.ID==jop.CompanyID);
+                            added.company.name = company.account.FullName;
+                            added.company.logo = company.account.ImagePath;
+                            var application =  unitOfWork._context.Applications.
+                                Where(a =>
+                            a.UserID == user.Id
+                                  &&
+                            a.JopID == jop.ID
+                            ).FirstOrDefault();
+                            if (application != null)
+                                added.IsApplied = true;
+                            else added.IsApplied = false; 
                             jobs.Add(added);
                         }
                     }
                 FilterRecomendationsJobs(ref jobs, search, experience, location, locationType, JobType, page, perpage, minSalary, maxSalary);
-                return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (jobs.Count() / perpage) + 1, pageSize = perpage, totalRecords = jobs.Count(), jobs = Paginate(jobs, page, perpage) });
+                return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (jobs.Count() / perpage) + 1, pageSize = perpage, totalRecords = jobs.Count(), data = Paginate(jobs, page, perpage) });
             }
             catch (Exception ex)
             {
@@ -386,7 +407,7 @@ namespace Jop.Services.Implemntations
         {
             return source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }
-        private void FilterRecomendationsJobs(ref List<JobListResponse> jobs ,string? search = null, string? experience = null, string? location = null, List<LocationType>? locationType = null, List<EmployeeType>? JobType = null, int page = 1, int perpage = 10, int? minSalary = null, int? maxSalary = null )
+        private void FilterRecomendationsJobs(ref List<JobRecomendations> jobs ,string? search = null, string? experience = null, string? location = null, List<LocationType>? locationType = null, List<EmployeeType>? JobType = null, int page = 1, int perpage = 10, int? minSalary = null, int? maxSalary = null )
         {
                    if (search != null && !search.IsNullOrEmpty())
             {

@@ -8,9 +8,11 @@ namespace HirBot.Data.Enums
 {
     public enum ApplicationStatus
     { 
+        
         waiting=1 , 
         approved=2  , 
-        rejected=3
+        rejected=3,
+        pending=4 ,
     }
 
 }

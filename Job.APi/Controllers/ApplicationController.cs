@@ -1,4 +1,5 @@
-﻿using HirBot.Data.Entities;
+﻿using Azure.Storage.Blobs.Models;
+using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using Jop.Services.Implemntations;
 using Jop.Services.Interfaces;
@@ -26,9 +27,9 @@ namespace Job.Api.Controllers
         }
         [Authorize]
         [HttpGet("{jobId}")] 
-        public async Task<IActionResult>GetALLApplications(int jobId, string? search = null, ApplicationStatus? status = null, string? sort = null, int page = 1, int perpage = 10)
+        public async Task<IActionResult>GetALLApplications(int jobId, string? search = null, ApplicationStatus? status = null, string sort = "score", string ?sortDirection=null, int page = 1, int perpage = 10)
         {
-            var response = await _applicationService.GetALLAplications(jobId, search, status, sort, page, perpage);
+            var response = await _applicationService.GetALLAplications(jobId, search, status, sort,sortDirection, page, perpage);
             if (response.StatusCode == 200)
                 return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
@@ -40,6 +41,33 @@ namespace Job.Api.Controllers
             var response = await _applicationService.ApplicateOnJob(jobId);
             if (response.StatusCode == 200)
                 return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpPut("approve")]
+        public async Task<IActionResult> approved(List<int> ids )
+        {
+            var response = await _applicationService.ApproveApplocations(ids);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpPut("rejected")]
+        public async Task<IActionResult> rejected(List<int> ids)
+        {
+            var response = await _applicationService.RejectApplication(ids);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> Delete(List<int> ids)
+        {
+            var response = await _applicationService.DeleteApplications(ids);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
     }

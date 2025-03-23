@@ -24,7 +24,7 @@ namespace Jop.Services.Responses
 
         public DateTime created_at { get; set; }
 
-        public List<Skills>  ? Skills { get; set; }
+        public List<Skills>  ? Skills { get; set; } 
     }
     public class Skills
     {

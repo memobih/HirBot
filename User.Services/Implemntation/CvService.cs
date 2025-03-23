@@ -28,20 +28,20 @@ namespace User.Services.Implemntation
 
         }
 
-        public async Task<bool> UpdateCv(ImageDto cv)
+        public async Task<bool> UpdateCv(FileDto cv)
         {
 
             var user = await _authenticationService.GetCurrentUserAsync();
             if (user == null ) return false;
             user = _unitOfWork._context.users.Include(U => U.Portfolio).First(u => u.Id == user.Id);
             if (user.Portfolio == null) user.Portfolio = new HirBot.Data.Entities.Portfolio();
-            if (cv.image !=null && cv.image.Length > 0)
+            if (cv.File !=null && cv.File.Length > 0)
             {
-                string extension = Path.GetExtension(cv.image.FileName);
+                string extension = Path.GetExtension(cv.File.FileName);
                 if(extension!=".pdf") return false;
                 try
                 {
-                    using var stream = cv.image.OpenReadStream();
+                    using var stream = cv.File.OpenReadStream();
 
                     user.Portfolio.CVUrl = await FileHelper.UpdateFileAsync(stream, user.Portfolio.CVUrl, user.Id + "CV" + extension, "cvs");
                     _unitOfWork._context.users.Update(user);

@@ -28,10 +28,11 @@ namespace HirBot.Common.Helpers
         }
 
         // 📌 Update an existing file in Azure Blob Storage
-        public static async Task<string> UpdateFileAsync(Stream fileStream,string fileUrl ,  string fileName , string ContainerName)
+        public static async Task<string> UpdateFileAsync(Stream fileStream,string ?fileUrl ,  string fileName , string ContainerName)
         {
             try
             {
+                if(fileUrl!=null)
                 await DeleteFileAsync(fileUrl , ContainerName); // Delete the old file
                 return await UploadFileAsync(fileStream, fileName, ContainerName); // Overwrites the existing file
             }

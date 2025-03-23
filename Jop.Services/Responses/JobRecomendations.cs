@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Jop.Services.Responses
 {
-    public  class JobDetailsResponse
-              {
-      
+    public class JobRecomendations
+    {
+
             public int ID { get; set; }
             public string Title { get; set; }
             public string? Description { get; set; }
@@ -21,16 +21,19 @@ namespace Jop.Services.Responses
             public JobStatus status { get; set; }
             public string Experience { get; set; }
 
-           public List<Requiremnts> ? requiremnts { get; set; }
-        public Company Company { get; set; } = new Company();
+            public int ApplicantNumber { get; set; }
 
-            
-        }
-        public class Requiremnts
+            public DateTime created_at { get; set; }
+
+            public List<Skills>? Skills { get; set; }
+        public bool IsApplied { get; set; }
+
+        public Company company { get; set; }=new Company();
+    }
+        public class Company
         {
-            public string Skill { get; set; }
-            public string level { get; set; }
+            public string? logo { get; set; }
+            public string name { get; set; }
         }
-        
-    
-}
+    }
+

@@ -22,7 +22,7 @@ namespace User.Api.Controllers.Portfolio
         }
         [HttpPost("UpdateCV")]
         [Authorize]
-        public async  Task<IActionResult> UpdateCV(ImageDto CV)
+        public async  Task<IActionResult> UpdateCV(FileDto CV)
         {
             var result=await _cvService.UpdateCv(CV);
             if (result) return Ok(new { status = true, massage = "the cv updated sucsseful" });
