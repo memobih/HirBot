@@ -23,7 +23,8 @@ namespace HirBot.Data.Entities
         public string  ?  location { get; set; }
         public string? Start_Date { get; set; }
         public string? End_Date { get; set; } 
-        public string  ? companyName { get; set; }
+        public string  ? companyName { get; set; } 
+
         public PrivacyEnum privacy { get; set; }
         [ForeignKey("Company")]
         public string ? CompanyID { get; set; } 
@@ -37,7 +38,8 @@ namespace HirBot.Data.Entities
        
         public virtual Company ?  Company { get; set; }
         [InverseProperty("CurentJop")]
-        public virtual  ApplicationUser ? UserJop { get; set; }
+        public virtual  ApplicationUser ? UserJop { get; set; } 
+
     } 
 
 }

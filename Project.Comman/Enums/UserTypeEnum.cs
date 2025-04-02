@@ -8,9 +8,8 @@ namespace HirBot.Comman.Enums
 {
     public enum UserType
     {
-
-        Admin = 2 ,
         User = 1,
+        Admin = 2 ,
         Company = 3,
         SuperAdmin = 4
 

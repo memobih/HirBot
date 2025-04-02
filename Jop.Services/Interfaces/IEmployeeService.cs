@@ -13,5 +13,13 @@ namespace Jop.Services.Interfaces
     {
         public Task<APIOperationResponse<object>> AddEmployee(AddEmployeeDto employee);
         public Task<APIOperationResponse<object>> GetAllEmployee(string ?search=null , EmployeeType  ? jobType=null ,LocationType ?workType  =null , int  ?rate=null , int page=1 , int perPage=10   );
+        public Task<APIOperationResponse<object>> EditEmployee(int id , AddEmployeeDto employee);
+
+        public Task<APIOperationResponse<object>> DeleteEmployees(List<int> ids);
+
+        public Task<APIOperationResponse<object>> showEmployee(int id); 
+
+
+        
     }
 }

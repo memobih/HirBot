@@ -44,5 +44,38 @@ namespace Job.Api.Controllers
             }
             return StatusCode(response.StatusCode, new { status = false, response.Message, errors = response.Errors });
         }
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> show(int id )
+        {
+            var response = await _employeeService.showEmployee(id);
+            if (response.StatusCode == 200)
+            {
+                return Ok(new { status = true, response.Message, response.Data });
+            }
+            return StatusCode(response.StatusCode, new { status = false, response.Message, errors = response.Errors });
+        }
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> delete(List<int> ids)
+        {
+            var response = await _employeeService.DeleteEmployees(ids);
+            if (response.StatusCode == 200)
+            {
+                return Ok(new { status = true, response.Message });
+            }
+            return StatusCode(response.StatusCode, new { status = false, response.Message, errors = response.Errors });
+        }
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> edit(int id , AddEmployeeDto employee)
+        {
+            var response = await _employeeService.EditEmployee(id , employee);
+            if (response.StatusCode == 200)
+            {
+                return Ok(new { status = true, response.Message });
+            }
+            return StatusCode(response.StatusCode, new { status = false, response.Message, errors = response.Errors });
+        }
     }
 }
