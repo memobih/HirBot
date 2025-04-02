@@ -31,7 +31,7 @@ namespace Jop.Services.Implemntations
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var job = await unitOfWork.Jobs.GetLastOrDefaultAsync(j => j.ID == jobId);
                 if (job == null || job.status != JobStatus.published)
-                  return  APIOperationResponse<object>.BadRequest("You cannot apply on this job");
+                    return APIOperationResponse<object>.BadRequest("You cannot apply on this job");
                 var application = new Application
                 {
                     UserID = user.Id,
@@ -39,52 +39,55 @@ namespace Jop.Services.Implemntations
                     status = ApplicationStatus.pending
 
                 };
-               await unitOfWork.Applications.AddAsync(application);
+                await unitOfWork.Applications.AddAsync(application);
                 await unitOfWork.SaveAsync();
-              return  APIOperationResponse<object>.Success("You are Applied Succefuly");
+                return APIOperationResponse<object>.Success("You are Applied Succefuly");
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return APIOperationResponse<object>.ServerError("there  are error accured ");
             }
         }
-      
-        public async  Task<APIOperationResponse<object>> GetALLAplications(int jobid , string? search = null, ApplicationStatus? status = null ,string columnsort="score",  string ?sort=null , int page=1 , int perpage=10)
+
+        public async Task<APIOperationResponse<object>> GetALLAplications(int jobid, string? search = null, ApplicationStatus? status = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
-                if (company == null )
+                if (company == null)
                     APIOperationResponse<object>.UnOthrized("this user is not a company");
                 var job = await unitOfWork._context.Jobs.
                     Include(j => j.Applications)
-                    .ThenInclude(a => a.User).ThenInclude(u=>u.Portfolio).FirstOrDefaultAsync(j=>j.ID==jobid);
-                 if (job == null || company.ID!=job.CompanyID)
-                 return   APIOperationResponse<object>.NotFound("this job is not found");
-                var applications = new List< Applications>();
+                    .ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefaultAsync(j => j.ID == jobid);
+                if (job == null || company.ID != job.CompanyID)
+                    return APIOperationResponse<object>.NotFound("this job is not found");
+                var applications = new List<Applications>();
                 if (job.Applications != null)
                 {
                     foreach (var application in job.Applications)
                     {
-                        if(application.User.Portfolio==null) application.User.Portfolio=new Portfolio();
-                        applications.Add(
-                            new Applications
-                            { 
-                                id= application.ID,
-                                name = application.User.FullName,
-                                email = application.User.Email,
-                                Score = 80,
-                                status = application.status,
-                                created_at = application.CreationDate,
-                                CVLink = application.User.Portfolio.CVUrl,
-                                imageLink=application.User.ImagePath,
-                                userName=application.User.UserName,
-                            }
+                        if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
+                        if (application.status != ApplicationStatus.approved)
+                            applications.Add(
+                                new Applications
+                                {
+                                    id = application.ID,
+                                    name = application.User.FullName,
+                                    email = application.User.Email,
+                                    Score = 80,
+                                    status = application.status,
+                                    created_at = application.CreationDate,
+                                    CVLink = application.User.Portfolio.CVUrl,
+                                    imageLink = application.User.ImagePath,
+                                    userName = application.User.UserName,
+                                }
 
-                          );
+                              );
                     }
+                    if (applications.Count == 0)
+                        return APIOperationResponse<object>.NotFound("there are no applications");
                 }
                 Filter(ref applications, jobid, search, status, sort, page, perpage);
                 return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (applications.Count() / perpage) + 1, pageSize = perpage, totalRecords = applications.Count(), data = Paginate(applications, page, perpage) });
@@ -98,11 +101,11 @@ namespace Jop.Services.Implemntations
         {
             try
             {
-                 return await changeStatus(ids, ApplicationStatus.approved);
+                return await changeStatus(ids, ApplicationStatus.approved);
             }
             catch (Exception ex)
             {
-                return APIOperationResponse<object>.ServerError("there are error accured"); 
+                return APIOperationResponse<object>.ServerError("there are error accured");
             }
         }
 
@@ -128,7 +131,87 @@ namespace Jop.Services.Implemntations
                     return APIOperationResponse<object>.UnOthrized("this email is not a company");
                 var applications = await unitOfWork._context.Applications.Include(a => a.Job).Where(a => ids.Contains(a.ID) && a.Job.CompanyID == company.ID).ToListAsync();
 
-       unitOfWork._context.Applications.RemoveRange(applications);
+                unitOfWork._context.Applications.RemoveRange(applications);
+                await unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("the applications is updated succeful", "the applications is updated succeful  ");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+
+            }
+        }
+        
+        public Task<APIOperationResponse<object>> GetAllApprovedApplications(int JobId,string? search = null, ApplicationStatus? status = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
+        {
+            try
+            {
+                var user = _authenticationService.GetCurrentUserAsync().Result;
+                var company = unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id).Result;
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return Task.FromResult(APIOperationResponse<object>.UnOthrized("this email is not a company"));
+                var job = unitOfWork._context.Jobs.Include(j => j.Applications).ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefault(j => j.ID == JobId);
+                if (job == null || company.ID != job.CompanyID)
+                    return Task.FromResult(APIOperationResponse<object>.NotFound("this job is not found"));
+                var applications = new List<Applications>();
+                if (job.Applications != null)
+                {
+                    foreach (var application in job.Applications)
+                    {
+                        if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
+                        if (application.status == ApplicationStatus.approved)
+                            applications.Add(
+                                new Applications
+                                {
+                                    id = application.ID,
+                                    name = application.User.FullName,
+                                    email = application.User.Email,
+                                    Score = 80,
+                                    status = application.status,
+                                    created_at = application.CreationDate,
+                                    CVLink = application.User.Portfolio.CVUrl,
+                                    imageLink = application.User.ImagePath,
+                                    userName = application.User.UserName,
+                                }
+
+                              );
+                    }
+                    if (applications.Count == 0)
+                        return Task.FromResult(APIOperationResponse<object>.NotFound("there are no applications"));
+                }
+                Filter(ref applications, JobId, search, status, sort, page, perpage);
+                return Task.FromResult(APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (applications.Count() / perpage) + 1, pageSize = perpage, totalRecords = applications.Count(), data = Paginate(applications, page, perpage) }));
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(APIOperationResponse<object>.ServerError("there are error accured"));
+            }
+        }
+      
+      
+        #region Helber  
+        private List<T> Paginate<T>(List<T> source, int page, int pageSize)
+        {
+            return source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
+        private async Task<APIOperationResponse<object>> changeStatus(List<int> ids, ApplicationStatus status)
+        {
+            try
+            {
+
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.UnOthrized("this email is not a company");
+                var applications = await unitOfWork._context.Applications.Include(a => a.Job).Where(a => ids.Contains(a.ID)).ToListAsync();
+                foreach (var application in applications)
+                {
+                    if (application.Job.CompanyID == company.ID)
+                    {
+                        application.status = status;
+                    }
+                }
+                unitOfWork._context.Applications.UpdateRange(applications);
                 await unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success("the applications is updated succeful", "the applications is updated succeful  ");
             }
@@ -139,40 +222,7 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        #region Helber  
-        private List<T> Paginate<T>(List<T> source, int page, int pageSize)
-        {
-            return source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-        }
-        private async Task<APIOperationResponse<object>>  changeStatus( List<int> ids , ApplicationStatus status)
-        {
-            try
-            {
-
-                var user = await _authenticationService.GetCurrentUserAsync();
-                var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
-                if (company == null || company.status != CompanyStatus.accepted)
-                    return APIOperationResponse<object>.UnOthrized("this email is not a company");
-                var applications = await unitOfWork._context.Applications.Include(a=>a.Job).Where(a=>ids.Contains(a.ID)).ToListAsync();
-                foreach (var application in applications)
-                {
-                    if (application.Job.CompanyID == company.ID)
-                    {
-                        application.status = status;
-                    }
-                }
-                unitOfWork._context.Applications.UpdateRange(applications);
-             await   unitOfWork.SaveAsync();
-                return APIOperationResponse<object>.Success("the applications is updated succeful", "the applications is updated succeful  ");
-            }
-            catch (Exception ex)
-            {
-                return APIOperationResponse<object>.ServerError("there are error accured");
-
-            }
-        }
-     
-        private void Filter(ref List<Applications> applications ,  int jobid, string? search = null, ApplicationStatus? status = null, string? sort = null, int page = 1, int perpage = 10)
+        private void Filter(ref List<Applications> applications, int jobid, string? search = null, ApplicationStatus? status = null, string? sort = null, int page = 1, int perpage = 10)
         {
             if (search != null)
                 applications = applications.Where(a =>
@@ -180,7 +230,7 @@ namespace Jop.Services.Implemntations
                 a.name.StartsWith(search)
 
                 ).ToList();
-            if(status!=null)
+            if (status != null)
             {
                 applications = applications.Where(a => a.status == status).ToList();
             }
@@ -194,7 +244,9 @@ namespace Jop.Services.Implemntations
             }
         }
 
-     
+        
+
+
 
 
         #endregion
