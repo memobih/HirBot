@@ -70,5 +70,14 @@ namespace Job.Api.Controllers
                 return Ok(new { status = true, response.Message });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
+        [Authorize]
+        [HttpGet("approved/{jobId}")]
+        public async Task<IActionResult> GetAllApprovedApplications(int jobId, string? search = null, ApplicationStatus? status = null, string sort = "score", string? sortDirection = null, int page = 1, int perpage = 10)
+        {
+            var response = await _applicationService.GetAllApprovedApplications(jobId, search, status, sort, sortDirection, page, perpage);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
     }
 }
