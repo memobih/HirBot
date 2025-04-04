@@ -129,6 +129,15 @@ namespace skill.api.Controllers
                 return Ok(new {status=true , result.Data , result.Message});
             return StatusCode(result.StatusCode , new { status = false, result.Message });
         }
+        [Authorize]
+        [HttpPost("{id}/addSkill")]
+        public async Task<IActionResult> AddSkill(int id )
+        {
+            var result = await _skillService.AddSkill(id);
+            if (result.StatusCode == 200)
+                return Ok(new { status = true, result.Message });
+            return StatusCode(result.StatusCode, new { status = false, result.Message });
+        }
 
         #endregion
 

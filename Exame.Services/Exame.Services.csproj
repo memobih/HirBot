@@ -8,13 +8,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HirBot.Data\HirBot.Data.csproj" />
-    <ProjectReference Include="..\HirBot.Infrastructure\Project.Repository\HireBot.Repository.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
+    <ProjectReference Include="..\skill.services\Skill.services.csproj" />
     <ProjectReference Include="..\User.Services\User.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Response\" />
   </ItemGroup>
 
 </Project>

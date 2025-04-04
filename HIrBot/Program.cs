@@ -21,6 +21,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using skill.services;
 using Jop.Services;
+using Exame.Services;
 using User.Services.Implemntation;
 // Set absolute paths for Linux compatibility
 var isWindows = System.Runtime.InteropServices.RuntimeInformation
@@ -95,7 +96,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region Dependency Injection
-builder.Services.AddInfrastructureServices().AddUsersServices().AddSkillServices().AddJopServices();
+builder.Services.AddInfrastructureServices().AddUsersServices().AddSkillServices().AddJopServices().AddExameServices();
 #endregion
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

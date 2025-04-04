@@ -24,8 +24,6 @@ namespace HirBot.Data.Entities
         public int Rate { get; set; }
         public virtual Skill Skill { get; set; }
         public virtual ApplicationUser User { get; set; } 
-
-         
         public virtual ICollection<Exam> Exams { get; set; }
     }
 }

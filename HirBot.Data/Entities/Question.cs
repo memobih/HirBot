@@ -18,13 +18,13 @@ namespace HirBot.Data.Entities
         [ForeignKey("Exam")]
        public int ExamID { get; set; } 
         public string Content { get; set; }
-        public int points { get; set; }
+        public int Points { get; set; }
 
         public QuestionType QuestionType { get; set; }
 
         public virtual Exam Exam { get; set; } 
-        public ICollection<Option> ? Options { get; set; }
-        public ICollection<UserAnwer> ? UserAnwers { get; set; }
+        public List<Option> ? Options { get; set; }
+        public List<UserAnwer> ? UserAnwers { get; set; }
     }
 
 }

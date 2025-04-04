@@ -7,14 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HirBot.Data\HirBot.Data.csproj" />
-    <ProjectReference Include="..\HirBot.Infrastructure\Project.Repository\HireBot.Repository.csproj" />
+    <ProjectReference Include="..\Exame.Services\Exame.Services.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
-    <ProjectReference Include="..\User.Services\User.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Response\" />
   </ItemGroup>
 
 </Project>

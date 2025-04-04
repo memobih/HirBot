@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Project.Repository.Repository;
 using skill.services.DataTransferObjects;
 using skill.services.Interfaces;
-
+using Project.Services.Interfaces;
 namespace skill.services.Implementation
 {
     public class SkillService : ISkillService
@@ -17,14 +17,16 @@ namespace skill.services.Implementation
         private readonly UnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IImageHandler _imageHandler;
-        public SkillService(UserManager<ApplicationUser> userManager, UnitOfWork unitOfWork, IHttpContextAccessor contextAccessor, SignInManager<ApplicationUser> signInManager, IImageHandler imageHandler)
+        private readonly IImageHandler _imageHandler; 
+        private readonly IAuthenticationService _authenticationService;
+        public SkillService(UserManager<ApplicationUser> userManager, UnitOfWork unitOfWork, IHttpContextAccessor contextAccessor, SignInManager<ApplicationUser> signInManager, IImageHandler imageHandler , IAuthenticationService authenticationService)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _contextAccessor = contextAccessor;
             _signInManager = signInManager;
             _imageHandler = imageHandler;
+            _authenticationService = authenticationService;
         }
         public Task<APIOperationResponse<AddSkillDto>> AddSkill(AddSkillDto skill)
 
@@ -249,6 +251,29 @@ namespace skill.services.Implementation
             {
                 var skills = await _unitOfWork.Skills.GetAllAsync();
                 return APIOperationResponse<Object>.Success(skills , "ALL skills ");
+            }
+            catch (Exception e)
+            {
+                return APIOperationResponse<Object>.ServerError("there are error accured");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> AddSkill(int id)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var skill = _unitOfWork._context.Skills.Where(s=>s.ID==id).FirstOrDefault();
+                if (skill == null)
+                    return APIOperationResponse<Object>.NotFound("this skill is not found");
+                var userKill =  _unitOfWork._context.UserSkills.Where(s => s.SkillID == id && user.Id == s.UserID).FirstOrDefault();
+                if (userKill == null) {
+                    userKill = new UserSkill { SkillID = skill.ID, UserID = user.Id, Rate = 0 };
+                       _unitOfWork._context.UserSkills.Add(userKill);
+                    await _unitOfWork.SaveAsync();
+                    return APIOperationResponse<Object>.Success("skill added susseful ", "skill added susseful ");
+                }
+                return APIOperationResponse<Object>.Conflict("this skill is already added"); 
             }
             catch (Exception e)
             {

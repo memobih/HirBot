@@ -20,6 +20,7 @@
 </ItemGroup>
 	
 	<ItemGroup>
+	  <ProjectReference Include="..\Exame.Api\Exame.Api.csproj" />
 	  <ProjectReference Include="..\HirBot.Infrastructure\Project.EntityFramework\HirBot.EntityFramework.csproj" />
 	  <ProjectReference Include="..\Job.APi\Job.Api.csproj" />
 	  <ProjectReference Include="..\Skill.Api\Skill.Api.csproj" />

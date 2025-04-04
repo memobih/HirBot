@@ -14,7 +14,7 @@ namespace HirBot.Data.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
-        public string content { get; set; } 
+        public string Content { get; set; } 
 
         public bool IsCorrect { get; set; }
 
