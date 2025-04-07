@@ -21,11 +21,11 @@ namespace HirBot.Data.Entities
         public int ApplicationID { get; set; } 
         public virtual Exam ?Exam { get; set; } 
         public virtual Application Application { get; set; }
-        public  DateTime Date {  get; set; }
-        public string Time {  get; set; } 
+        public  DateTime Date {  get; set; } 
+        public string Time { get; set; }
         public string Location { get; set; }
-        public string ? Notes { get; set; }
-        
-
+        public string InterviewType { get; set; } ="Online"; 
+        public string? InterviewerName { get; set; }
+        public List<string>Notes { get; set; } = new List<string>();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
+using Jop.Services.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,6 @@ namespace Jop.Services.Interfaces
         public Task<APIOperationResponse<object>> RejectApplication(List<int> ids);
         public Task<APIOperationResponse<object>> DeleteApplications(List<int> ids);
         public Task<APIOperationResponse<object>> GetAllApprovedApplications(int jobId,string? search = null, ApplicationStatus? status = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10);
-
+        public Task<APIOperationResponse<AppuserDto>>GetApplicantDetails(int ApplicationId);
     }
 }
