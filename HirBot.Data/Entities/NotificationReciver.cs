@@ -25,6 +25,7 @@ namespace HirBot.Data.Entities
         public DateTime  ? read_at { get; set; }
         public virtual ApplicationUser User { get; set; }
         public virtual Notification Notification { get; set; } 
+        
 
 
     }

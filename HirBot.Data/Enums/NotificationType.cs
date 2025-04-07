@@ -8,6 +8,7 @@ namespace HirBot.Data.Enums
 {
     public  enum NotificationType
     { 
-       post =1 
+       post =1 ,
+       job =2 ,
     } 
 }

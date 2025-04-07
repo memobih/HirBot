@@ -1,6 +1,7 @@
 ﻿using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
+using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
 using Jop.Services.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -57,7 +58,7 @@ namespace Jop.Services.Implemntations
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null)
-                    APIOperationResponse<object>.UnOthrized("this user is not a company");
+                   return APIOperationResponse<object>.UnOthrized("this user is not a company");
                 var job = await unitOfWork._context.Jobs.
                     Include(j => j.Applications)
                     .ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefaultAsync(j => j.ID == jobid);
@@ -187,7 +188,34 @@ namespace Jop.Services.Implemntations
                 return Task.FromResult(APIOperationResponse<object>.ServerError("there are error accured"));
             }
         }
-      
+        public async Task<APIOperationResponse<AppuserDto>> GetApplicantDetails(int ApplicationId)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<AppuserDto>.UnOthrized("this email is not a company");
+                var application = await unitOfWork._context.Applications.Include(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefaultAsync(a => a.ID == ApplicationId);
+                if (application == null || application.status != ApplicationStatus.approved)
+                    return APIOperationResponse<AppuserDto>.NotFound("this application is not found or not approved yet");
+                var applicant = new AppuserDto
+                {
+                    Id = application.User.Id,
+                    Name = application.User.FullName,
+                    Email = application.User.Email,
+                    jobTitle = application.User.Portfolio.Title,
+                    image = application.User.ImagePath
+                };
+                return APIOperationResponse<AppuserDto>.Success(applicant, "the applicant details are fetched succefuly");
+
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<AppuserDto>.ServerError("there are error accured");
+
+            }
+        }
       
         #region Helber  
         private List<T> Paginate<T>(List<T> source, int page, int pageSize)
