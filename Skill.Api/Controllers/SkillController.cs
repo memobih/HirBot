@@ -1,6 +1,7 @@
 ﻿
 using HirBot.Comman.Idenitity;
 using HirBot.ResponseHandler.Models;
+using Mailing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -54,21 +55,23 @@ namespace skill.api.Controllers
             var result = await _skillService.AddSkill(skill);
             if (!result.Succeeded)
             {
-                return BadRequest(result);
+            return BadRequest( new { status = false, Massage = result.Message });
+
             }
-            return Ok(result);
+           return Ok( new { status = true, Massage = result.Message });
+
         }
         [HttpGet("GetAllSkills")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllSkills()
+        public async Task<IActionResult> GetAllSkills(string? searh = null)
         {
             var result = await _skillService.GetAllSkills();
             if (!result.Succeeded)
             {
-                return BadRequest(result);
+                return BadRequest(new { status = false, Massage = result.Message });
+
             }
-            
-            return Ok(result);
+            return Ok(new { status = true, data = result.Data });
         }
         [HttpDelete("DeleteSkill/{id}")]
         [Authorize(Roles = "Admin")]

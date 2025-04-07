@@ -14,7 +14,11 @@ namespace HirBot.EntityFramework.DataBaseContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-           // Specify the foreign key
+            // Specify the foreign key
+            modelBuilder.Entity<IdentityRole>().HasData(
+                  new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+                  new IdentityRole { Id = "2", Name = "User", NormalizedName = "USER" }
+              ); 
             modelBuilder.Entity<ApplicationUser>().ToTable("users");
             modelBuilder.Entity<IdentityRole>().ToTable("roles");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("user_roles");

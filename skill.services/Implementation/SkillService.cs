@@ -9,6 +9,10 @@ using Project.Repository.Repository;
 using skill.services.DataTransferObjects;
 using skill.services.Interfaces;
 using Project.Services.Interfaces;
+using HirBot.Common.Helpers;
+using System.IO;
+using Google.Protobuf;
+using Org.BouncyCastle.Asn1.X509;
 namespace skill.services.Implementation
 {
     public class SkillService : ISkillService
@@ -19,6 +23,8 @@ namespace skill.services.Implementation
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IImageHandler _imageHandler; 
         private readonly IAuthenticationService _authenticationService;
+        private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png" };
+
         public SkillService(UserManager<ApplicationUser> userManager, UnitOfWork unitOfWork, IHttpContextAccessor contextAccessor, SignInManager<ApplicationUser> signInManager, IImageHandler imageHandler , IAuthenticationService authenticationService)
         {
             _userManager = userManager;
@@ -57,25 +63,39 @@ namespace skill.services.Implementation
                     Succeeded = false
                 });
             }
-            var image = _imageHandler.UploadImageAsync(skill.ImagePath,"Skills").Result;
-            if (!image.IsSuccess)
-            {
+            //var image = _imageHandler.UploadImageAsync(skill.ImagePath,"Skills").Result;
+            string extension = Path.GetExtension(skill.ImagePath.FileName).ToLower();
+            if (!AllowedExtensions.Contains(extension))
                 return Task.FromResult(new APIOperationResponse<AddSkillDto>
                 {
-                    Message = image.ErrorMessage,
+                    Message = "not accepted image format",
+                    Succeeded = false
+                });
+            try
+            {
+                using var stream = skill.ImagePath.OpenReadStream();
+                var image =  FileHelper.UploadFileAsync(stream, "skill" + user.Id + extension, "userprofileimages").Result;
+                string imagePath = image;
+                var skillModel = new HirBot.Data.Entities.Skill
+                {
+                    Name = skill.Name,
+                    Status = skill.Status,
+                    ImagePath = imagePath,
+                    // CreatedBy = user.FullName,
+                    CreationDate = DateTime.Now,
+                };
+                _unitOfWork._context.Skills.Add(skillModel);
+            }
+            catch (Exception ex)
+            {
+                
+                return Task.FromResult(new APIOperationResponse<AddSkillDto>
+                {
+                    Message = "there are error when image file",
                     Succeeded = false
                 });
             }
-            string imagePath = image.FilePath;
-            var skillModel = new HirBot.Data.Entities.Skill
-            {
-                Name = skill.Name,
-                Status = skill.Status,
-                ImagePath = imagePath,
-               // CreatedBy = user.FullName,
-                CreationDate = DateTime.Now,
-            };
-            _unitOfWork._context.Skills.Add(skillModel);
+         
             try
             {
                 _unitOfWork._context.SaveChanges();
@@ -102,9 +122,13 @@ namespace skill.services.Implementation
             return await _userManager.GetUserAsync(currentUser);
         }
    
-        public Task<APIOperationResponse<List<GettingAllSkillsDto>>> GetAllSkills()
+        public Task<APIOperationResponse<List<GettingAllSkillsDto>>> GetAllSkills(string ? searh=null)
         {
             var skills = _unitOfWork._context.Skills.ToList();
+            if(searh != null)
+            {
+                skills=skills.Where(S=>S.Name.StartsWith(searh)).ToList();
+            }
             if (skills.Count == 0)
             {
                 return Task.FromResult(new APIOperationResponse<List<GettingAllSkillsDto>>
@@ -202,6 +226,17 @@ namespace skill.services.Implementation
             }
             if (skill.ImagePath != null)
             {
+                string extension = Path.GetExtension(skill.ImagePath.FileName).ToLower();
+                if (!AllowedExtensions.Contains(extension))
+                    return Task.FromResult(new APIOperationResponse<UpdateSkillDto>
+                    {
+                        Message = "not accepted image format",
+                        Succeeded = false
+                    });
+                using var stream = skill.ImagePath.OpenReadStream();
+                var image = FileHelper.UploadFileAsync(stream, "skill" + extension, "userprofileimages").Result;
+                string imagePath = image;
+              
                 var result = _imageHandler.DeleteImage(skillModel.ImagePath).Result;
                 if (!result.Item1)
                 {
@@ -211,16 +246,7 @@ namespace skill.services.Implementation
                         Succeeded = false
                     });
                 }
-                var image = _imageHandler.UploadImageAsync(skill.ImagePath, "Skills").Result;
-                if (!image.IsSuccess)
-                {
-                    return Task.FromResult(new APIOperationResponse<UpdateSkillDto>
-                    {
-                        Message = image.ErrorMessage,
-                        Succeeded = false
-                    });
-                }
-                string imagePath = image.FilePath;
+               
                 skillModel.ImagePath = imagePath;
             }
             skillModel.Name = skill.Name;

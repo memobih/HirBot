@@ -152,7 +152,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Applications", (string)null);
+                    b.ToTable("Applications");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Company", b =>
@@ -219,7 +219,7 @@ namespace HirBot.EntityFramework.Migrations
                     b.HasIndex("UserID")
                         .IsUnique();
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Education", b =>
@@ -277,7 +277,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Educations", (string)null);
+                    b.ToTable("Educations");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Exam", b =>
@@ -317,7 +317,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("UserSkillID");
 
-                    b.ToTable("Exams", (string)null);
+                    b.ToTable("Exams");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Experience", b =>
@@ -380,7 +380,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Experiences", (string)null);
+                    b.ToTable("Experiences");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Interview", b =>
@@ -426,7 +426,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("ExamID");
 
-                    b.ToTable("Interviews", (string)null);
+                    b.ToTable("Interviews");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Job", b =>
@@ -483,7 +483,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("CompanyID");
 
-                    b.ToTable("Jobs", (string)null);
+                    b.ToTable("Jobs");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.JobRequirment", b =>
@@ -523,7 +523,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("SkillID");
 
-                    b.ToTable("JobRequirements", (string)null);
+                    b.ToTable("JobRequirements");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Level", b =>
@@ -558,7 +558,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Levels", (string)null);
+                    b.ToTable("Levels");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Option", b =>
@@ -568,6 +568,10 @@ namespace HirBot.EntityFramework.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
@@ -587,15 +591,11 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int>("QuestionID")
                         .HasColumnType("int");
 
-                    b.Property<string>("content")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.HasKey("ID");
 
                     b.HasIndex("QuestionID");
 
-                    b.ToTable("Options", (string)null);
+                    b.ToTable("Options");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Portfolio", b =>
@@ -651,7 +651,7 @@ namespace HirBot.EntityFramework.Migrations
                     b.HasIndex("UserID")
                         .IsUnique();
 
-                    b.ToTable("Portfolios", (string)null);
+                    b.ToTable("Portfolios");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Question", b =>
@@ -681,17 +681,17 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("QuestionType")
+                    b.Property<int>("Points")
                         .HasColumnType("int");
 
-                    b.Property<int>("points")
+                    b.Property<int>("QuestionType")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("ExamID");
 
-                    b.ToTable("Questions", (string)null);
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Skill", b =>
@@ -728,7 +728,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Skills", (string)null);
+                    b.ToTable("Skills");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.UserAnwer", b =>
@@ -769,7 +769,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("QuestionID");
 
-                    b.ToTable("UserAnswers", (string)null);
+                    b.ToTable("UserAnswers");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.UserSkill", b =>
@@ -808,7 +808,7 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("UserSkills", (string)null);
+                    b.ToTable("UserSkills");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -835,6 +835,20 @@ namespace HirBot.EntityFramework.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -950,7 +964,7 @@ namespace HirBot.EntityFramework.Migrations
                         .HasForeignKey("HirBot.Comman.Idenitity.ApplicationUser", "CurentJopID")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsMany("HirBot.Comman.Idenitity.ApplicationUser.refreshTokens#HirBot.Comman.Idenitity.RefreshToken", "refreshTokens", b1 =>
+                    b.OwnsMany("HirBot.Comman.Idenitity.RefreshToken", "refreshTokens", b1 =>
                         {
                             b1.Property<string>("ApplicationUserId")
                                 .HasColumnType("varchar(255)");
@@ -972,7 +986,7 @@ namespace HirBot.EntityFramework.Migrations
 
                             b1.HasKey("ApplicationUserId", "Id");
 
-                            b1.ToTable("RefreshToken", (string)null);
+                            b1.ToTable("RefreshToken");
 
                             b1.WithOwner()
                                 .HasForeignKey("ApplicationUserId");
@@ -1070,7 +1084,7 @@ namespace HirBot.EntityFramework.Migrations
             modelBuilder.Entity("HirBot.Data.Entities.Job", b =>
                 {
                     b.HasOne("HirBot.Data.Entities.Company", "Company")
-                        .WithMany()
+                        .WithMany("jobs")
                         .HasForeignKey("CompanyID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1237,6 +1251,11 @@ namespace HirBot.EntityFramework.Migrations
             modelBuilder.Entity("HirBot.Data.Entities.Application", b =>
                 {
                     b.Navigation("Interviews");
+                });
+
+            modelBuilder.Entity("HirBot.Data.Entities.Company", b =>
+                {
+                    b.Navigation("jobs");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Exam", b =>
