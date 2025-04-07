@@ -16,6 +16,7 @@ namespace Jop.Services
             service.AddTransient<IJobService, JobServices>();
             service.AddTransient<IApplicationService, ApplicationService>();
             service.AddTransient<IEmployeeService, EmployeeService>();
+            service.AddTransient<IInterviewService, InterviewService>();
 
             return service; 
         }
