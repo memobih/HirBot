@@ -23,6 +23,7 @@ namespace User.Services.Implemntation
             service.AddScoped<ICVService, CvService>();
             service.AddScoped<IExperienceServices, ExperienceService>();
             service.AddScoped<IEducationService, EducationService>();
+            service.AddScoped<ICompanyService, CompanyService>();
             return service;
         }
     }

@@ -2,6 +2,7 @@
 using Exame.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.X509;
 using Project.ResponseHandler.Models;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace Exame.Api.ExamController
         }
         [Authorize]
         [HttpGet("{id}/getexame")]
-        public async Task<IActionResult> GetExame(int id)
+        public async Task<IActionResult> GetExame(int id , int level )
         {
             var response=await _exameServices.DoExame(id);
             if(response.StatusCode==200) 

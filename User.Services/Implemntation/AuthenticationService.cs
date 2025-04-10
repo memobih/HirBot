@@ -53,6 +53,7 @@ namespace User.Services.Implemntation
         }
         #endregion
         #region Authenticated
+
         public async Task<APIOperationResponse<AuthModel>> RegisterUser(UserRegisterDto userRegisterDto)
         {
 
@@ -119,7 +120,9 @@ namespace User.Services.Implemntation
                     respon.Role = user.role.ToString();
                     respon.id = user.Id;
                     user.IsVerified = true;
+                    user.refreshTokens?.Add(refreshtoken);
                     await _userManager.UpdateAsync(user);
+                    
                     return APIOperationResponse<AuthModel>.Success(respon, "user login successfully.");
                 }
                 return APIOperationResponse<AuthModel>.BadRequest(message: "Un valid otp" , new {otp="otp is not correct or expire"} );
@@ -150,38 +153,8 @@ namespace User.Services.Implemntation
                 newUser.UserName = companyRegisterDto.CompanyEmail.Split('@')[0]; ;
                 newUser.PhoneNumber = companyRegisterDto.ContactNumber;
                 newUser.role = UserType.Company;
-                
-
-                IdentityResult result = await _userManager.CreateAsync(newUser, companyRegisterDto.Password);
-                if (!result.Succeeded)
-                {
-                    var errors = result.Errors.Select(e => e.Description).ToList();
-                    return APIOperationResponse<AuthModel>.BadRequest(message: "Failed to register the  company. Please check the provided details.", errors);
-                }
-                string accessToken = await GenerateJwtTokenAsync(newUser);
-                RefreshToken refreshtoken = GenerateRefreshToken();
-                respon.Email = newUser.Email;
-                respon.RefreshToken = refreshtoken.token;
-                respon.Token = accessToken;
-                respon.Username = newUser.UserName;
-                respon.ExpiresOn = refreshtoken.expirationOn;
-                respon.Role = newUser.role.ToString();
-                respon.id = newUser.Id;
-                newUser.refreshTokens?.Add(refreshtoken);
-                await _userManager.UpdateAsync(newUser); 
                 var newCompany = new Company();
-                newCompany.Comments = companyRegisterDto.AdditionalInformation;
-                newCompany.status = CompanyStatus.process;
-                newCompany.CreatedBy = newUser.Id;
-                newCompany.ModifiedBy = newUser.Id;
-                newCompany.country= companyRegisterDto.country;
-                newCompany.street= companyRegisterDto.street;
-                newCompany.Governate = companyRegisterDto.Governate;
-                newCompany.websiteUrl = companyRegisterDto.websiteURL;
-                newCompany.SocialMeediaLink= companyRegisterDto.SocialMediaLink;
-                newCompany.CompanyType = companyRegisterDto.CompanyType;
-                newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
-                newCompany.UserID= newUser.Id;
+
                 if (companyRegisterDto.BusinessLicense != null && (companyRegisterDto.BusinessLicense.Length > 0) ) 
                 {
                     try
@@ -204,11 +177,46 @@ namespace User.Services.Implemntation
                     catch (Exception ex)
                     {
                         return APIOperationResponse<AuthModel>.BadRequest("can not uplode the file", new
-                        {
+                        { 
+                             
                             BusinessLicense = "can not uplode the file"
                         });
                     }
-                } 
+                }
+
+
+
+                string accessToken = await GenerateJwtTokenAsync(newUser);
+                RefreshToken refreshtoken = GenerateRefreshToken();
+                respon.Email = newUser.Email;
+                respon.RefreshToken = refreshtoken.token;
+                respon.Token = accessToken;
+                respon.Username = newUser.UserName;
+                respon.ExpiresOn = refreshtoken.expirationOn;
+                respon.Role = newUser.role.ToString();
+                respon.id = newUser.Id;
+
+                newUser.refreshTokens?.Add(refreshtoken);
+                await _userManager.UpdateAsync(newUser);
+                IdentityResult result = await _userManager.CreateAsync(newUser, companyRegisterDto.Password);
+
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description).ToList();
+                    return APIOperationResponse<AuthModel>.BadRequest(message: "Failed to register the  company. Please check the provided details.", errors);
+                }
+                newCompany.Comments = companyRegisterDto.AdditionalInformation;
+                newCompany.status = CompanyStatus.process;
+                newCompany.CreatedBy = newUser.Id;
+                newCompany.ModifiedBy = newUser.Id;
+                newCompany.country = companyRegisterDto.country;
+                newCompany.street = companyRegisterDto.street;
+                newCompany.Governate = companyRegisterDto.Governate;
+                newCompany.websiteUrl = companyRegisterDto.websiteURL;
+                newCompany.SocialMeediaLink = companyRegisterDto.SocialMediaLink;
+                newCompany.CompanyType = companyRegisterDto.CompanyType;
+                newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
+                newCompany.UserID = newUser.Id;
 
                 await _unitOfWork.Companies.AddAsync(newCompany);
                 //newUser.CompanyID = newCompany.ID; 
@@ -254,7 +262,12 @@ namespace User.Services.Implemntation
                 var user = await _userManager.FindByEmailAsync(request.Email);
                  if (user != null )
                 {
-
+                    if(user.role==UserType.Company)
+                    {
+                        var company = await _unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                        if (company.status != CompanyStatus.accepted)
+                            return APIOperationResponse<AuthModel>.UnOthrized("this is company is not accepted");
+                    }
                     if (user.IsVerified != true)
                         return APIOperationResponse<AuthModel>.UnOthrized("your email is not varified");
                     var isVaild = await _userManager.CheckPasswordAsync(user, request.Password);

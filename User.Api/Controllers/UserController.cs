@@ -49,7 +49,6 @@ namespace User.Api.Controllers
         [Route("CompanyRegister")]
         [HttpPost]
         public async Task<IActionResult> CompanyRegister(
-            [FromForm]
       CompanyRegisterDto addCompanyDto)
         {
  //helllooo 
@@ -107,9 +106,11 @@ namespace User.Api.Controllers
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
                 var response = await _authenticationService.ConfirmEmail(confirmEmailDto);
-                if (response.Succeeded)
-                    return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
-                
+            if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
+                {
+                    SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
+                    return Ok(new { status = response.Succeeded, response.Message, Data = new {token= response.Data.Token} });
+                }
                 return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
             
         }

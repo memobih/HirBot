@@ -35,15 +35,21 @@ namespace Exame.Services.Implemntation
             {
               var user=await _authenticationService.GetCurrentUserAsync(); 
                var userSkill = _unitOfWork._context.UserSkills.Include(s=>s.Skill).Where(s=>s.SkillID == skillId && user.Id==s.UserID).FirstOrDefault();
-                
+
                 if (userSkill == null)
-                    return APIOperationResponse<Object>.NotFound("this skill is not addded");
+                {
+                    userSkill = new UserSkill();
+                    var skill = await _unitOfWork.Skills.GetLastOrDefaultAsync(s => s.ID == skillId);
+                    userSkill.Skill = skill; 
+                    userSkill.SkillID= skillId;
+                    userSkill.UserID = user.Id;
+                }
                 //ID Name    Type Points  UserSkillID
 
                 Exam newExam = new
                     Exam {
-                    UserSkillID= userSkill.ID  , 
-                    Points=0 , 
+                    UserSkill= userSkill,
+                    Points =0 , 
                    Type=ExamType.Exame , 
                    Name ="exame for" +  userSkill.Skill.Name ,
 
