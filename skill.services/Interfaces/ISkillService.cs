@@ -13,6 +13,8 @@ namespace skill.services.Interfaces
         public Task<APIOperationResponse<UpdateSkillDto>> UpdateSkill(UpdateSkillDto skill);
 
         public Task<APIOperationResponse<object>> GetALLSkillForUsers();
-        public Task<APIOperationResponse<object>> AddSkill(int id);
+        public Task<APIOperationResponse<object>> AddSkill(int id); 
+
+        public Task<APIOperationResponse<object>> GetUserSkill();
     }
 }

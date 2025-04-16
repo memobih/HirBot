@@ -34,7 +34,7 @@ namespace User.Services.Implemntation
                 var user = await _authenticationService.GetCurrentUserAsync();
                 if (user.role != UserType.Admin)
                     return APIOperationResponse<object>.UnOthrized();
-                var company = await _unitOfWork.Companies.GetLastOrDefaultAsync(c => c.ID == id);
+                var company =  _unitOfWork._context.Companies.Where(c => c.ID == id).FirstOrDefault();
                 if (company != null)
                 {
                     if (status == CompanyStatus.accepted) user.IsVerified = true;
@@ -54,20 +54,18 @@ namespace User.Services.Implemntation
 
         }
 
-            public async Task<APIOperationResponse<object>> Delete(string id)
+            public async Task<APIOperationResponse<object>> Delete(List<string> ids)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
                 if (user.role != UserType.Admin)
                     return APIOperationResponse<object>.UnOthrized();
-                var company = await _unitOfWork.Companies.GetLastOrDefaultAsync(c => c.ID == id);
-                if (company != null)
-                {
-                    await _unitOfWork.Companies.DeleteAsync(company);
-                    await _unitOfWork.SaveAsync();
-                }
-                else return APIOperationResponse<object>.NotFound("the company is not found");
+                var companies =  _unitOfWork._context.Companies.Where(c=>ids.Contains(c.ID));
+                    
+       _unitOfWork._context.Companies.RemoveRange(companies);
+                  await _unitOfWork.SaveAsync();
+                
                 return APIOperationResponse<object>.Success("the company is deleted", "the company is deleted");
             }
             catch (Exception ex)
@@ -130,13 +128,14 @@ namespace User.Services.Implemntation
                 if (company != null)
                 {
                     var response = new CompanyDetails(); 
-                    response.name=company.account.FullName;
+                    response.name=company.account.FullName; 
                     response.phoneNumber = company.account.PhoneNumber;
                     response.country = company.country; 
                     response.Governate=company.Governate;
                     response.street = company.street;
                     response.email = company.account.Email; 
                     response.logo=company.account.ImagePath;
+                    response.TaxNumber = company.TaxIndtefierNumber;
                     response.id = company.ID;
                     response.status = company.status;
                     response.legalInformation.BuisnessLicense=company.BusinessLicense;

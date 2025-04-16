@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250407034920_seeding")]
-    partial class seeding
+    [Migration("20250412114026_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -406,6 +406,13 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int?>("ExamID")
                         .HasColumnType("int");
 
+                    b.Property<string>("InterviewType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("InterviewerName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -417,6 +424,7 @@ namespace HirBot.EntityFramework.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Notes")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Time")

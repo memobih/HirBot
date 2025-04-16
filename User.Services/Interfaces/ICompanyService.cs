@@ -14,7 +14,7 @@ namespace User.Services.Interfaces
         public Task<APIOperationResponse<object>> ChangeStatus(CompanyStatus status, string id); 
 
         public Task<APIOperationResponse<object>> GetByid(string id);
-        public Task<APIOperationResponse<object>> Delete(string id);  
+        public Task<APIOperationResponse<object>> Delete(List<string> ids);  
 
 
     }

@@ -13,8 +13,4 @@
     <ProjectReference Include="..\User.Services\User.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Response\" />
-  </ItemGroup>
-
 </Project>

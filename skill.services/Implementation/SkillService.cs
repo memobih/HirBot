@@ -13,6 +13,8 @@ using HirBot.Common.Helpers;
 using System.IO;
 using Google.Protobuf;
 using Org.BouncyCastle.Asn1.X509;
+using Microsoft.EntityFrameworkCore;
+using Skill.services.Response;
 namespace skill.services.Implementation
 {
     public class SkillService : ISkillService
@@ -300,6 +302,28 @@ namespace skill.services.Implementation
                     return APIOperationResponse<Object>.Success("skill added susseful ", "skill added susseful ");
                 }
                 return APIOperationResponse<Object>.Conflict("this skill is already added"); 
+            }
+            catch (Exception e)
+            {
+                return APIOperationResponse<Object>.ServerError("there are error accured");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> GetUserSkill()
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var userSkill = _unitOfWork._context.UserSkills.Include(s=>s.Skill).Where(s => s.UserID == user.Id).ToList();
+                var response = new List<UserSkillResponse>();
+                foreach (var skill in userSkill)
+                {
+                    response.Add(new UserSkillResponse { skill = skill.Skill.Name, points = skill.Rate, level = "Basic" });
+                }
+                
+
+                    return APIOperationResponse<Object>.Success(response);
+            
             }
             catch (Exception e)
             {

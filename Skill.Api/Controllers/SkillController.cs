@@ -141,7 +141,15 @@ namespace skill.api.Controllers
                 return Ok(new { status = true, result.Message });
             return StatusCode(result.StatusCode, new { status = false, result.Message });
         }
-
+        [Authorize]
+        [HttpGet("userskill")]
+        public async Task<IActionResult> GetUserSkill()
+        {
+            var result = await _skillService.GetUserSkill();
+            if (result.StatusCode == 200)
+                return Ok(new { status = true, result.Data, result.Message });
+            return StatusCode(result.StatusCode, new { status = false, result.Message });
+        }
         #endregion
 
 

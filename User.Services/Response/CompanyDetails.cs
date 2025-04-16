@@ -20,7 +20,7 @@ namespace User.Services.Response
         public string street { get; set; }
 
         public string phoneNumber { get; set; }
-
+        public string  ? TaxNumber { get; set; }
         public CompanyStatus status { get; set; }
         public string Governate { get; set; }
         public string  ? logo { get; set; }

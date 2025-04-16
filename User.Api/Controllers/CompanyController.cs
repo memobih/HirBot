@@ -34,10 +34,10 @@ namespace User.Api.Controllers
 
         }
         [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(List<string> ids)
         {
-            var response = await _companyService.Delete( id);
+            var response = await _companyService.Delete( ids);
             if (response.StatusCode == 200)
 
                 return Ok(new { status = true, response.Message });
