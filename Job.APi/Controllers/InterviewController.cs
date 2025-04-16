@@ -35,13 +35,12 @@ namespace Job.APi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetInterviewDto>> GetById(int id)
+        public async Task<ActionResult<GetInterviewDto>> GetById(string id)
         {
-            if (id <= 0)
+            if (string.IsNullOrEmpty(id))
             {
-                return BadRequest("Invalid ID. ID must be greater than 0.");
+                return BadRequest("Invalid ID. ID cannot be null or empty.");
             }
-
             var interview = await _interviewService.GetByIdAsync(id);
             if (interview == null)
             {
@@ -74,11 +73,11 @@ namespace Job.APi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] InterviewDto dto)
+        public async Task<ActionResult> Update(string id, [FromBody] InterviewDto dto)
         {
-            if (id <= 0)
+            if (string.IsNullOrEmpty(id))
             {
-                return BadRequest("Invalid ID. ID must be greater than 0.");
+                return BadRequest("Invalid ID. ID cannot be null or empty.");
             }
 
             if (!ModelState.IsValid)
@@ -93,7 +92,7 @@ namespace Job.APi.Controllers
             }
             if(response.StatusCode != 200)
             {
-                return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+                return StatusCode(response.StatusCode, new { status = false, message = response.Message, errors = response.Errors });
             }
             else 
             {
@@ -102,11 +101,11 @@ namespace Job.APi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
-            if (id <= 0)
+            if (string.IsNullOrEmpty(id))
             {
-                return BadRequest("Invalid ID. ID must be greater than 0.");
+                return BadRequest("Invalid ID. ID cannot be null or empty.");
             }
 
             var deleted = await _interviewService.DeleteAsync(id);

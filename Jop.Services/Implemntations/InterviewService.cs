@@ -27,6 +27,8 @@ namespace Jop.Services.Implemntations
         public async Task<APIOperationResponse<List<GetInterviewDto>>> GetAllAsync()
         {
             var interviews = await _unitOfWork._context.Interviews.ToListAsync();
+            if (interviews == null || !interviews.Any())
+                return APIOperationResponse<List<GetInterviewDto>>.NotFound("No interviews found.");
             var interviewsdtos = new List<GetInterviewDto>();
             foreach (var interview in interviews)
             {
@@ -41,7 +43,8 @@ namespace Jop.Services.Implemntations
                     DurationInMinutes = interview.durationInMinutes,
                     Location = interview.Location,
                     ZoomMeetinLink = interview.ZoomMeetinLink,
-                    Notes = interview.Notes
+                    Notes = interview.Notes,
+                    ApplicationId = interview.ApplicationID
                 };
                 interviewsdtos.Add(interviewDto);
             }
@@ -49,12 +52,13 @@ namespace Jop.Services.Implemntations
             return APIOperationResponse<List<GetInterviewDto>>.Success(interviewsdtos);
         }
 
-        public async Task<APIOperationResponse<GetInterviewDto>> GetByIdAsync(int id)
+        public async Task<APIOperationResponse<GetInterviewDto>> GetByIdAsync(string id)
         {
-            if (id <= 0)
+            if (string.IsNullOrEmpty(id))
                 return APIOperationResponse<GetInterviewDto>.BadRequest("Invalid interview ID.");
-
             var interview = await _unitOfWork._context.Interviews.FindAsync(id);
+            if (interview == null)
+                return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.");
             var GetInterviewDto_1 = new GetInterviewDto
             {
                 ID = interview.ID,
@@ -66,7 +70,8 @@ namespace Jop.Services.Implemntations
                 DurationInMinutes = interview.durationInMinutes,
                 Location = interview.Location,
                 ZoomMeetinLink = interview.ZoomMeetinLink,
-                Notes = interview.Notes
+                Notes = interview.Notes,
+                ApplicationId = interview.ApplicationID
             };
             return interview == null
                 ? APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.")
@@ -78,7 +83,9 @@ namespace Jop.Services.Implemntations
             var validation = ValidateInterviewDto(dto);
             if (validation != null)
                 return APIOperationResponse<GetInterviewDto>.UnprocessableEntity("Validation errors occurred.", validation.Errors as List<string>);
-
+            var Application = await _unitOfWork._context.Applications.FindAsync(dto.ApplicationId);
+            if (Application == null)
+                return APIOperationResponse<GetInterviewDto>.NotFound("Application not found.");
             try
             {
                 string? zoomLink = null;
@@ -102,7 +109,8 @@ namespace Jop.Services.Implemntations
                     durationInMinutes = dto.durationInMinutes,
                     ZoomMeetinLink = zoomLink,
                     Notes = dto.Notes,
-                    Location = dto.Location
+                    Location = dto.Location,
+                    ApplicationID = dto.ApplicationId,
                 };
                 var interviewDto = new GetInterviewDto
                 {
@@ -114,7 +122,8 @@ namespace Jop.Services.Implemntations
                     DurationInMinutes = interview.durationInMinutes,
                     Location = interview.Location,
                     ZoomMeetinLink = interview.ZoomMeetinLink,
-                    Notes = interview.Notes
+                    Notes = interview.Notes,
+                    ApplicationId = interview.ApplicationID
                 };
                 var response = _unitOfWork._context.Interviews.Add(interview);
                 await _unitOfWork._context.SaveChangesAsync();
@@ -128,9 +137,9 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        public async Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(int id, InterviewDto dto)
+        public async Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(string id, InterviewDto dto)
         {
-            if (id <= 0)
+            if (string.IsNullOrEmpty(id))
                 return APIOperationResponse<GetInterviewDto>.BadRequest("Invalid interview ID.");
 
             var validation = ValidateInterviewDto(dto);
@@ -174,10 +183,8 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        public async Task<APIOperationResponse<bool>> DeleteAsync(int id)
+        public async Task<APIOperationResponse<bool>> DeleteAsync(string id)
         {
-            if (id <= 0)
-                return APIOperationResponse<bool>.BadRequest("Invalid interview ID.");
 
             var interview = await _unitOfWork._context.Interviews.FindAsync(id);
             if (interview == null)
