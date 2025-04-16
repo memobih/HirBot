@@ -12,13 +12,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:HirBot.Infrastructure/Project.EntityFramework/Migrations/20250412114026_init.Designer.cs
+
     [Migration("20250412114026_init")]
-    partial class init
-========
-    [Migration("20250416102053_editinterv")]
-    partial class editinterv
->>>>>>>> c521e6f363abb957f85bd19e938207757fe48f3e:HirBot.Infrastructure/Project.EntityFramework/Migrations/20250416102053_editinterv.Designer.cs
+partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
