@@ -19,9 +19,9 @@ namespace Job.APi.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateZoomMeeting(DateTime time, string topic)
+        public async Task<IActionResult> CreateZoomMeeting(DateTime time, string topic,int duration)
         {
-            var link = await _zoomService.CreateMeetingAsync(time, topic);
+            var link = await _zoomService.CreateMeetingAsync(time, topic, duration);
             return Ok(new { link });
         }
     }

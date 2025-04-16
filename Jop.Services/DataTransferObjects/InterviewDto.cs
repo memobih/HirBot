@@ -18,18 +18,19 @@ namespace Jop.Services.DataTransferObjects
         [MinLength(2, ErrorMessage = "Candidate name must be at least 2 characters long.")]
         public string CandidateName { get; set; }
         [Required(ErrorMessage ="Interview Type is required.")]
-        [StringLength(200, ErrorMessage = "Type cannot exceed 200 characters.")]
+        
         public InterviewType Type { get; set; }
         [Required(ErrorMessage = "Interview Mode is required.")]
-        [StringLength(200, ErrorMessage = "Mode cannot exceed 200 characters.")]
+        
 
         public InterviewMode Mode { get; set; }
         [Required(ErrorMessage ="Interview Date is required.")]
         [DataType(DataType.DateTime, ErrorMessage = "Invalid date format.")]
         public DateTime StartTime { get; set; }
         [Required(ErrorMessage = "Duration is required.")]
-        [StringLength(50, ErrorMessage = "Duration cannot exceed 50 characters.")]
-        [RegularExpression(@"^\d+\s*(?:minutes?|hours?|days?)$", ErrorMessage = "Invalid duration format. Use 'X minutes', 'X hours', or 'X days'.")]
-        public string? Duration { get; set; } 
+        public int durationInMinutes { get; set; }
+        
+        public string? Location { get; set; }
+        public List<string>? Notes { get; set; } = new List<string>();  
     }
 }

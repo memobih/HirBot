@@ -22,7 +22,7 @@ namespace Jop.Services.Implemntations
         _http = factory.CreateClient();
     }
 
-    public async Task<string> CreateMeetingAsync(DateTime time, string topic)
+    public async Task<string> CreateMeetingAsync(DateTime time, string topic, int durationn)
     {
         var token = await _tokenService.GetTokenAsync();
         _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -32,9 +32,8 @@ namespace Jop.Services.Implemntations
             topic,
             type = 2,
             start_time = time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"),
-            duration = 60,
+            duration = durationn,
             timezone = "UTC",
-            
         };
 
         var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");

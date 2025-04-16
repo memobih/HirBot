@@ -23,83 +23,102 @@ namespace Job.APi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<APIOperationResponse<List<Interview>>>> GetAll()
+        public async Task<ActionResult<List<GetInterviewDto>>> GetAll()
         {
-            var response = await _interviewService.GetAllAsync();
-            return StatusCode(response.StatusCode, response);
+            var interviews = await _interviewService.GetAllAsync();
+            if (interviews == null )
+            {
+                return NotFound("No interviews found.");
+            }
+
+            return Ok(interviews);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<APIOperationResponse<Interview>>> GetById(int id)
+        public async Task<ActionResult<GetInterviewDto>> GetById(int id)
         {
             if (id <= 0)
             {
-                return BadRequest(new APIOperationResponse<Interview>
-                {
-                    StatusCode = 400,
-                    Message = "Invalid ID. ID must be greater than 0."
-                });
+                return BadRequest("Invalid ID. ID must be greater than 0.");
             }
 
-            var response = await _interviewService.GetByIdAsync(id);
-            return StatusCode(response.StatusCode, response);
+            var interview = await _interviewService.GetByIdAsync(id);
+            if (interview == null)
+            {
+                return NotFound($"Interview with ID {id} not found.");
+            }
+
+            return Ok(interview);
         }
 
         [HttpPost]
-        public async Task<ActionResult<APIOperationResponse<Interview>>> Create([FromBody] InterviewDto dto)
+        public async Task<ActionResult> Create([FromBody] InterviewDto dto)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new APIOperationResponse<Interview>
-                {
-                    StatusCode = 400,
-                    Message = "Invalid data. Please check the input and try again."
-                });
+                return BadRequest(new { Error = "Invalid data. Please check the input and try again.", Details = ModelState });
             }
 
             var response = await _interviewService.CreateAsync(dto);
-            return StatusCode(response.StatusCode, response);
+            if(!response.Succeeded)
+            {
+                return StatusCode(response.StatusCode, new { status = false, message = response.Message, errors = response.Errors });
+            }
+            return StatusCode(response.StatusCode, new 
+            { 
+                status = response.StatusCode == 200, 
+                message = response.Message, 
+                data = response.Data, 
+                errors = response.Errors 
+            });
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<APIOperationResponse<Interview>>> Update(int id, [FromBody] InterviewDto dto)
+        public async Task<ActionResult> Update(int id, [FromBody] InterviewDto dto)
         {
             if (id <= 0)
             {
-                return BadRequest(new APIOperationResponse<Interview>
-                {
-                    StatusCode = 400,
-                    Message = "Invalid ID. ID must be greater than 0."
-                });
+                return BadRequest("Invalid ID. ID must be greater than 0.");
             }
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(new APIOperationResponse<Interview>
-                {
-                    StatusCode = 400,
-                    Message = "Invalid data. Please check the input and try again."
-                });
+                 return BadRequest(new { Error = "Invalid data. Please check the input and try again.", Details = ModelState });
             }
 
             var response = await _interviewService.UpdateAsync(id, dto);
-            return StatusCode(response.StatusCode, response);
+            if (response == APIOperationResponse<GetInterviewDto>.NotFound())
+            {
+                return NotFound($"Interview with ID {id} not found.");
+            }
+            if(response.StatusCode != 200)
+            {
+                return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+            }
+            else 
+            {
+                return Ok(new { status = true, message = response.Message, data = response.Data });
+            }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<APIOperationResponse<bool>>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             if (id <= 0)
             {
-                return BadRequest(new APIOperationResponse<bool>
-                {
-                    StatusCode = 400,
-                    Message = "Invalid ID. ID must be greater than 0."
-                });
+                return BadRequest("Invalid ID. ID must be greater than 0.");
             }
 
-            var response = await _interviewService.DeleteAsync(id);
-            return StatusCode(response.StatusCode, response);
+            var deleted = await _interviewService.DeleteAsync(id);
+            if (!deleted.Succeeded)
+            {
+                return NotFound($"Interview with ID {id} not found.");
+            }
+           else 
+            {
+                return Ok(new { status = true, message = deleted.Message });
+            }
+            
         }
     }
 }
