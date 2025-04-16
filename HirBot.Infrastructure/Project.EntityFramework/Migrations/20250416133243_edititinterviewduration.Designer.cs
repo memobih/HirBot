@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:HirBot.Infrastructure/Project.EntityFramework/Migrations/20250412114026_init.Designer.cs
-    [Migration("20250412114026_init")]
-    partial class init
-========
-    [Migration("20250416102053_editinterv")]
-    partial class editinterv
->>>>>>>> c521e6f363abb957f85bd19e938207757fe48f3e:HirBot.Infrastructure/Project.EntityFramework/Migrations/20250416102053_editinterv.Designer.cs
+    [Migration("20250416133243_edititinterviewduration")]
+    partial class edititinterviewduration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -411,9 +406,6 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Duration")
-                        .HasColumnType("longtext");
-
                     b.Property<int?>("ExamID")
                         .HasColumnType("int");
 
@@ -441,6 +433,9 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<string>("ZoomMeetinLink")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("durationInMinutes")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 

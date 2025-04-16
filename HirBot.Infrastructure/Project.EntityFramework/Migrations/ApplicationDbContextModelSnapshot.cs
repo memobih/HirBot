@@ -391,28 +391,26 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int>("ApplicationID")
                         .HasColumnType("int");
 
+                    b.Property<string>("CandidateEmail")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CandidateName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<int?>("ExamID")
                         .HasColumnType("int");
 
-                    b.Property<string>("InterviewType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("InterviewerName")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime(6)");
@@ -424,9 +422,17 @@ namespace HirBot.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Time")
-                        .IsRequired()
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ZoomMeetinLink")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("durationInMinutes")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
