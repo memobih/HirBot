@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Project.ResponseHandler.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace User.Api.Controllers
         }
         [Authorize]
         [HttpPut("{id}/changestatus")]
-        public async Task<IActionResult> editStatus(string  id , CompanyStatus status)
+        public async Task<IActionResult> editStatus(string  id ,[Required(ErrorMessage ="this field is required ")]CompanyStatus status)
         {
             var response = await _companyService.ChangeStatus(status , id);
             if (response.StatusCode == 200)
