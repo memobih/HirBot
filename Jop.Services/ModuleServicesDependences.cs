@@ -17,8 +17,11 @@ namespace Jop.Services
             service.AddTransient<IApplicationService, ApplicationService>();
             service.AddTransient<IEmployeeService, EmployeeService>();
             service.AddTransient<IInterviewService, InterviewService>();
+            service.AddHttpClient();
+            service.AddScoped<ZoomTokenService>();
+            service.AddScoped<ZoomMeetingService>();
 
-            return service; 
+            return service;
         }
     }
 }

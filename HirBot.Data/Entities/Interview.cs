@@ -1,4 +1,5 @@
-﻿using Moujam.Casiher.Comman.Base;
+﻿using HirBot.Data.Enums;
+using Moujam.Casiher.Comman.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,12 +21,15 @@ namespace HirBot.Data.Entities
         [ForeignKey("Application")]
         public int ApplicationID { get; set; } 
         public virtual Exam ?Exam { get; set; } 
-        public virtual Application Application { get; set; }
-        public  DateTime Date {  get; set; } 
-        public string Time { get; set; }
-        public string Location { get; set; }
-        public string InterviewType { get; set; } ="Online"; 
-        public string? InterviewerName { get; set; }
+        public virtual Application? Application { get; set; }
+        public  DateTime StartTime {  get; set; } 
+        public string? Duration { get; set; }
+        public string? Location { get; set; }
+        public InterviewMode Mode { get; set; }
+        public InterviewType Type { get; set; }
+        public string? CandidateName { get; set; }
+        public string? CandidateEmail { get; set; }
         public List<string>Notes { get; set; } = new List<string>();
+        public string ? ZoomMeetinLink { get; set; }
     }
 }

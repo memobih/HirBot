@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250405085721_editinterview")]
-    partial class editinterview
+    [Migration("20250416102053_editinterv")]
+    partial class editinterv
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -394,28 +394,29 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int>("ApplicationID")
                         .HasColumnType("int");
 
+                    b.Property<string>("CandidateEmail")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CandidateName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("Duration")
+                        .HasColumnType("longtext");
 
                     b.Property<int?>("ExamID")
                         .HasColumnType("int");
 
-                    b.Property<string>("InterviewType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("InterviewerName")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime(6)");
@@ -427,8 +428,13 @@ namespace HirBot.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Time")
-                        .IsRequired()
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ZoomMeetinLink")
                         .HasColumnType("longtext");
 
                     b.HasKey("ID");
@@ -846,6 +852,20 @@ namespace HirBot.EntityFramework.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
