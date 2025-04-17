@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using User.Services.DataTransferObjects.Profile;
+using User.Services.Interfaces;
 
 namespace Jop.Services.Implemntations
 {
@@ -20,8 +22,10 @@ namespace Jop.Services.Implemntations
 
         private readonly IAuthenticationService _authenticationService;
         private readonly UnitOfWork unitOfWork;
-        public ApplicationService(IAuthenticationService authenticationService, UnitOfWork unitOfWork)
+        private readonly IExperienceServices _experienceServices;
+        public ApplicationService(IAuthenticationService authenticationService, UnitOfWork unitOfWork, IExperienceServices experienceServices)
         {
+            _experienceServices = experienceServices;
             _authenticationService = authenticationService;
             this.unitOfWork = unitOfWork;
         }
@@ -216,6 +220,8 @@ namespace Jop.Services.Implemntations
 
             }
         }
+
+        
       
         #region Helber  
         private List<T> Paginate<T>(List<T> source, int page, int pageSize)
@@ -272,7 +278,59 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        
+        public async Task<APIOperationResponse<object>> AcceptTheApplication(int ApplicationId)
+        {
+            var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId);
+            if (application == null)
+                return APIOperationResponse<object>.NotFound("this application is not found");
+            if (application.status != ApplicationStatus.approved)
+                return APIOperationResponse<object>.BadRequest("this application is not approved yet");
+
+                var user = await unitOfWork._context.Users.Include(c=>c.experiences).FirstOrDefaultAsync(u => u.Id == application.UserID);
+                if (user == null)
+                    return APIOperationResponse<object>.NotFound("this user is not found");
+                user.experiences.Add(new Experience()
+                {
+                    Title = application.Job.Title,
+                    companyName = application.Job.Company.Name,
+                    location = application.Job.location,
+                    Start_Date = DateTime.Now.ToString("yyyy-MM-dd"),
+                    End_Date = null,
+                    workType = application.Job.LocationType,
+                    privacy = PrivacyEnum.Public,
+                    employeeType = application.Job.EmployeeType,
+                });
+            application.status = ApplicationStatus.accepted;
+            try 
+            {
+                unitOfWork._context.Applications.Update(application);
+                unitOfWork._context.Users.Update(user);
+                await unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("the application is accepted succefuly", "the application is accepted succefuly");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> RejectTheApplication(int ApplicationId)
+        {
+            var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId);
+            if (application == null)
+                return APIOperationResponse<object>.NotFound("this application is not found");
+            application.status = ApplicationStatus.rejected;
+            try
+            {
+                unitOfWork._context.Applications.Update(application);
+                await unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("the application is rejected succefuly", "the application is rejected succefuly");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
+            }
+        }
 
 
 

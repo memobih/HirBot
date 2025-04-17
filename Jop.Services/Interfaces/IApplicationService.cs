@@ -20,5 +20,7 @@ namespace Jop.Services.Interfaces
         public Task<APIOperationResponse<object>> DeleteApplications(List<int> ids);
         public Task<APIOperationResponse<object>> GetAllApprovedApplications(int jobId,string? search = null, ApplicationStatus? status = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10);
         public Task<APIOperationResponse<AppuserDto>>GetApplicantDetails(int ApplicationId);
+        public Task<APIOperationResponse<object>> AcceptTheApplication(int ApplicationId);
+        public Task<APIOperationResponse<object>> RejectTheApplication(int ApplicationId);
     }
 }

@@ -13,6 +13,7 @@ namespace HirBot.Data.Enums
         approved=2  , 
         rejected=3,
         pending=4 ,
+        accepted=5,
     }
 
 }

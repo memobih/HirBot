@@ -17,6 +17,9 @@ namespace HirBot.Data.Entities
     {
         [Key,MaxLength(200)]
         public string ID { get; set; }=Guid.NewGuid().ToString();
+        [Required(ErrorMessage = "Company name is Required")]
+        [MaxLength(200)]
+        public string Name { get; set; }
         [Required(ErrorMessage = "Company type is Required")]
         public string CompanyType { get; set; }
         public string country { get; set; }
@@ -42,6 +45,8 @@ namespace HirBot.Data.Entities
         [JsonIgnore]
         public virtual ApplicationUser account { get; set; } 
         public virtual  List<Job> ? jobs { get; set; }
+
+
 
     }
 }
