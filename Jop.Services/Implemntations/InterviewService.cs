@@ -44,7 +44,8 @@ namespace Jop.Services.Implemntations
                     Location = interview.Location,
                     ZoomMeetinLink = interview.ZoomMeetinLink,
                     Notes = interview.Notes,
-                    ApplicationId = interview.ApplicationID
+                    ApplicationId = interview.ApplicationID,
+                    InterviewerName = interview.InterviewerName ?? string.Empty,
                 };
                 interviewsdtos.Add(interviewDto);
             }
@@ -71,7 +72,8 @@ namespace Jop.Services.Implemntations
                 Location = interview.Location,
                 ZoomMeetinLink = interview.ZoomMeetinLink,
                 Notes = interview.Notes,
-                ApplicationId = interview.ApplicationID
+                ApplicationId = interview.ApplicationID,
+                InterviewerName = interview.InterviewerName?? string.Empty,
             };
             return interview == null
                 ? APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.")
@@ -83,20 +85,28 @@ namespace Jop.Services.Implemntations
             var validation = ValidateInterviewDto(dto);
             if (validation != null)
                 return APIOperationResponse<GetInterviewDto>.UnprocessableEntity("Validation errors occurred.", validation.Errors as List<string>);
-            var Application = await _unitOfWork._context.Applications.FindAsync(dto.ApplicationId);
-            if (Application == null)
+
+            var application = await _unitOfWork._context.Applications.FindAsync(dto.ApplicationId);
+            if (application == null)
                 return APIOperationResponse<GetInterviewDto>.NotFound("Application not found.");
+
+            var exists = await _unitOfWork._context.Interviews
+                .AnyAsync(i => i.ApplicationID == dto.ApplicationId && i.StartTime == dto.StartTime);
+
+            if (exists)
+                return APIOperationResponse<GetInterviewDto>.BadRequest("An interview already exists for this application at the specified time.");
+
             try
             {
                 string? zoomLink = null;
+
                 if (dto.Mode == InterviewMode.Online)
                 {
                     zoomLink = await _zoom.CreateMeetingAsync(
-                    dto.StartTime,
-                    $"{dto.Type} Interview with {dto.CandidateName}",
-                   dto.durationInMinutes
+                        dto.StartTime,
+                        $"{dto.Type} Interview with {dto.CandidateName}",
+                        dto.durationInMinutes
                     );
-
                 }
 
                 var interview = new Interview
@@ -111,9 +121,15 @@ namespace Jop.Services.Implemntations
                     Notes = dto.Notes,
                     Location = dto.Location,
                     ApplicationID = dto.ApplicationId,
+                    InterviewerName = string.IsNullOrWhiteSpace(dto.InterviewerName) ? "Unknown" : dto.InterviewerName.Trim()
                 };
+
+                _unitOfWork._context.Interviews.Add(interview);
+                await _unitOfWork._context.SaveChangesAsync();
+
                 var interviewDto = new GetInterviewDto
                 {
+                    ID = interview.ID,
                     CandidateName = interview.CandidateName,
                     CandidateEmail = interview.CandidateEmail,
                     Type = interview.Type,
@@ -123,11 +139,9 @@ namespace Jop.Services.Implemntations
                     Location = interview.Location,
                     ZoomMeetinLink = interview.ZoomMeetinLink,
                     Notes = interview.Notes,
-                    ApplicationId = interview.ApplicationID
+                    ApplicationId = interview.ApplicationID,
+                    InterviewerName = interview.InterviewerName?? string.Empty,
                 };
-                var response = _unitOfWork._context.Interviews.Add(interview);
-                await _unitOfWork._context.SaveChangesAsync();
-
 
                 return APIOperationResponse<GetInterviewDto>.Success(interviewDto, "Interview created successfully.");
             }
@@ -136,6 +150,7 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<GetInterviewDto>.ServerError("An error occurred while creating the interview.", new List<string> { ex.Message });
             }
         }
+
 
         public async Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(string id, InterviewDto dto)
         {
@@ -158,7 +173,9 @@ namespace Jop.Services.Implemntations
                 interview.Mode = dto.Mode;
                 interview.StartTime = dto.StartTime;
                 interview.durationInMinutes = dto.durationInMinutes;
-
+                interview.Location = dto.Location;
+                interview.Notes = dto.Notes;
+                interview.InterviewerName = dto.InterviewerName?? string.Empty;
                 if (dto.Mode == InterviewMode.Online && string.IsNullOrEmpty(interview.ZoomMeetinLink))
                 {
                     interview.ZoomMeetinLink = await _zoom.CreateMeetingAsync(
@@ -201,7 +218,31 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<bool>.ServerError("An error occurred while deleting the interview.", new List<string> { ex.Message });
             }
         }
+        public async Task<APIOperationResponse<InterviewCandidateinfoDto>> GetInterviewCandidateInfoAsync(string applicationId)
+        {
+            if (string.IsNullOrEmpty(applicationId))
+                return APIOperationResponse<InterviewCandidateinfoDto>.BadRequest("Invalid application ID.");
 
+            if (!int.TryParse(applicationId, out var applicationIdInt))
+                return APIOperationResponse<InterviewCandidateinfoDto>.BadRequest("Invalid application ID format.");
+
+            var application = await _unitOfWork._context.Applications.Include(c => c.User).FirstOrDefaultAsync(a => a.ID == applicationIdInt);
+            if (application == null)
+                return APIOperationResponse<InterviewCandidateinfoDto>.NotFound("Application not found.");
+
+            var user = await _unitOfWork._context.Users.FindAsync(application.UserID);
+            if (application.User is null)
+                return APIOperationResponse<InterviewCandidateinfoDto>.NotFound("User not found for the application.");
+
+            var interviewCandidateInfoDto = new InterviewCandidateinfoDto
+            {
+                CandidateName = application.User.FullName,
+                CandidateEmail = application.User.Email,
+                ImagePath = application.User.ImagePath,
+            };
+
+            return APIOperationResponse<InterviewCandidateinfoDto>.Success(interviewCandidateInfoDto, "Candidate information retrieved successfully.");
+        }
         private APIOperationResponse<Interview>? ValidateInterviewDto(InterviewDto dto)
         {
             var errors = new List<string>();
@@ -228,7 +269,8 @@ namespace Jop.Services.Implemntations
 
             if (!Enum.IsDefined(typeof(InterviewType), dto.Type))
                 errors.Add("Invalid interview type.");
-
+            if (string.IsNullOrWhiteSpace(dto.InterviewerName))
+                errors.Add("Interviewer name is required.");
             return errors.Any()
                 ? APIOperationResponse<Interview>.UnprocessableEntity("Validation errors occurred.", errors)
                 : null;

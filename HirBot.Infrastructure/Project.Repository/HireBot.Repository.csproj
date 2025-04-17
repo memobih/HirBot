@@ -11,6 +11,7 @@
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" />
 	  <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
+	  <PackageReference Include="Microsoft.Web.WebJobs.Publish" Version="17.1.361" />
 	  <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
 	  <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
 	  <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

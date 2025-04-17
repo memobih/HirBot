@@ -406,6 +406,10 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int?>("ExamID")
                         .HasColumnType("int");
 
+                    b.Property<string>("InterviewerName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Location")
                         .HasColumnType("longtext");
 
