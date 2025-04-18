@@ -13,6 +13,7 @@ namespace Job.APi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles ="Company,Admin")]
     public class InterviewController : ControllerBase
     {
         private readonly IInterviewService _interviewService;
@@ -118,6 +119,22 @@ namespace Job.APi.Controllers
                 return Ok(new { status = true, message = deleted.Message });
             }
             
+        }
+        [HttpGet("candidate")]
+        public async Task<ActionResult<InterviewCandidateinfoDto>> GetInterviewCandidateInfo([FromQuery]string applicationId)
+        {
+            if (string.IsNullOrEmpty(applicationId))
+            {
+                return BadRequest("Invalid Application ID. ID cannot be null or empty.");
+            }
+
+            var interviewInfo = await _interviewService.GetInterviewCandidateInfoAsync(applicationId);
+            if (interviewInfo.Succeeded == false)
+            {
+                return NotFound($"Interview information for Application ID {applicationId} not found.");
+            }
+
+            return Ok(interviewInfo);
         }
     }
 }

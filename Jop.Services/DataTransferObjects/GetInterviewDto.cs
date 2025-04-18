@@ -23,5 +23,6 @@ namespace Jop.Services.DataTransferObjects
         public List<string> Notes { get; set; } = new List<string>();
         public string? ZoomMeetinLink { get; set; }
         public int ApplicationId { get; set; }
+        public string? InterviewerName { get; set; } = string.Empty;
     }
 }

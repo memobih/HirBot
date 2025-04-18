@@ -31,5 +31,6 @@ namespace HirBot.Data.Entities
         public string? CandidateEmail { get; set; }
         public List<string>Notes { get; set; } = new List<string>();
         public string ? ZoomMeetinLink { get; set; }
+        public string? InterviewerName { get; set; } 
     }
 }

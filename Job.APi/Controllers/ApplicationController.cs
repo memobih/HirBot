@@ -79,5 +79,23 @@ namespace Job.Api.Controllers
                 return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
+        [Authorize("Company")]
+        [HttpPut("accept")]
+        public async Task<IActionResult> AcceptTheApplication(int ApplicationId)
+        {
+            var response = await _applicationService.AcceptTheApplication(ApplicationId);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize("Company")]
+        [HttpPut("reject")]
+        public async Task<IActionResult> RejectTheApplication(int ApplicationId)
+        {
+            var response = await _applicationService.RejectTheApplication(ApplicationId);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
     }
 }
