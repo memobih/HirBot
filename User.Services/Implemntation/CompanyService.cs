@@ -34,10 +34,11 @@ namespace User.Services.Implemntation
                 var user = await _authenticationService.GetCurrentUserAsync();
                 if (user.role != UserType.Admin)
                     return APIOperationResponse<object>.UnOthrized();
-                var company =  _unitOfWork._context.Companies.Where(c => c.ID == id).FirstOrDefault();
+                var company =  _unitOfWork._context.Companies.Include(c=>c.account).Where(c => c.ID == id).FirstOrDefault();
                 if (company != null)
                 {
-                    if (status == CompanyStatus.accepted) user.IsVerified = true;
+
+                    if (status == CompanyStatus.accepted) company.account.IsVerified = true;
                     company.status = status;
                     await _unitOfWork.Companies.UpdateAsync(company);
                     await _unitOfWork.Users.UpdateAsync(user);

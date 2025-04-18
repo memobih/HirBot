@@ -12,5 +12,8 @@ namespace skill.services.DataTransferObjects
         public string ImagePath { get; set; }
         public int TotalUsers { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string status { get; set; }
+
+
     }
 }

@@ -15,6 +15,7 @@ using Google.Protobuf;
 using Org.BouncyCastle.Asn1.X509;
 using Microsoft.EntityFrameworkCore;
 using Skill.services.Response;
+using Mysqlx.Prepare;
 namespace skill.services.Implementation
 {
     public class SkillService : ISkillService
@@ -124,7 +125,7 @@ namespace skill.services.Implementation
             return await _userManager.GetUserAsync(currentUser);
         }
    
-        public Task<APIOperationResponse<List<GettingAllSkillsDto>>> GetAllSkills(string ? searh=null)
+        public Task<APIOperationResponse<object>> GetAllSkills(string ? searh=null  , int page=1 , int perpage=10 )
         {
             var skills = _unitOfWork._context.Skills.ToList();
             if(searh != null)
@@ -133,7 +134,7 @@ namespace skill.services.Implementation
             }
             if (skills.Count == 0)
             {
-                return Task.FromResult(new APIOperationResponse<List<GettingAllSkillsDto>>
+                return Task.FromResult(new APIOperationResponse<object>
                 {
                     Message = "No skills found",
                     Succeeded = false
@@ -150,11 +151,27 @@ namespace skill.services.Implementation
                     ImagePath = skill.ImagePath,
                     TotalUsers = totalUsers,
                     CreatedAt = skill.CreationDate
+                    ,
+                    status = skill.Status
+
                 });
             }
-            return Task.FromResult(new APIOperationResponse<List<GettingAllSkillsDto>>
+            
+              
+
+                var data = new
+                {
+                    currentPage = page,
+                    totalPages = (skillsDto.Count() / perpage) + 1,
+                    pageSize = perpage,
+                    totalRecords = skillsDto.Count(),
+                    data = Paginate(skillsDto, page, perpage)
+
+                };
+            return Task.FromResult(new APIOperationResponse<object>
             {
-                Data = skillsDto,
+
+                Data =data, 
                 Succeeded = true
             });
         }
@@ -208,6 +225,8 @@ namespace skill.services.Implementation
                 ImagePath = skill.ImagePath,
                 TotalUsers = totalUsers,
                 CreatedAt = skill.CreationDate
+                ,
+                status = skill.Status
             };
             return Task.FromResult(new APIOperationResponse<GettingAllSkillsDto>
             {
@@ -273,6 +292,10 @@ namespace skill.services.Implementation
             }
         }
 
+        private List<T> Paginate<T>(List<T> source, int page, int pageSize)
+        {
+            return source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
         public async Task<APIOperationResponse<object>> GetALLSkillForUsers()
         {
             try
