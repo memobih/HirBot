@@ -73,12 +73,12 @@ namespace skill.api.Controllers
             }
             return Ok(new { status = true, data = result.Data });
         }
-        [HttpDelete("DeleteSkill/{id}")]
+        [HttpDelete("DeleteSkill")]
         [Authorize(Roles = "Admin")]
 
-        public async Task<IActionResult> DeleteSkill(int id)
+        public async Task<IActionResult> DeleteSkill(List<int> ids)
         {
-            var result = await _skillService.DeleteSkill(id);
+            var result = await _skillService.DeleteSkill(ids);
             if (!result.Succeeded)
             {
                 return BadRequest(result);

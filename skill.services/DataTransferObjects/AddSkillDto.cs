@@ -11,7 +11,6 @@ namespace skill.services.DataTransferObjects
     {
         [Required]
         [StringLength(50, ErrorMessage = "Name length can't be more than 50.")]
-        [MinLength(3, ErrorMessage = "Name length can't be less than 3.")]
         [RegularExpression(@"^[a-zA-Z''-'\s]{1,40}$", ErrorMessage = "Special characters are not allowed.")]
         public string Name { get; set; }
         [Required]

@@ -175,24 +175,17 @@ namespace skill.services.Implementation
                 Succeeded = true
             });
         }
-        public Task<APIOperationResponse<bool>> DeleteSkill(int id)
+        public Task<APIOperationResponse<bool>> DeleteSkill(List<int> ids)
         {
-            var skill = _unitOfWork._context.Skills.FirstOrDefault(x => x.ID == id);
-            if (skill == null)
-            {
-                return Task.FromResult(new APIOperationResponse<bool>
-                {
-                    Message = "Skill not found",
-                    Succeeded = false
-                });
-            }
-            _unitOfWork._context.Skills.Remove(skill);
+            var skill = _unitOfWork._context.Skills.Where(x => ids.Contains(x.ID));
+          
+            _unitOfWork._context.Skills.RemoveRange(skill);
             try
             {
                 _unitOfWork._context.SaveChanges();
                 return Task.FromResult(new APIOperationResponse<bool>
                 {
-                    Message = "Skill deleted successfully",
+                    Message = "Skills deleted successfully",
                     Succeeded = true,
                     Data = true
                 });

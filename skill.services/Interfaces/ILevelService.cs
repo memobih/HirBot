@@ -9,7 +9,7 @@ namespace Skill.services.Interfaces
 {
     public  interface ILevelService
     {
-        public Task<APIOperationResponse<object>> GetALLLevel(); 
+        public Task<APIOperationResponse<object>> GetALLLevel();
 
     }
 }
