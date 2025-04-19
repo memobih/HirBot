@@ -60,7 +60,7 @@ namespace Jop.Services.Implemntations
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                var company = unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
                 if (company == null)
                    return APIOperationResponse<object>.UnOthrized("this user is not a company");
                 var job = await unitOfWork._context.Jobs.
@@ -131,7 +131,7 @@ namespace Jop.Services.Implemntations
             {
 
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                var company = unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this email is not a company");
                 var applications = await unitOfWork._context.Applications.Include(a => a.Job).Where(a => ids.Contains(a.ID) && a.Job.CompanyID == company.ID).ToListAsync();
@@ -147,18 +147,18 @@ namespace Jop.Services.Implemntations
             }
         }
         
-        public Task<APIOperationResponse<object>> GetAllApprovedApplications(int JobId,string? search = null, ApplicationStatus? status = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
+        public async Task<APIOperationResponse<object>> GetAllApprovedApplications(int JobId,string? search = null, ApplicationStatus? status = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
         {
             try
             {
                 var user = _authenticationService.GetCurrentUserAsync().Result;
-                var company = unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id).Result;
+                var company = unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
-                    return Task.FromResult(APIOperationResponse<object>.UnOthrized("this email is not a company"));
-                var job = unitOfWork._context.Jobs.Include(j => j.Applications).ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefault(j => j.ID == JobId);
+                    return APIOperationResponse<object>.UnOthrized("this email can not show this job ");
+                var job = unitOfWork._context.Jobs.Include(j => j.Applications).ThenInclude(a=>a.Interviews).Include(a=>a.Applications).ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefault(j => j.ID == JobId);
                 if (job == null || company.ID != job.CompanyID)
-                    return Task.FromResult(APIOperationResponse<object>.NotFound("this job is not found"));
-                var applications = new List<Applications>();
+                    return APIOperationResponse<object>.NotFound("this job is not found");
+                var applications = new List<ApprovedApplication>();
                 if (job.Applications != null)
                 {
                     foreach (var application in job.Applications)
@@ -166,7 +166,7 @@ namespace Jop.Services.Implemntations
                         if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
                         if (application.status == ApplicationStatus.approved)
                             applications.Add(
-                                new Applications
+                                new ApprovedApplication
                                 {
                                     id = application.ID,
                                     name = application.User.FullName,
@@ -176,20 +176,22 @@ namespace Jop.Services.Implemntations
                                     created_at = application.CreationDate,
                                     CVLink = application.User.Portfolio.CVUrl,
                                     imageLink = application.User.ImagePath,
-                                    userName = application.User.UserName,
+                                    userName = application.User.UserName
+                                    ,
+                                    interviewType = application.Interviews?.LastOrDefault()?.Type ?? null
                                 }
 
                               );
                     }
                     if (applications.Count == 0)
-                        return Task.FromResult(APIOperationResponse<object>.NotFound("there are no applications"));
+                        return APIOperationResponse<object>.NotFound("there are no applications aproved");
                 }
-                Filter(ref applications, JobId, search, status, sort, page, perpage);
-                return Task.FromResult(APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (applications.Count() / perpage) + 1, pageSize = perpage, totalRecords = applications.Count(), data = Paginate(applications, page, perpage) }));
+                Filterapproved(ref applications, JobId, search, status, sort, page, perpage);
+                return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (applications.Count() / perpage) + 1, pageSize = perpage, totalRecords = applications.Count(), data = Paginate(applications, page, perpage) });
             }
             catch (Exception ex)
             {
-                return Task.FromResult(APIOperationResponse<object>.ServerError("there are error accured"));
+                return APIOperationResponse<object>.ServerError("there are error accured");
             }
         }
         public async Task<APIOperationResponse<AppuserDto>> GetApplicantDetails(int ApplicationId)
@@ -277,7 +279,27 @@ namespace Jop.Services.Implemntations
                 else applications = applications.OrderBy(j => j.Score).ToList();
             }
         }
+        private void Filterapproved(ref List<ApprovedApplication> applications, int jobid, string? search = null, ApplicationStatus? status = null, string? sort = null, int page = 1, int perpage = 10)
+        {
+            if (search != null)
+                applications = applications.Where(a =>
+                a.email.StartsWith(search) ||
+                a.name.StartsWith(search)
 
+                ).ToList();
+            if (status != null)
+            {
+                applications = applications.Where(a => a.status == status).ToList();
+            }
+            applications.Reverse();
+            if (sort != null)
+            {
+
+                if (sort != "asc")
+                    applications = applications.OrderByDescending(j => j.Score).ToList();
+                else applications = applications.OrderBy(j => j.Score).ToList();
+            }
+        }
         public async Task<APIOperationResponse<object>> AcceptTheApplication(int ApplicationId)
         {
             var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId);

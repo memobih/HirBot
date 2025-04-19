@@ -47,7 +47,7 @@ namespace Jop.Services.Implemntations
                     ApplicationId = interview.ApplicationID,
                     InterviewerName = interview.InterviewerName ?? string.Empty,
                 };
-                interviewsdtos.Add(interviewDto);
+                interviewsdtos.Add( interviewDto );
             }
 
             return APIOperationResponse<List<GetInterviewDto>>.Success(interviewsdtos);

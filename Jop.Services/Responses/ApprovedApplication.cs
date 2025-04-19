@@ -1,0 +1,25 @@
+﻿using HirBot.Data.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Jop.Services.Responses
+{
+    public class ApprovedApplication
+    {
+
+        public int id { get; set; }
+        public string name { get; set; }
+        public string email { get; set; }
+        public int Score { get; set; }
+        public ApplicationStatus status { get; set; }
+        public string? CVLink { get; set; }
+        public DateTime created_at { get; set; }
+        public string? imageLink { get; set; }
+        public string userName { get; set; }
+
+        public InterviewType? interviewType { get; set; }
+    }
+}

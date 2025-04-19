@@ -5,15 +5,11 @@ using HirBot.ResponseHandler.Models;
 using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
 using Jop.Services.Responses;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.IdentityModel.Tokens;
-using Mysqlx.Prepare;
 using Project.Repository.Repository;
 using Project.Services.Interfaces;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace Jop.Services.Implemntations
 {
     public class JobServices : IJobService
