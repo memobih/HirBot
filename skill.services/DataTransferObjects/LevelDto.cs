@@ -17,5 +17,8 @@ namespace Skill.services.DataTransferObjects
         public int min { get; set; }
         [Required(ErrorMessage = "this field is required")]
         public int max { get; set; }
+        [Required(ErrorMessage = "this field is required")]
+
+        public string status { get; set; }
     }
 }

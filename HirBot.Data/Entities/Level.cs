@@ -19,6 +19,7 @@ namespace HirBot.Data.Entities
 
         public int min {  get; set; }
         public int max { get; set; }
+        public string status { get; set; }
          //public virtual ICollection<JobRequirment>? JobRequirments { get; set; }
 
     }

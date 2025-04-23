@@ -578,6 +578,10 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int>("min")
                         .HasColumnType("int");
 
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("ID");
 
                     b.ToTable("Levels");

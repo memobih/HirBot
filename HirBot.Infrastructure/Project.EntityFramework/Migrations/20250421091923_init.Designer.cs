@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-[Migration("20250416102053_editinterv")]
-partial class editinterv
+    [Migration("20250421091923_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -192,6 +192,11 @@ partial class editinterv
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
 
                     b.Property<string>("SocialMeediaLink")
                         .HasColumnType("longtext");
@@ -406,11 +411,11 @@ partial class editinterv
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Duration")
-                        .HasColumnType("longtext");
-
                     b.Property<int?>("ExamID")
                         .HasColumnType("int");
+
+                    b.Property<string>("InterviewerName")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Location")
                         .HasColumnType("longtext");
@@ -436,6 +441,9 @@ partial class editinterv
 
                     b.Property<string>("ZoomMeetinLink")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("durationInMinutes")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
@@ -572,6 +580,10 @@ partial class editinterv
 
                     b.Property<int>("min")
                         .HasColumnType("int");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("ID");
 

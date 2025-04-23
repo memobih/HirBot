@@ -96,9 +96,9 @@ namespace skill.api.Controllers
             }
             return Ok(result);
         }
-        [HttpPut("UpdateSkill")]
+        [HttpPut("UpdateSkill/{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateSkill(UpdateSkillDto skill)
+        public async Task<IActionResult> UpdateSkill(int id  ,  UpdateSkillDto skill)
         {
             if (!ModelState.IsValid)
             {
@@ -114,7 +114,7 @@ namespace skill.api.Controllers
                     Data = skill
                 });
             }
-            var result = await _skillService.UpdateSkill(skill);
+            var result = await _skillService.UpdateSkill(id  ,skill);
             if (!result.Succeeded)
             {
                 return BadRequest(result);

@@ -9,10 +9,10 @@ namespace skill.services.DataTransferObjects
 {
     public class UpdateSkillDto
     {
-        public int ID { get; set; }
+       
         [Required]
         [StringLength(50, ErrorMessage = "Name must be less than 50 characters")]
-        [MinLength(3, ErrorMessage = "Name must be more than 3 characters")]
+        [MinLength(1, ErrorMessage = "Name must be more than 3 characters")]
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Name must be alphabets")]
         public string Name { get; set; }
         public IFormFile ? ImagePath { get; set; }

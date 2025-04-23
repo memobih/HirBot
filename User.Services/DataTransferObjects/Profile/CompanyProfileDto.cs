@@ -20,7 +20,7 @@ namespace User.Services.DataTransferObjects.Profile
         public CompanyStatus status { get; set; }
 
 
-        public Documents Documents { get; set; } 
+        public Documents ? Documents { get; set; } 
         public Contact ContactInfo { get; set; } 
     } 
     public class Contact

@@ -227,9 +227,10 @@ namespace skill.services.Implementation
                 Succeeded = true
             });
         }
-        public Task<APIOperationResponse<UpdateSkillDto>> UpdateSkill(UpdateSkillDto skill)
+        public  Task<APIOperationResponse<UpdateSkillDto>> UpdateSkill(int  ID , UpdateSkillDto skill)
         {
-            var skillModel = _unitOfWork._context.Skills.FirstOrDefault(x => x.ID == skill.ID);
+            var user = _authenticationService.GetCurrentUserAsync().Result;
+            var skillModel = _unitOfWork._context.Skills.FirstOrDefault(x => x.ID == ID);
             if (skillModel == null)
             {
                 return Task.FromResult(new APIOperationResponse<UpdateSkillDto>
@@ -248,18 +249,9 @@ namespace skill.services.Implementation
                         Succeeded = false
                     });
                 using var stream = skill.ImagePath.OpenReadStream();
-                var image = FileHelper.UploadFileAsync(stream, "skill" + extension, "userprofileimages").Result;
+                var image = FileHelper.UpdateFileAsync(stream, skillModel.ImagePath, "skill" + user.Id + extension ,  "userprofileimages").Result;
                 string imagePath = image;
-              
-                var result = _imageHandler.DeleteImage(skillModel.ImagePath).Result;
-                if (!result.Item1)
-                {
-                    return Task.FromResult(new APIOperationResponse<UpdateSkillDto>
-                    {
-                        Message = result.Item2,
-                        Succeeded = false
-                    });
-                }
+             
                
                 skillModel.ImagePath = imagePath;
             }

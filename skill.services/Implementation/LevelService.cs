@@ -38,6 +38,7 @@ namespace Skill.services.Implementation
                 newLevel.max=level.max;
                 newLevel.min=level.min;
                 newLevel.Name=level.Name;
+                newLevel.status=level.status;
                await _unitOfWork.Levels.AddAsync(newLevel);
               await  _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success("the level is added " , "the level is added ");
@@ -123,7 +124,7 @@ namespace Skill.services.Implementation
                 editlevel.Name = level.Name;
                 editlevel.max=level.max;
                 editlevel.min=level.min;
-              
+              editlevel.status=level.status;
                 _unitOfWork._context.Update(editlevel);
                 await _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success("the level is updated ", "the level is updated ");

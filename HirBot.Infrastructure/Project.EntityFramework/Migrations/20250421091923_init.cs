@@ -27,6 +27,8 @@ namespace HirBot.EntityFramework.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     min = table.Column<int>(type: "int", nullable: false),
                     max = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ModifiedBy = table.Column<string>(type: "longtext", nullable: true)
@@ -137,6 +139,8 @@ namespace HirBot.EntityFramework.Migrations
                 columns: table => new
                 {
                     ID = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CompanyType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -321,16 +325,21 @@ namespace HirBot.EntityFramework.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ExamID = table.Column<int>(type: "int", nullable: true),
                     ApplicationID = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Time = table.Column<string>(type: "longtext", nullable: false)
+                    StartTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    durationInMinutes = table.Column<int>(type: "int", nullable: false),
+                    Location = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Location = table.Column<string>(type: "longtext", nullable: false)
+                    Mode = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    CandidateName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    InterviewType = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    InterviewerName = table.Column<string>(type: "longtext", nullable: true)
+                    CandidateEmail = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Notes = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ZoomMeetinLink = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    InterviewerName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),

@@ -40,5 +40,14 @@ namespace User.Api.Controllers.Portfolio
             else
                 return StatusCode(respon.StatusCode, new { status = false, respon.Message } );
         }
+        [HttpGet("{userName}")]
+        public async Task<IActionResult> GetProfileByUserName(string userName)
+        {
+            var respon = await _profileService.GetProfileWithUserName(userName);
+            if (respon.StatusCode == 200)
+                return Ok(new { status = true, respon.Data });
+            else
+                return StatusCode(respon.StatusCode, new { status = false, respon.Message });
+        }
     }
 }
