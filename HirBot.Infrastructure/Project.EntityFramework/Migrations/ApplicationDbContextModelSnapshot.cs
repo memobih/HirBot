@@ -587,6 +587,79 @@ namespace HirBot.EntityFramework.Migrations
                     b.ToTable("Levels");
                 });
 
+            modelBuilder.Entity("HirBot.Data.Entities.Notification", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Notifiable_ID")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Notifiable_Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("massage")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("HirBot.Data.Entities.NotificationReciver", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("NotificationID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReciverID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("read_at")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("NotificationID");
+
+                    b.HasIndex("ReciverID");
+
+                    b.ToTable("NotificationRecivers");
+                });
+
             modelBuilder.Entity("HirBot.Data.Entities.Option", b =>
                 {
                     b.Property<int>("ID")
@@ -1145,6 +1218,25 @@ namespace HirBot.EntityFramework.Migrations
                     b.Navigation("Skill");
                 });
 
+            modelBuilder.Entity("HirBot.Data.Entities.NotificationReciver", b =>
+                {
+                    b.HasOne("HirBot.Data.Entities.Notification", "Notification")
+                        .WithMany("Recivers")
+                        .HasForeignKey("NotificationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HirBot.Comman.Idenitity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("ReciverID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Notification");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HirBot.Data.Entities.Option", b =>
                 {
                     b.HasOne("HirBot.Data.Entities.Question", "Question")
@@ -1301,6 +1393,11 @@ namespace HirBot.EntityFramework.Migrations
                     b.Navigation("Applications");
 
                     b.Navigation("JobRequirments");
+                });
+
+            modelBuilder.Entity("HirBot.Data.Entities.Notification", b =>
+                {
+                    b.Navigation("Recivers");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.Option", b =>
