@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.3.0" />
     <PackageReference Include="Microsoft.Web.WebJobs.Publish" Version="17.1.361" />
+    <PackageReference Include="PusherServer" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

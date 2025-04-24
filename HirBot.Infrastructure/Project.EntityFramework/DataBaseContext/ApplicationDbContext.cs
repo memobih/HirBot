@@ -47,6 +47,8 @@ namespace HirBot.EntityFramework.DataBaseContext
         public DbSet<Question> Questions { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<UserAnwer> UserAnswers { get; set; }
-        public DbSet<UserSkill> UserSkills { get; set; }
+        public DbSet<UserSkill> UserSkills { get; set; } 
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<NotificationReciver> NotificationRecivers { get; set; }
     }
 }

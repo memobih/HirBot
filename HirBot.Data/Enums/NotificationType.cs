@@ -10,5 +10,6 @@ namespace HirBot.Data.Enums
     { 
        post =1 ,
        job =2 ,
+       Interview =3 ,
     } 
 }

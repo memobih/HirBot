@@ -23,6 +23,7 @@ using skill.services;
 using Jop.Services;
 using Exame.Services;
 using User.Services.Implemntation;
+using Notification.Services;
 // Set absolute paths for Linux compatibility
 var isWindows = System.Runtime.InteropServices.RuntimeInformation
     .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
@@ -96,7 +97,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 #region Dependency Injection
-builder.Services.AddInfrastructureServices().AddUsersServices().AddSkillServices().AddJopServices().AddExameServices();
+builder.Services.AddInfrastructureServices().AddUsersServices().AddSkillServices().AddJopServices().AddExameServices().AddNotificationService();
 #endregion
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
