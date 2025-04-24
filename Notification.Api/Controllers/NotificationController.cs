@@ -58,7 +58,6 @@ namespace Notification.Api.Controllers
                 dto.NotifiableID,
                 dto.RecieversIds
             );
-
             return StatusCode(result.StatusCode, result);
         }
     }

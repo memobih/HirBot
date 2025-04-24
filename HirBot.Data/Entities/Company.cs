@@ -19,7 +19,7 @@ namespace HirBot.Data.Entities
         public string ID { get; set; }=Guid.NewGuid().ToString();
         [Required(ErrorMessage = "Company name is Required")]
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [Required(ErrorMessage = "Company type is Required")]
         public string CompanyType { get; set; }
         public string country { get; set; }
