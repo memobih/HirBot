@@ -70,8 +70,8 @@ namespace Notification.Services.Implementation
                     ID = n.Notification.ID.ToString(),
                     Message = n.Notification.massage,
                     UserID = n.ReciverID,
-                    Type = n.Notification.NotifiableType,
-                    ReferenceID = n.Notification.NotifiableID,
+                    Type = n.Notification.Notifiable_Type,
+                    ReferenceID = n.Notification.Notifiable_ID,
                     CreatedAt = n.CreationDate,
                     IsRead = n.read_at.HasValue
                 }).ToListAsync();
@@ -106,8 +106,8 @@ namespace Notification.Services.Implementation
             var notification = new HirBot.Data.Entities.Notification
             {
                 massage = message,
-                NotifiableType = type,
-                NotifiableID = referenceId,
+                Notifiable_Type = type,
+                Notifiable_ID = referenceId,
                 CreationDate = DateTime.UtcNow
             };
 
