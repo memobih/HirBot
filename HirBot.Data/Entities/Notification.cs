@@ -17,19 +17,10 @@ namespace HirBot.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        [ForeignKey("User")]
-        public string UserID { get; set;  } 
-
-        public virtual ApplicationUser User {  get; set; }
+        public NotificationType Notifiable_Type {  get; set; } 
          
-        public NotificationType type {  get; set; } 
-         
-        public int ReferenceID {  get; set; } 
-         public string ? massage { get ; set; }  
-
-
-       public  ICollection<Notification>  ?Notifications { get; set; }
-
-
+        public string? Notifiable_ID {  get; set; } 
+         public string ? massage { get ; set; } 
+       public  ICollection<NotificationReciver>Recivers { get; set; }
     }
 }

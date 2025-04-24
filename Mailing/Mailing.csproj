@@ -10,6 +10,7 @@
     <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0" />
     <PackageReference Include="Microsoft.Web.WebJobs.Publish" Version="17.1.361" />
+    <PackageReference Include="PusherServer" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

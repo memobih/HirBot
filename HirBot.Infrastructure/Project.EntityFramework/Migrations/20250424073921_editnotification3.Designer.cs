@@ -4,6 +4,7 @@ using HirBot.EntityFramework.DataBaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HirBot.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250424073921_editnotification3")]
+    partial class editnotification3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -613,10 +616,16 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<int>("NotifiableType")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("massage")
                         .HasColumnType("longtext");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Notifications");
                 });
@@ -1216,6 +1225,17 @@ namespace HirBot.EntityFramework.Migrations
                     b.Navigation("Level");
 
                     b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("HirBot.Data.Entities.Notification", b =>
+                {
+                    b.HasOne("HirBot.Comman.Idenitity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.NotificationReciver", b =>
