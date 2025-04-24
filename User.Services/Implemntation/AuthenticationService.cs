@@ -217,7 +217,8 @@ namespace User.Services.Implemntation
                 newCompany.CompanyType = companyRegisterDto.CompanyType;
                 newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
                 newCompany.UserID = newUser.Id;
-
+                newUser.FullName = companyRegisterDto.CompanyName;
+                newCompany.Name = companyRegisterDto.CompanyName;
                 await _unitOfWork.Companies.AddAsync(newCompany);
                 //newUser.CompanyID = newCompany.ID; 
                  //await _userManager.AddToRoleAsync(newUser, "Company");

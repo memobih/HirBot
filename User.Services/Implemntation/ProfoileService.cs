@@ -67,7 +67,7 @@ namespace User.Services.Implemntation
         {
             try
             {
-                var user = await _unitOfWork.Users.GetEntityByPropertyWithIncludeAsync(u => u.UserName == userName);
+                var user = await _unitOfWork.Users.GetEntityByPropertyWithIncludeAsync(u => u.UserName == userName , u=>u.Portfolio);
                 if (user == null)
                     return APIOperationResponse<object>.NotFound("this user is not found");
                 if(user.role==UserType.User)
