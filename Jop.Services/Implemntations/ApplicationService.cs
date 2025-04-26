@@ -147,7 +147,7 @@ namespace Jop.Services.Implemntations
             }
         }
         
-        public async Task<APIOperationResponse<object>> GetAllApprovedApplications(int JobId,string? search = null, ApplicationStatus? status = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
+        public async Task<APIOperationResponse<object>> GetAllApprovedApplications(int JobId,string? search = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
         {
             try
             {
@@ -186,7 +186,7 @@ namespace Jop.Services.Implemntations
                     if (applications.Count == 0)
                         return APIOperationResponse<object>.NotFound("there are no applications aproved");
                 }
-                Filterapproved(ref applications, JobId, search, status, sort, page, perpage);
+                Filterapproved(ref applications, JobId, search, ApplicationStatus.approved, sort, page, perpage);
                 return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (applications.Count() / perpage) + 1, pageSize = perpage, totalRecords = applications.Count(), data = Paginate(applications, page, perpage) });
             }
             catch (Exception ex)
