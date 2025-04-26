@@ -48,9 +48,9 @@ namespace User.Api.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetALLCompanies(string?  search =null, int page=1 , int perpage=10)
+        public async Task<IActionResult> GetALLCompanies(string?  search =null, CompanyStatus? status = null,  int page=1 , int perpage=10)
         {
-            var response = await _companyService.GetAllCompanies(search , page , perpage);
+            var response = await _companyService.GetAllCompanies(search ,status ,  page , perpage);
             if (response.StatusCode == 200)
 
                 return Ok(new { status = true, response.Data });

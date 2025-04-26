@@ -75,7 +75,7 @@ namespace User.Services.Implemntation
             }
         }
 
-        public async Task<APIOperationResponse<object>> GetAllCompanies(string? search = null, int page = 1, int perpage = 10)
+        public async Task<APIOperationResponse<object>> GetAllCompanies(string? search = null, CompanyStatus? status = null, int page = 1, int perpage = 10)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace User.Services.Implemntation
 
                        ); 
                 }
-                Filter(ref response, search);
+                Filter(ref response, search , status);
                 return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (response.Count() / perpage) + 1, pageSize = perpage, totalRecords = response.Count(), data = Paginate(response, page, perpage) });
             }
             catch (Exception ex)
@@ -155,7 +155,7 @@ namespace User.Services.Implemntation
         {
             return source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }
-        private void Filter(ref List<CompanyList> companies, string? search = null)
+        private void Filter(ref List<CompanyList> companies, string? search = null , CompanyStatus ?status=null)
         {
             if(search!=null)
             companies = companies.Where(c =>
@@ -167,9 +167,10 @@ namespace User.Services.Implemntation
             c.category.StartsWith(search)
             ||
             c.country.StartsWith(search)
-            ||
-            c.status.ToString().StartsWith(search)
-            ).ToList();
+          
+            ).ToList(); 
+            if(status!=null)
+                companies=companies.Where(c=>c.status==status).ToList();
 
         }
     }
