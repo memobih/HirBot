@@ -14,6 +14,7 @@ namespace Project.Repository.Repository
         private IGeneralRepository<RefreshToken> refreshs { get; set; }
         public IGeneralRepository<Company> Companies { get;   private set ;} 
         public IGeneralRepository<Education> Educations { get; private set; }
+       
          
         public IGeneralRepository<Experience> Experiences { get; private set; } 
          
@@ -23,9 +24,12 @@ namespace Project.Repository.Repository
         public IGeneralRepository<Job> Jobs { get; private set; }
         public IGeneralRepository<Application> Applications { get; private set; }
 
+        public IGeneralRepository<UserSkill> userSKils { get; private set; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
+
             refreshs =new GeneralRepository<RefreshToken> (_context);
             Users = new GeneralRepository<ApplicationUser>(_context);
             Companies=new GeneralRepository<Company>(_context);
@@ -34,7 +38,8 @@ namespace Project.Repository.Repository
             Jobs=new GeneralRepository<Job>(_context); 
             Levels = new GeneralRepository<Level>(_context);
             Skills = new GeneralRepository<Skill>(_context);
-            Applications=new GeneralRepository<Application>(_context); ;
+            Applications=new GeneralRepository<Application>(_context); 
+            userSKils=new GeneralRepository<UserSkill>(_context);
         }
         public async Task<bool> SaveAsync()
         {

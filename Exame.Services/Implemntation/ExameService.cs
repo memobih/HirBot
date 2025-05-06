@@ -182,6 +182,7 @@ namespace Exame.Services.Implemntation
                     }
 
                 }
+                exam.IsAnswerd = true;
                 exam.UserSkill.Rate += exam.Points;
                 response.TotalQuestion = exam.Questions.Count();
                 response.skill = exam.UserSkill.Skill.Name;

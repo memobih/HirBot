@@ -25,9 +25,10 @@ namespace HirBot.Data.Entities
         public int UserSkillID { get; set; }
 
         public virtual  UserSkill ? UserSkill { get; set; }
-
-    
+        public int duration { get; set; }
         public virtual ICollection<Interview >   ?Interviews { get; set; }
         public virtual ICollection<Question > Questions { get; set; }
+
+        public bool IsAnswerd { get; set; } = false; 
     }
 }

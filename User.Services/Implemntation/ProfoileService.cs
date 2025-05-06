@@ -152,7 +152,7 @@ namespace User.Services.Implemntation
                 return null;
             }
         }
-        private CompanyProfileDto GetCompanyProfile(Company entity)
+        private CompanyProfileDto GetCompanyProfile(HirBot.Data.Entities.Company entity)
         {
             try
             {

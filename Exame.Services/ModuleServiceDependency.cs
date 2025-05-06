@@ -14,7 +14,7 @@ namespace Exame.Services
         public static IServiceCollection AddExameServices(this IServiceCollection service)
         {
             service.AddTransient<IExameService , ExameService>();
-       
+            service.AddTransient<IDailyChanalgeService , DailyChanalgeService>();
             return service;
         }
     }

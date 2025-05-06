@@ -11,6 +11,7 @@ namespace Skill.services.Response
        public string skill {  get; set; } 
        public string level { get; set; } 
 
-     public int points { get; set; }
+     public int points { get; set; } 
+        public string  ? logo { get; set; }
     }
 }

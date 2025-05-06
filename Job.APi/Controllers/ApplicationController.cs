@@ -71,7 +71,7 @@ namespace Job.Api.Controllers
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
         [Authorize]
-        [HttpGet("approved")]
+        [HttpGet("{jobId}/approved")]
         public async Task<IActionResult> GetAllApprovedApplications(int jobId, string? search = null, string sort = "score", string? sortDirection = null, int page = 1, int perpage = 10)
         {
             var response = await _applicationService.GetAllApprovedApplications(jobId, search, sort, sortDirection, page, perpage);

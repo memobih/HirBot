@@ -5,10 +5,12 @@ using HirBot.ResponseHandler.Models;
 using Jop.Services.Responses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Mysqlx.Prepare;
 using Project.Repository.Repository;
 using Project.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -172,6 +174,34 @@ namespace User.Services.Implemntation
             if(status!=null)
                 companies=companies.Where(c=>c.status==status).ToList();
 
+        }
+
+        public async Task<APIOperationResponse<object>> GetAcceptedCompanies(string  ? search= null ,int page = 1, int perpage = 10)
+        {
+            try
+            {
+                var companies = _unitOfWork._context.Companies.Include(C => C.account).Where(c => c.status == CompanyStatus.accepted);
+                if (search != null)
+                    companies = companies.Where(c => c.Name.StartsWith(search));
+                var response = new List<User.Services.Response.Company>();
+                foreach (var company in companies)
+                {
+                    response.Add(new User.Services.Response.Company
+                    {
+                        id = company.ID,
+                        name = company.account.FullName,
+                        logo = company.account.ImagePath,
+
+                    }
+
+                       );
+                }
+                return APIOperationResponse<object>.Success(new { currentPage = page, totalPages = (response.Count() / perpage) + 1, pageSize = perpage, totalRecords = response.Count(), data = Paginate(response, page, perpage) });
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
         }
     }
 }

@@ -34,6 +34,7 @@ namespace User.Services.Implemntation
                 newExperience.location = experience.location;
                 newExperience.workType = experience.workType;
                 newExperience.companyName = experience.companyName;
+                newExperience.CompanyID=experience.CompanyID;
                 user.experiences?.Add(newExperience);
                 await _unitOfWork.Users.UpdateAsync(user);
                 await _unitOfWork.SaveAsync();

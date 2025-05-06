@@ -326,7 +326,7 @@ namespace skill.services.Implementation
                 var response = new List<UserSkillResponse>();
                 foreach (var skill in userSkill)
                 {
-                    response.Add(new UserSkillResponse { skill = skill.Skill.Name, points = skill.Rate, level = "Basic" });
+                    response.Add(new UserSkillResponse { skill = skill.Skill.Name, points = skill.Rate, level = "Basic"   ,logo=skill.Skill.ImagePath});
                 }
                 
 

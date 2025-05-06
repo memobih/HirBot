@@ -58,6 +58,16 @@ namespace User.Api.Controllers
 
 
         }
+        [HttpGet("companies")]
+        public async Task<IActionResult> GetALLCompanies(string ?search=null , int page=1 , int perpage=10)
+        {
+            var response = await _companyService.GetAcceptedCompanies( search , page , perpage);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            else return StatusCode(response.StatusCode, new { status = false, response.Message });
+
+
+        }
         [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)

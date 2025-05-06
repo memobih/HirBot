@@ -11,6 +11,8 @@ namespace User.Services.Interfaces
     public interface ICompanyService
     { 
         public Task<APIOperationResponse<object >>GetAllCompanies (string ?search=null , CompanyStatus? status = null ,int page = 1, int perpage = 10);
+        public Task<APIOperationResponse<object>> GetAcceptedCompanies(string ?  search=null , int page=1 , int perpage=10);
+
         public Task<APIOperationResponse<object>> ChangeStatus(CompanyStatus status, string id); 
 
         public Task<APIOperationResponse<object>> GetByid(string id);

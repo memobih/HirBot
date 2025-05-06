@@ -15,6 +15,7 @@ namespace HirBot.Data.IGenericRepository_IUOW
         public IGeneralRepository<Skill> Skills { get; }
         public IGeneralRepository<Level> Levels { get; }
         public IGeneralRepository<Application> Applications { get;  }
+        public IGeneralRepository<UserSkill> userSKils { get; }
         Task<bool> SaveAsync();
     }
 }

@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace User.Services.DataTransferObjects.Profile
 {
-    public  class ExperienceDto
+    public class ExperienceDto
     {
-        [Required(ErrorMessage ="This field is Required")]
+        [Required(ErrorMessage = "This field is Required")]
         public string title { get; set; }
         [Required(ErrorMessage = "This field is Required")]
         public EmployeeType jobType { get; set; }
@@ -24,8 +24,11 @@ namespace User.Services.DataTransferObjects.Profile
         public string? endDate { get; set; }
         [Required(ErrorMessage = "This field is Required")]
         public PrivacyEnum privacy { get; set; }
+        [Required(ErrorMessage = "This field is Required")]
+
         public string? companyName { get; set; }
 
+        public string  ?  CompanyID {get; set;}
 
         public string  ? location { get; set; }
     }
