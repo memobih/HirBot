@@ -24,8 +24,8 @@ namespace Jop.Services.DataTransferObjects
         [Required(ErrorMessage = "This field is Required")]
         public LocationType workType { get; set; }
         [Required(ErrorMessage = "This field is Required")]
-        public string? startDate { get; set; }
-        public string? endDate { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate { get; set; }
         [Required(ErrorMessage = "This field is Required")]
 
         public int  rate { get; set; }

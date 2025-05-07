@@ -54,15 +54,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jop.Services", "Jop.Service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Exame", "HirBot.Exame", "{CDE08694-8DE3-4EF6-A778-46A7C9E20093}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exame.Services", "Exame.Services\Exame.Services.csproj", "{331A739E-21B0-4F7B-8AC2-91D93E2B1962}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exame.Services", "Exame.Services\Exame.Services.csproj", "{331A739E-21B0-4F7B-8AC2-91D93E2B1962}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exame.Api", "Exame.Api\Exame.Api.csproj", "{C9C4D036-B54E-4201-ACD2-F30C6BB82399}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exame.Api", "Exame.Api\Exame.Api.csproj", "{C9C4D036-B54E-4201-ACD2-F30C6BB82399}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.Notification", "HirBot.Notification", "{4325219F-B072-4A91-8B8A-3FBA3CC09785}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notification.Services", "Notification.Services\Notification.Services.csproj", "{77EBCD3E-9D2E-4FBA-A7E8-7083818AA478}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification.Services", "Notification.Services\Notification.Services.csproj", "{77EBCD3E-9D2E-4FBA-A7E8-7083818AA478}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notification.Api", "Notification.Api\Notification.Api.csproj", "{1D10243D-3C6A-45E6-BF98-274D5837AF18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notification.Api", "Notification.Api\Notification.Api.csproj", "{1D10243D-3C6A-45E6-BF98-274D5837AF18}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HirBot.UnitTest", "HirBot.UnitTest", "{909B531E-66D5-44B4-BB57-3E499496FC75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

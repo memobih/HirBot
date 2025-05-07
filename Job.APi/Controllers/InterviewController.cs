@@ -13,7 +13,7 @@ namespace Job.APi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-   // [Authorize(Roles ="Company,Admin")]
+   [Authorize]
     public class InterviewController : ControllerBase
     {
         private readonly IInterviewService _interviewService;

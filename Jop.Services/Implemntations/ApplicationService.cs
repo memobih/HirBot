@@ -311,17 +311,17 @@ namespace Jop.Services.Implemntations
                 var user = await unitOfWork._context.Users.Include(c=>c.experiences).FirstOrDefaultAsync(u => u.Id == application.UserID);
                 if (user == null)
                     return APIOperationResponse<object>.NotFound("this user is not found");
-                user.experiences.Add(new Experience()
-                {
-                    Title = application.Job.Title,
-                    companyName = application.Job.Company.Name,
-                    location = application.Job.location,
-                    Start_Date = DateTime.Now.ToString("yyyy-MM-dd"),
+            user.experiences.Add(new Experience()
+            {
+                Title = application.Job.Title,
+                companyName = application.Job.Company.Name,
+                location = application.Job.location,
+                Start_Date = DateTime.Now,
                     End_Date = null,
-                    workType = application.Job.LocationType,
-                    privacy = PrivacyEnum.Public,
-                    employeeType = application.Job.EmployeeType,
-                });
+                workType = application.Job.LocationType,
+                privacy = PrivacyEnum.Public,
+                employeeType = application.Job.EmployeeType,
+            });
             application.status = ApplicationStatus.accepted;
             try 
             {
