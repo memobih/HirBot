@@ -11,6 +11,7 @@ namespace Jop.Services.DataTransferObjects
         public string CandidateEmail { get; set; }
         public string CandidateName { get; set; }
         public string? ImagePath { get; set; }
-        public string?Title { get; set; }
+        public string?Title { get; set; } 
+        public float?Score { get; set; }
     }
 }
