@@ -230,15 +230,20 @@ namespace Jop.Services.Implemntations
             if (application == null)
                 return APIOperationResponse<InterviewCandidateinfoDto>.NotFound("Application not found.");
 
-            var user = await _unitOfWork._context.Users.FindAsync(application.UserID);
             if (application.User is null)
                 return APIOperationResponse<InterviewCandidateinfoDto>.NotFound("User not found for the application.");
 
+            var user = await _unitOfWork._context.Users.Include(u => u.Portfolio).FirstOrDefaultAsync(u => u.Id == application.User.Id);
+            if (user is null)
+                return APIOperationResponse<InterviewCandidateinfoDto>.NotFound("User details not found.");
+
             var interviewCandidateInfoDto = new InterviewCandidateinfoDto
             {
-                CandidateName = application.User.FullName,
-                CandidateEmail = application.User.Email,
-                ImagePath = application.User.ImagePath,
+                CandidateName = user.FullName,
+                CandidateEmail = user.Email,
+                ImagePath = user.ImagePath,
+                CandidateId = user.Id.ToString(),
+                Title = user.Portfolio?.Title ?? "No title available"
             };
 
             return APIOperationResponse<InterviewCandidateinfoDto>.Success(interviewCandidateInfoDto, "Candidate information retrieved successfully.");
