@@ -20,11 +20,9 @@ namespace User.Services.DataTransferObjects.Profile
         public LocationType workType { get; set; }
         [Required(ErrorMessage = "This field is Required")]
         public string? startDate { get; set; }
-        [Required(ErrorMessage = "This field is Required")]
         public string? endDate { get; set; }
         [Required(ErrorMessage = "This field is Required")]
         public PrivacyEnum privacy { get; set; }
-        [Required(ErrorMessage = "This field is Required")]
 
         public string? companyName { get; set; }
 

@@ -172,6 +172,49 @@ namespace User.Services.Implemntation
             }
         }
 
+        public async Task<APIOperationResponse<object>> UpdateCurrentJob(int id)
+        {
+            try
+            {
+                var user = await authenticationService.GetCurrentUserAsync();
+                var experience=await _unitOfWork.Experiences.GetByIdAsync(id);
+                if(experience !=null && experience.UserID==user.Id  )
+                {
+                    user.CurentJop = experience;
+                    user.CurentJopID = experience.ID;
+                    await _unitOfWork.Users.UpdateAsync(user);
+                    await _unitOfWork.SaveAsync();
+                    return APIOperationResponse<object>.Success("the current job updated succesful" , "the current job updated succesful");
+
+                }
+                return APIOperationResponse<object>.BadRequest("try again !");
+
+
+            }
+            catch
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured "); 
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> DeleteCurrentJob()
+        {
+            try
+            {
+                var user = await authenticationService.GetCurrentUserAsync();
+                    user.CurentJop = null;
+                user.CurentJopID = null;
+                    await _unitOfWork.Users.UpdateAsync(user);
+                await _unitOfWork.SaveAsync();
+
+                return APIOperationResponse<object>.Success("the current job deleted succesful", "the current job deleted succesful");
+            }
+            catch
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured ");
+            }
+        }
+
         #endregion
     }
 }

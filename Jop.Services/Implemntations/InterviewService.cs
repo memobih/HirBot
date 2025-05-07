@@ -7,6 +7,7 @@ using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
 using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Project.Repository.Repository;
 using Project.ResponseHandler.Consts;

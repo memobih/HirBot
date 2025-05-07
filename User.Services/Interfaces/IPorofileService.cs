@@ -13,6 +13,8 @@ namespace User.Services.Interfaces
         public Task<APIOperationResponse<ProfileDto>> GetPorofileAync();
         public Task<APIOperationResponse<object>> GetCompanyProfileAsync();  
         public Task<APIOperationResponse<object>> GetProfileWithUserName(string userName);
+        public Task<APIOperationResponse<object>> UpdateCurrentJob(int id);
+        public Task<APIOperationResponse<object>> DeleteCurrentJob();
 
     }
 }

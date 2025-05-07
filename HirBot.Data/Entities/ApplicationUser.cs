@@ -33,6 +33,7 @@ namespace HirBot.Comman.Idenitity
 
         [InverseProperty("account")]
         public  virtual Company ?  Company { get; set; }
+        public virtual List<UserSkill> ? Skills { get; set; }
        
     }
 }

@@ -15,8 +15,8 @@ namespace User.Services.Response
         public EmployeeType jobType { get; set; }
         public LocationType workType { get; set; }
         public string? location { get; set; }
-        public string? startDate { get; set; }
-        public string? endDate { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate { get; set; }
         public PrivacyEnum? privacy { get; set; }
      
         public int rate { get; set; }

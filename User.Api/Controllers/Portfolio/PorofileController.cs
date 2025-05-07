@@ -49,5 +49,27 @@ namespace User.Api.Controllers.Portfolio
             else
                 return StatusCode(respon.StatusCode, new { status = false, respon.Message });
         }
+        [Authorize]
+        [HttpPut("update/{id}/CurrentJob")]
+        public async Task<IActionResult> UpdateCurrentJob(int id )
+        {
+            var respon = await _profileService.UpdateCurrentJob(id);
+            if (respon.StatusCode == 200)
+                return Ok(new { status = true, respon.Message });
+            else
+                return StatusCode(respon.StatusCode, new { status = false, respon.Message });
+        }
+        [Authorize]
+        [HttpDelete("CurrentJob")]
+        public async Task<IActionResult> DeleteCurrentJob()
+        {
+            var respon = await _profileService.DeleteCurrentJob();
+            if (respon.StatusCode == 200)
+                return Ok(new { status = true, respon.Message });
+            else
+                return StatusCode(respon.StatusCode, new { status = false, respon.Message });
+        }
+
+
     }
 }

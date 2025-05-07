@@ -18,7 +18,7 @@ namespace Jop.Services.Responses
         public LocationType workType { get; set; } 
 
         public int Rate { get; set; } 
-        public string ?  start_date { get; set; }
+        public DateTime ?  start_date { get; set; }
 
     } 
 }

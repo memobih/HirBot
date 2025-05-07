@@ -21,8 +21,8 @@ namespace HirBot.Data.Entities
         public EmployeeType employeeType { get; set; }
         public LocationType workType {  get; set; } 
         public string  ?  location { get; set; }
-        public string? Start_Date { get; set; }
-        public string? End_Date { get; set; } 
+        public DateTime? Start_Date { get; set; }
+        public DateTime? End_Date { get; set; } 
         public string  ? companyName { get; set; } 
 
         public PrivacyEnum privacy { get; set; }

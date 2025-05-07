@@ -3,6 +3,7 @@ using HirBot.ResponseHandler.Models;
 using Microsoft.EntityFrameworkCore;
 using Project.Repository.Repository;
 using Project.Services.Interfaces;
+using System.ComponentModel.Design;
 using User.Services.DataTransferObjects.Profile;
 using User.Services.Interfaces;
 using User.Services.Response;
@@ -22,21 +23,27 @@ namespace User.Services.Implemntation
         {
             try
             {
-                var user = await authenticationService.GetCurrentUserAsync(); 
-                if(user==null) return APIOperationResponse<object>.NotFound("experiecne is not found");
+                var user = await authenticationService.GetCurrentUserAsync();
+                if (user == null) return APIOperationResponse<object>.NotFound("experiecne is not found");
+                if (experience.CompanyID == null && experience.companyName == null)
+                    return APIOperationResponse<object>.BadRequest("you must choose the name of the commpany ", new { companyName = "you must choose name " });
                 var newExperience = new Experience();
-                user = _unitOfWork._context.users.Include(u=>u.experiences).FirstOrDefault(u=>u.Id==user.Id); 
+                user = _unitOfWork._context.users.Include(u=>u.experiences).FirstOrDefault(u=>u.Id==user.Id);  
+                
                 newExperience.privacy = experience.privacy;
-                newExperience.Start_Date = experience.startDate;
+                newExperience.Start_Date = DateTime.Parse(experience.startDate);
                 newExperience.employeeType = experience.jobType;
-                newExperience.End_Date = experience.endDate;
+                newExperience.End_Date = DateTime.Parse(experience.endDate);
                 newExperience.Title = experience.title;
                 newExperience.location = experience.location;
                 newExperience.workType = experience.workType;
+                newExperience.CompanyID=experience.CompanyID;
+                if (experience.CompanyID != null) 
+                   experience.companyName =(await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.ID == experience.CompanyID )).Name;
                 newExperience.companyName = experience.companyName;
                 newExperience.CompanyID=experience.CompanyID;
-                user.experiences?.Add(newExperience);
-                await _unitOfWork.Users.UpdateAsync(user);
+                newExperience.UserID = user.Id;
+                await _unitOfWork.Experiences.AddAsync(newExperience);
                 await _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success(experience);
             }
@@ -77,9 +84,9 @@ namespace User.Services.Implemntation
                 if (user == null  || editedExperience==null || editedExperience.UserID !=user.Id)  
                  return APIOperationResponse<object>.NotFound("experience is not found");     
                 editedExperience.privacy = experience.privacy;
-                editedExperience.Start_Date = experience.startDate;
+                editedExperience.Start_Date = DateTime.Parse(experience.startDate);
                 editedExperience.employeeType = experience.jobType;
-                editedExperience.End_Date = experience.endDate;
+                editedExperience.End_Date = DateTime.Parse(experience.endDate);
                 editedExperience.Title = experience.title;
                 editedExperience.location = experience.location;
                 editedExperience.workType = experience.workType;
