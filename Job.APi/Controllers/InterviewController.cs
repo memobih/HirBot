@@ -36,12 +36,9 @@ namespace Job.APi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetInterviewDto>> GetById(string id)
+        public async Task<ActionResult<GetInterviewDto>> GetById(int id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest("Invalid ID. ID cannot be null or empty.");
-            }
+         
             var interview = await _interviewService.GetByIdAsync(id);
             if (interview == null)
             {

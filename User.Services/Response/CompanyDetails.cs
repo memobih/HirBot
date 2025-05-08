@@ -29,8 +29,7 @@ namespace User.Services.Response
     public class legalInformation
     {
         public string ?SocialMediaLink { get; set; } 
-        public string ?website { get; set; }
-
+        public string? website { get; set; }
         public string? BuisnessLicense { get; set; }
 
     }

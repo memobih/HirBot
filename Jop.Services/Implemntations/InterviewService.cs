@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Project.Repository.Repository;
 using Project.ResponseHandler.Consts;
+using Project.Services.Interfaces;
 
 namespace Jop.Services.Implemntations
 {
@@ -18,11 +19,14 @@ namespace Jop.Services.Implemntations
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ZoomMeetingService _zoom;
+        private readonly IAuthenticationService _authenticationService;
 
-        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom)
+        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom , IAuthenticationService authenticationService)
         {
+
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _zoom = zoom ?? throw new ArgumentNullException(nameof(zoom));
+            _authenticationService = authenticationService;
         }
 
         public async Task<APIOperationResponse<List<GetInterviewDto>>> GetAllAsync()
@@ -48,19 +52,21 @@ namespace Jop.Services.Implemntations
                     ApplicationId = interview.ApplicationID,
                     InterviewerName = interview.InterviewerName ?? string.Empty,
                 };
-                interviewsdtos.Add( interviewDto );
+                interviewsdtos.Add(interviewDto);
             }
 
             return APIOperationResponse<List<GetInterviewDto>>.Success(interviewsdtos);
         }
 
-        public async Task<APIOperationResponse<GetInterviewDto>> GetByIdAsync(string id)
+        public async Task<APIOperationResponse<GetInterviewDto>> GetByIdAsync(int id)
         {
-            if (string.IsNullOrEmpty(id))
-                return APIOperationResponse<GetInterviewDto>.BadRequest("Invalid interview ID.");
-            var interview = await _unitOfWork._context.Interviews.FindAsync(id);
-            if (interview == null)
+            var user=await _authenticationService.GetCurrentUserAsync();
+            var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+            var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == id).FirstOrDefault();
+            if (application == null || application.Interviews == null || application.Job.CompanyID!=company.ID )
                 return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.");
+
+            var interview = application.Interviews.Last();
             var GetInterviewDto_1 = new GetInterviewDto
             {
                 ID = interview.ID,
