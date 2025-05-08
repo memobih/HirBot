@@ -211,7 +211,8 @@ namespace Jop.Services.Implemntations
                     Name = application.User.FullName,
                     Email = application.User.Email,
                     jobTitle = application.User.Portfolio.Title,
-                    image = application.User.ImagePath
+                    image = application.User.ImagePath,
+                    
                 };
                 return APIOperationResponse<AppuserDto>.Success(applicant, "the applicant details are fetched succefuly");
 

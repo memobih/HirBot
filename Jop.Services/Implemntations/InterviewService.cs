@@ -250,7 +250,8 @@ namespace Jop.Services.Implemntations
                 CandidateEmail = user.Email,
                 ImagePath = user.ImagePath,
                 CandidateId = user.Id.ToString(),
-                Title = user.Portfolio?.Title ?? "No title available"
+                Title = user.Portfolio?.Title ?? "No title available",
+                Score = 80f // Placeholder for score, replace with actual logic to fetch score if needed
             };
 
             return APIOperationResponse<InterviewCandidateinfoDto>.Success(interviewCandidateInfoDto, "Candidate information retrieved successfully.");
