@@ -165,6 +165,7 @@ namespace Jop.Services.Implemntations
                     {
                         if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
                         if (application.status == ApplicationStatus.approved)
+                            if (application.Interviews != null) application.Interviews=application.Interviews.OrderBy(a => a.CreationDate).ToList();
                             applications.Add(
                                 new ApprovedApplication
                                 {
@@ -178,6 +179,7 @@ namespace Jop.Services.Implemntations
                                     imageLink = application.User.ImagePath,
                                     userName = application.User.UserName
                                     ,
+                                    
                                     interviewType = application.Interviews?.LastOrDefault()?.Type ?? null
                                 }
 

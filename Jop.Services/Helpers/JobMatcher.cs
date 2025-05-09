@@ -24,30 +24,44 @@
 //    class Candidate
 //    {
 //        private readonly UnitOfWork _unitOfWork;
-        
+
 //        public string Name { get; set; }
-//        public string ?Bio { get; set; }
+//        public string? Bio { get; set; }
 
 //        public List<string> Skills { get; set; }
 //        public int Experience { get; set; }
 //        public string Location { get; set; }
 //        public string GetProfileText() => $"Candidate {Bio} {string.Join(" ", Skills)} {Experience} years {Location}";
-//        Candidate(ApplicationUser user  , UnitOfWork unitOfWork)
+//        Candidate(ApplicationUser user, UnitOfWork unitOfWork)
 
 //        {
 //            _unitOfWork = unitOfWork;
 //            Name = user.FullName;
 //            Bio = user.Portfolio?.Title;
 //            //Skills=user.Skills. 
-//             var ids=user.Skills.Select(s=>s.SkillID).ToList();
-//           this. Skills=_unitOfWork._context.Skills.Where(s => ids.Contains(s.ID)).Select(s=>s.Name).ToList();
-//            foreach(var experience in user.experiences)
+//            var ids = user.Skills.Select(s => s.SkillID).ToList();
+//            this.Skills = _unitOfWork._context.Skills.Where(s => ids.Contains(s.ID)).Select(s => s.Name).ToList();
+//            if(user.experiences!=null)
+//            foreach (var experience in user.experiences)
 //            {
-                      
-//                Experience+=()
-//            }
+
+//                    if (experience.Start_Date != null && experience.End_Date != null)
+//                    {
+//                        DateTime start = experience.Start_Date.Value;
+//                        DateTime end = experience.End_Date.Value;
+
+//                        int years = end.Year - start.Year;
+
+//                        if (end < start.AddYears(years))
+//                        {
+//                            years--;
+//                        }
+//                    }
+
+
+//                }
 //        }
-//    } 
+//    }
 
 
 //    class JobMatcherWithAI
@@ -119,10 +133,11 @@
 //            Console.WriteLine(JobMatcherWithAI.ComputeTFIDFCosineSimilarity(job.GetJobText(), candidate.GetProfileText()));
 //            return totalScore;
 //        }
-//        public static double GetScore(ApplicationUser user, HirBot.Data.Entities.Job job) {
+//        public static double GetScore(ApplicationUser user, HirBot.Data.Entities.Job job)
+//        {
 //            var candidate =;
 
-        
+
 //        }
 
 //        public static void RecommendJobs(List<Job> jobs, Candidate candidate)

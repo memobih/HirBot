@@ -120,7 +120,7 @@ namespace Exame.Services.Implemntation
             //ID content IsCorrect QuestionID
             Questions.Add(new Question
             {
-                Content = "Which of the following is the correct way to declare a variable in C#?",
+                Content = "test  the error ?",
                 Points = 10,
                 QuestionType = QuestionType.MCQ,
                 Options = new List<Option> {

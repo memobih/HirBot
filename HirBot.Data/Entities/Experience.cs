@@ -40,7 +40,9 @@ namespace HirBot.Data.Entities
         public virtual Company ?  Company { get; set; }
         [JsonIgnore]
         [InverseProperty("CurentJop")]
-        public virtual  ApplicationUser ? UserJop { get; set; } 
+        public virtual  ApplicationUser ? UserJop { get; set; }  
+
+        public bool IsStill { get; set; }
 
     } 
 

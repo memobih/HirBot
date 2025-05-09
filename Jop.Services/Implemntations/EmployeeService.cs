@@ -63,6 +63,7 @@ namespace Jop.Services.Implemntations
                 newExperience.CompanyID=company.ID;
                 newExperience.UserID = user.Id;
                 newExperience.rate=employee.rate;
+                newExperience.IsStill=true;
                 await _unitOfWork.Experiences.AddAsync(newExperience);
                 await _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success("employee added Successful", "employee added Successful");
@@ -83,7 +84,7 @@ namespace Jop.Services.Implemntations
                 var company = await _unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this user is not a company or accepted");
-                var experiences = _unitOfWork._context.Experiences.Include(e => e.User).Where(e => e.CompanyID == company.ID).ToList();
+                var experiences = _unitOfWork._context.Experiences.Include(e => e.User).Where(e => e.CompanyID == company.ID&& e.IsStill==true).ToList();
                 List<EmployeeList> employees = new List<EmployeeList>();
                 foreach (Experience experience in experiences)
                 {
@@ -148,7 +149,7 @@ namespace Jop.Services.Implemntations
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var company = await _unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this user is not a company or accepted");
                 List<Experience> Employess = _unitOfWork._context.Experiences.Where(e => e.CompanyID == company.ID
@@ -158,7 +159,7 @@ namespace Jop.Services.Implemntations
                 ).ToList();
                 foreach (var employee in Employess)
                 {
-                    employee.CompanyID = null;
+                    employee.IsStill = false;
                 }
                 _unitOfWork._context.UpdateRange(Employess);
               await  _unitOfWork.SaveAsync();
