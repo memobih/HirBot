@@ -39,13 +39,13 @@ namespace Job.APi.Controllers
         public async Task<ActionResult<GetInterviewDto>> GetById(int id)
         {
          
-            var interview = await _interviewService.GetByIdAsync(id);
-            if (interview == null)
+            var response = await _interviewService.GetByIdAsync(id);
+            if (response.StatusCode !=200)
             {
-                return NotFound($"Interview with ID {id} not found.");
+                return NotFound("there are no interviews");
             }
 
-            return Ok(interview);
+            return Ok(response);
         }
 
         [HttpPost]
@@ -71,23 +71,15 @@ namespace Job.APi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(string id, [FromBody] InterviewDto dto)
+        public async Task<ActionResult> Update(int  id,  InterviewDto dto)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest("Invalid ID. ID cannot be null or empty.");
-            }
-
+           
             if (!ModelState.IsValid)
             {
                  return BadRequest(new { Error = "Invalid data. Please check the input and try again.", Details = ModelState });
             }
 
             var response = await _interviewService.UpdateAsync(id, dto);
-            if (response == APIOperationResponse<GetInterviewDto>.NotFound())
-            {
-                return NotFound($"Interview with ID {id} not found.");
-            }
             if(response.StatusCode != 200)
             {
                 return StatusCode(response.StatusCode, new { status = false, message = response.Message, errors = response.Errors });
@@ -99,13 +91,9 @@ namespace Job.APi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string id)
+        public async Task<ActionResult> Delete(int id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest("Invalid ID. ID cannot be null or empty.");
-            }
-
+          
             var deleted = await _interviewService.DeleteAsync(id);
             if (!deleted.Succeeded)
             {
