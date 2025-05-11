@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HirBot.Data\HirBot.Data.csproj" />
+    <ProjectReference Include="..\Notification.Services\Notification.Services.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
     <ProjectReference Include="..\User.Services\User.Services.csproj" />
   </ItemGroup>

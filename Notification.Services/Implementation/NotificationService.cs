@@ -57,30 +57,99 @@ namespace Notification.Services.Implementation
         }
 
         public async Task<APIOperationResponse<List<NotificationDto>>> GetAllForUserAsync(string userId)
+{
+    var user = await _context._context.Users.FindAsync(userId);
+    if (user == null)
+        return APIOperationResponse<List<NotificationDto>>.NotFound("User not found");
+
+    var notificationReceivers = await _context._context.NotificationRecivers
+        .Where(n => n.ReciverID == userId)
+        .Include(n => n.Notification)
+        .ToListAsync();
+
+    var notificationDtos = new List<NotificationDto>();
+
+    foreach (var receiver in notificationReceivers)
+    {
+        var notification = receiver.Notification;
+        var dto = new NotificationDto
         {
-            var user = await _context._context.Users.FindAsync(userId);
-            if (user == null)
-                return APIOperationResponse<List<NotificationDto>>.NotFound("User not found");
+            ID = notification.ID.ToString(),
+            Message = notification.massage,
+            UserID = receiver.ReciverID,
+            Type = notification.Notifiable_Type,
+            ReferenceID = notification.Notifiable_ID,
+            CreatedAt = notification.CreationDate,
+            IsRead = receiver.read_at.HasValue,
+            Metadata = new Dictionary<string, object>()
+        };
 
-            var notifications = await _context._context.NotificationRecivers
-                .Where(n => n.ReciverID == userId)
-                .Include(n => n.Notification)
-                .Select(n => new NotificationDto
+        // 🔁 Enrich Metadata based on notification type
+        switch (notification.Notifiable_Type)
+        {
+            case NotificationType.job:
+                var job = await _context._context.Jobs
+                    .Where(j => j.ID.ToString() == notification.Notifiable_ID)
+                    .Select(j => new { j.ID, j.Title, j.CreationDate,j.Company})
+                    
+                    .FirstOrDefaultAsync();
+                if (job != null)
                 {
-                    ID = n.Notification.ID.ToString(),
-                    Message = n.Notification.massage,
-                    UserID = n.ReciverID,
-                    Type = n.Notification.Notifiable_Type,
-                    ReferenceID = n.Notification.Notifiable_ID,
-                    CreatedAt = n.CreationDate,
-                    IsRead = n.read_at.HasValue
-                }).ToListAsync();
+                    dto.Metadata["JobTitle"] = job.Title;
+                    dto.Metadata["PostedDate"] = job.CreationDate;
+                }
+                break;
 
-            if (notifications == null || !notifications.Any())
-                return APIOperationResponse<List<NotificationDto>>.NotFound("No notifications found for this user");
+            case NotificationType.Interview:
+                var interview = await _context._context.Interviews
+                    .Where(i => i.ID.ToString() == notification.Notifiable_ID)
+                    .Select(i => new { i.ID, i.CandidateName, i.StartTime ,i.Mode,i.Application})
+                    .Include(i => i.Application)
+                    .ThenInclude(a => a.Job)
+                    .ThenInclude(j => j.Company)
+                    .FirstOrDefaultAsync();
+                if (interview != null)
+                {
+                    
+                    dto.Metadata["Date"] = interview.StartTime;
+                    dto.Metadata["Mode"] = interview.Mode;
+                    dto.Metadata["CompanyLogo"] = interview.Application.Job.Company.Logo??string.Empty;
+                    dto.Metadata["CompanyName"] = interview.Application.Job.Company.Name??string.Empty;
+                    dto.Metadata["JobTitle"] = interview.Application.Job.Title??string.Empty;
 
-            return APIOperationResponse<List<NotificationDto>>.Success(notifications);
+                }
+                break;
+
+            case NotificationType.post:
+                // Add logic here for post enrichment if needed
+                break;
+            case NotificationType.Application:
+                var application = await _context._context.Applications
+                    .Where(a => a.ID.ToString() == notification.Notifiable_ID)
+                    .Include(a => a.Job)
+                    .ThenInclude(j => j.Company)
+                    .FirstOrDefaultAsync();
+                if (application != null)
+                {
+                    dto.Metadata["CompanyLogo"] = application.Job.Company.Logo??string.Empty;
+                    dto.Metadata["CompanyName"] = application.Job.Company.Name??string.Empty;
+                    dto.Metadata["JobTitle"] = application.Job.Title??string.Empty;
+                    dto.Metadata["ApplicationStatus"] = application.status.ToString();
+                }
+                break;
+
+            // Add more types as needed...
         }
+
+        notificationDtos.Add(dto);
+    }
+
+    if (!notificationDtos.Any())
+        return APIOperationResponse<List<NotificationDto>>.NotFound("No notifications found for this user");
+
+    return APIOperationResponse<List<NotificationDto>>.Success(notificationDtos);
+}
+
 
         public async Task<APIOperationResponse<bool>> MarkAsReadAsync(int notificationId, string userId)
         {

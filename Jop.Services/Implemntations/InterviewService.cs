@@ -9,6 +9,7 @@ using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Notification.Services.Interfaces;
 using Project.Repository.Repository;
 using Project.ResponseHandler.Consts;
 using Project.Services.Interfaces;
@@ -20,13 +21,15 @@ namespace Jop.Services.Implemntations
         private readonly UnitOfWork _unitOfWork;
         private readonly ZoomMeetingService _zoom;
         private readonly IAuthenticationService _authenticationService;
+        private readonly INotificationService _notificationService;
 
-        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom , IAuthenticationService authenticationService)
+        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom , IAuthenticationService authenticationService, INotificationService notificationService)
         {
 
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _zoom = zoom ?? throw new ArgumentNullException(nameof(zoom));
             _authenticationService = authenticationService;
+            _notificationService = notificationService;
         }
 
         public async Task<APIOperationResponse<List<GetInterviewDto>>> GetAllAsync()
@@ -159,7 +162,18 @@ namespace Jop.Services.Implemntations
                     ApplicationId = interview.ApplicationID,
                     InterviewerName = interview.InterviewerName?? string.Empty,
                 };
-
+                try{
+                await _notificationService.SendNotificationAsync(
+                    "New interview created",
+                    NotificationType.Interview,
+                    interview.ID.ToString(),
+                    new List<string> { application.User.Id }
+                );
+                }
+                catch (Exception ex)
+                {
+                    return APIOperationResponse<GetInterviewDto>.ServerError("An error occurred while creating the interview.", new List<string> { ex.Message });
+                }
                 return APIOperationResponse<GetInterviewDto>.Success(interviewDto, "Interview created successfully.");
             }
             catch (Exception ex)
@@ -207,13 +221,21 @@ namespace Jop.Services.Implemntations
                     interview.ZoomMeetinLink = null;
                 }
 
-                await _unitOfWork._context.SaveChangesAsync();
-                return APIOperationResponse<GetInterviewDto>.Updated("Interview updated successfully.");
+                await _unitOfWork._context.SaveChangesAsync(); 
+                    await _notificationService.SendNotificationAsync(
+                        "Interview updated",
+                        NotificationType.Interview,
+                        id.ToString(),
+                        new List<string> { user.Id }
+                    );
+                 return APIOperationResponse<GetInterviewDto>.Updated("Interview updated successfully.");
+                
             }
             catch (Exception ex)
             {
                 return APIOperationResponse<GetInterviewDto>.ServerError("An error occurred while updating the interview.", new List<string> { ex.Message });
             }
+
         }
 
         public async Task<APIOperationResponse<bool>> DeleteAsync(int id)

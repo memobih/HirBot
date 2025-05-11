@@ -15,5 +15,6 @@ namespace Notification.Services.DataTransferObjects
         public string ReferenceID { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsRead { get; set; }
+        public Dictionary<string, object> Metadata { get; set; }
     }
 }

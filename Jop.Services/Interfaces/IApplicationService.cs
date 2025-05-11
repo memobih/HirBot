@@ -22,5 +22,8 @@ namespace Jop.Services.Interfaces
         public Task<APIOperationResponse<AppuserDto>>GetApplicantDetails(int ApplicationId);
         public Task<APIOperationResponse<object>> AcceptTheApplication(int ApplicationId);
         public Task<APIOperationResponse<object>> RejectTheApplication(int ApplicationId);
+        public Task<APIOperationResponse<object>> TrackApprovedApplications();
+        public Task<APIOperationResponse<object>> TrackRejectedApplications();
+        public Task<APIOperationResponse<object>> TrackInprogressApplications();
     }
 }
