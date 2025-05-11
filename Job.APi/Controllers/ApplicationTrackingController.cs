@@ -44,5 +44,13 @@ namespace Job.APi.Controllers
                 return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }
+        [HttpPost("startprocess/{applicationId}")]
+        public async Task<IActionResult> StartProcess(int applicationId)
+        {
+            var response = await _applicationService.StartProcess(applicationId);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
     }
 }

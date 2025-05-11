@@ -25,5 +25,6 @@ namespace Jop.Services.Interfaces
         public Task<APIOperationResponse<object>> TrackApprovedApplications();
         public Task<APIOperationResponse<object>> TrackRejectedApplications();
         public Task<APIOperationResponse<object>> TrackInprogressApplications();
+        public Task<APIOperationResponse<object>> StartProcess(int ApplicationId);
     }
 }

@@ -379,13 +379,10 @@ namespace Jop.Services.Implemntations
                         Companyimage=a.Job.Company.Logo
                     })
                     .ToListAsync();
-
-                if (!applications.Any())
-                    return APIOperationResponse<object>.NotFound("No approved applications found");
                 var interviews = await unitOfWork._context.Interviews
                     .Include(i => i.Application)
                     .Where(i => i.Application.UserID == user.Id 
-                           && i.Application.status == ApplicationStatus.waiting 
+                           && i.Application.status == ApplicationStatus.approved
                            && i.StartTime.Date >= DateTime.Now.Date)
                            .Select(i => new
                            {
@@ -398,6 +395,9 @@ namespace Jop.Services.Implemntations
                             status = i.Type
                            })
                     .ToListAsync();
+                if (!applications.Any() && !interviews.Any())
+                  return APIOperationResponse<object>.NotFound("No Approved applications found or interviews found");
+
                 return APIOperationResponse<object>.Success(new
                 {
                     applications = applications,
@@ -467,6 +467,28 @@ namespace Jop.Services.Implemntations
             catch (Exception ex)
             {
                 return APIOperationResponse<object>.ServerError("An error occurred", new List<string> { ex.Message });
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> StartProcess(int ApplicationId)
+        {
+            var user = await _authenticationService.GetCurrentUserAsync();
+
+            var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId && a.UserID == user.Id);
+            if (application == null)
+                return APIOperationResponse<object>.NotFound("this application is not found or not yours");
+            if(application.status== ApplicationStatus.approved)
+                return APIOperationResponse<object>.BadRequest("this application is already approved");
+            application.status = ApplicationStatus.approved;
+            try
+            {
+                unitOfWork._context.Applications.Update(application);
+                await unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("the Process has started succefuly", "the Process has started succefuly");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
             }
         }
         
