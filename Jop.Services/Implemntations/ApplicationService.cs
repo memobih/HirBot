@@ -5,11 +5,14 @@ using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
 using Jop.Services.Responses;
 using Microsoft.EntityFrameworkCore;
+using Notification.Services.Interfaces;
+using Org.BouncyCastle.Asn1.Cms;
 using Project.Repository.Repository;
 using Project.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using User.Services.DataTransferObjects.Profile;
@@ -23,11 +26,13 @@ namespace Jop.Services.Implemntations
         private readonly IAuthenticationService _authenticationService;
         private readonly UnitOfWork unitOfWork;
         private readonly IExperienceServices _experienceServices;
-        public ApplicationService(IAuthenticationService authenticationService, UnitOfWork unitOfWork, IExperienceServices experienceServices)
+        private readonly INotificationService _notificationService;
+        public ApplicationService(IAuthenticationService authenticationService, UnitOfWork unitOfWork, IExperienceServices experienceServices, INotificationService notificationService)
         {
             _experienceServices = experienceServices;
             _authenticationService = authenticationService;
             this.unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
         public async Task<APIOperationResponse<object>> ApplicateOnJob(int jobId)
         {
@@ -41,7 +46,8 @@ namespace Jop.Services.Implemntations
                 {
                     UserID = user.Id,
                     JopID = jobId,
-                    status = ApplicationStatus.pending
+                    status = ApplicationStatus.pending,
+                    CreationDate = DateTime.Now,
 
                 };
                 await unitOfWork.Applications.AddAsync(application);
@@ -106,7 +112,8 @@ namespace Jop.Services.Implemntations
         {
             try
             {
-                return await changeStatus(ids, ApplicationStatus.approved);
+                return await changeStatus(ids, ApplicationStatus.waiting);
+               
             }
             catch (Exception ex)
             {
@@ -114,7 +121,7 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        public async Task<APIOperationResponse<object>> RejectApplication(List<int> ids)
+         public async Task<APIOperationResponse<object>> RejectApplication(List<int> ids)
         {
             try
             {
@@ -248,6 +255,8 @@ namespace Jop.Services.Implemntations
                     if (application.Job.CompanyID == company.ID)
                     {
                         application.status = status;
+                        application.ModificationDate = DateTime.Now;
+                        application.ModifiedBy = user.Id;
                     }
                 }
                 unitOfWork._context.Applications.UpdateRange(applications);
@@ -320,7 +329,7 @@ namespace Jop.Services.Implemntations
                 companyName = application.Job.Company.Name,
                 location = application.Job.location,
                 Start_Date = DateTime.Now,
-                    End_Date = null,
+                 End_Date = null,
                 workType = application.Job.LocationType,
                 privacy = PrivacyEnum.Public,
                 employeeType = application.Job.EmployeeType,
@@ -356,9 +365,242 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
             }
         }
+        public async Task<APIOperationResponse<object>> TrackApprovedApplications()
+        {
+            var user = await _authenticationService.GetCurrentUserAsync();
+            try
+            {
+                var applications = await unitOfWork._context.Applications
+                    .Include(a => a.Job)
+                    .ThenInclude(j => j.Company)
+                    .Where(a => a.UserID == user.Id && a.status == ApplicationStatus.waiting)
+                    .Select(a => new
+                    {
+                        id = a.ID,
+                        jobTitle = a.Job.Title,
+                        companyName = a.Job.Company.Name,
+                        ApprovedTime = a.ModificationDate,
+                        TimeAgo = DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes < 60 
+                            ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes:F0} minutes ago" 
+                            : DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours < 24 
+                                ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours:F0} hours ago" 
+                                : $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalDays:F0} days ago",
+                        Companyimage = a.Job.Company.Logo,
+                    })
+                    .ToListAsync();
+                var interviews = await unitOfWork._context.Interviews
+                    .Include(i => i.Application)
+                    .Where(i => i.Application.UserID == user.Id 
+                           && i.Application.status == ApplicationStatus.approved
+                           && i.StartTime.Date >= DateTime.Now.Date)
+                           .Select(i => new
+                           {
+                            id = i.ID,
+                            jobTitle = i.Application.Job.Title,
+                            companyName = i.Application.Job.Company.Name,
+                            interviewDate = i.StartTime,
+                            companyImage = i.Application.Job.Company.Logo,
+                            status = i.Type,
+                            TimeAgo = DateTime.Now.Subtract(i.CreationDate).TotalMinutes < 60 
+                                ? $"{DateTime.Now.Subtract(i.CreationDate).TotalMinutes:F0} minutes ago" 
+                                : DateTime.Now.Subtract(i.CreationDate).TotalHours < 24 
+                                    ? $"{DateTime.Now.Subtract(i.CreationDate).TotalHours:F0} hours ago" 
+                                    : $"{DateTime.Now.Subtract(i.CreationDate).TotalDays:F0} days ago"
+                           })
+                    .ToListAsync();
+                if (!applications.Any() && !interviews.Any())
+                  return APIOperationResponse<object>.NotFound("No Approved applications found or interviews found");
 
+                return APIOperationResponse<object>.Success(new
+                {
+                    applications = applications,
+                    interviews = interviews
+                });
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("An error occurred", new List<string> { ex.Message });
+            }
+        }
+         public async Task<APIOperationResponse<object>> TrackRejectedApplications()
+         {
+            var user = await _authenticationService.GetCurrentUserAsync();
+            try
+            {
+                var applications = await unitOfWork._context.Applications
+                    .Include(a => a.Job)
+                    .ThenInclude(j => j.Company)
+                    .Where(a => a.UserID == user.Id && a.status == ApplicationStatus.rejected)
+                    .Select(a => new
+                    {
+                        id = a.ID,
+                        jobTitle = a.Job.Title,
+                        companyName = a.Job.Company.Name,
+                        Companyimage=a.Job.Company.Logo,
+                        TimeAgo = DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes < 60 
+                            ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes:F0} minutes ago" 
+                            : DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours < 24 
+                                ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours:F0} hours ago" 
+                                : $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalDays:F0} days ago",
+                    })
+                    .ToListAsync();
 
+                if (!applications.Any())
+                    return APIOperationResponse<object>.NotFound("No Rejected applications found");
 
+                return APIOperationResponse<object>.Success(applications);
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("An error occurred", new List<string> { ex.Message });
+
+         }
+               
+        }
+        public async Task<APIOperationResponse<object>> TrackInprogressApplications()
+        {
+            var user = _authenticationService.GetCurrentUserAsync().Result;
+            try
+            {
+                var applications = unitOfWork._context.Applications
+                    .Include(a => a.Job)
+                    .ThenInclude(j => j.Company)
+                    .Where(a => a.UserID == user.Id && a.status == ApplicationStatus.pending)
+                    .Select(a => new
+                    {
+                        id = a.ID,
+                        jobTitle = a.Job.Title,
+                        companyName = a.Job.Company.Name,
+                        appliedDateAgo = DateTime.Now.Subtract(a.CreationDate).TotalMinutes < 60 
+                            ? $"{DateTime.Now.Subtract(a.CreationDate).TotalMinutes:F0} minutes ago" 
+                            : DateTime.Now.Subtract(a.CreationDate).TotalHours < 24 
+                                ? $"{DateTime.Now.Subtract(a.CreationDate).TotalHours:F0} hours ago" 
+                                : $"{DateTime.Now.Subtract(a.CreationDate).TotalDays:F0} days ago",
+                        Companyimage=a.Job.Company.Logo
+                    })
+                    .ToList();
+
+                if (!applications.Any())
+                    return APIOperationResponse<object>.NotFound("No Inprogress applications found");
+
+                return APIOperationResponse<object>.Success(applications);
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("An error occurred", new List<string> { ex.Message });
+            }
+        }
+ public async Task<APIOperationResponse<object>> TrackAllApplications()
+{
+    var user = await _authenticationService.GetCurrentUserAsync();
+
+    try
+    {
+        var allApplications = await unitOfWork._context.Applications
+            .Include(a => a.Job)
+                .ThenInclude(j => j.Company)
+            .Include(a => a.Interviews)
+            .Where(a => a.UserID == user.Id)
+            .ToListAsync();
+
+        if (!allApplications.Any())
+            return APIOperationResponse<object>.NotFound("No applications found");
+
+        var Applications = allApplications.Select<Application, object>(app =>
+        {
+            bool isApprovedWithInterview = app.status == ApplicationStatus.approved && app.Interviews.Any(i => i.StartTime > DateTime.Now);
+
+            return isApprovedWithInterview 
+                ? new
+                {
+                    Applicationid = app.ID,
+                    status = "interview",
+                    created_at = app.CreationDate,
+                    message = "You have an upcoming interview.",
+                    interview = app.Interviews.Select(i => new
+                    {
+                        id = i.ID,
+                        type = i.Type.ToString().ToLower(),
+                        date = i.StartTime.ToString("yyyy-MM-dd"),
+                        time = i.StartTime.ToString("hh:mm tt"),
+                        duration = $"{i.durationInMinutes} minutes",
+                        location = i.Mode == InterviewMode.Online ? "Zoom" : i.Location,
+                        zoom_link = i.ZoomMeetinLink,
+                        notes=i.Notes,
+                        interviewername = i.InterviewerName,
+                    }).ToList(),
+                    job = new
+                    {
+                        id = app.Job.ID,
+                        title = app.Job.Title,
+                    },
+                    company = new
+                    {
+                        id = app.Job.Company.ID,
+                        name = app.Job.Company.Name,
+                        logo = app.Job.Company.Logo,
+                        websiteurl = app.Job.Company.websiteUrl,
+                        location=new 
+                        {
+                            street=app.Job.Company.street,
+                            country = app.Job.Company.country,
+                            governorate = app.Job.Company.Governate,
+                        }
+                    }
+                }
+                : new
+                {
+                    id = app.ID,
+                    status = app.status.ToString().ToLower(),
+                    created_at = app.CreationDate,
+                    job = new
+                    {
+                        id = app.Job.ID,
+                        title = app.Job.Title,
+                        location = app.Job.location,
+                        salary = app.Job.Salary,
+                        type = app.Job.LocationType.ToString()
+                    },
+                    company = new
+                    {
+                        id = app.Job.Company.ID,
+                        name = app.Job.Company.Name,
+                        logo = app.Job.Company.Logo
+                    }               
+                    
+                 };
+        }).ToList();
+
+        return APIOperationResponse<object>.Success(new { applications = Applications });
+    }
+    catch (Exception ex)
+    {
+        return APIOperationResponse<object>.ServerError("An error occurred while fetching applications", new List<string> { ex.Message });
+    }
+}
+
+        public async Task<APIOperationResponse<object>> StartProcess(int ApplicationId)
+        {
+            var user = await _authenticationService.GetCurrentUserAsync();
+
+            var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId && a.UserID == user.Id);
+            if (application == null)
+                return APIOperationResponse<object>.NotFound("this application is not found or not yours");
+            if(application.status== ApplicationStatus.approved)
+                return APIOperationResponse<object>.BadRequest("this application is already approved");
+            application.status = ApplicationStatus.approved;
+            try
+            {
+                unitOfWork._context.Applications.Update(application);
+                await unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("the Process has started succefuly", "the Process has started succefuly");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
+            }
+        }
+        
 
         #endregion
     }

@@ -1,0 +1,164 @@
+@using Notification.Services.DataTransferObjects
+@using HirBot.Data.Enums
+@inject INotificationService NotificationService
+@inject PusherNotificationService PusherService
+
+<div class="notification-container">
+    <div class="notification-header">
+        <h3>Notifications</h3>
+        <span class="unread-count">@_unreadCount unread</span>
+    </div>
+
+    <div class="notification-list">
+        @if (_notifications == null)
+        {
+            <p>Loading notifications...</p>
+        }
+        else if (!_notifications.Any())
+        {
+            <p>No notifications</p>
+        }
+        else
+        {
+            @foreach (var notification in _notifications)
+            {
+                <div class="notification-item @(notification.IsRead ? "read" : "unread")">
+                    <div class="notification-content">
+                        <p class="message">@notification.Message</p>
+                        <span class="type">@notification.Type</span>
+                        <span class="time">@notification.CreatedAt.ToString("g")</span>
+                    </div>
+                    @if (!notification.IsRead)
+                    {
+                        <button @onclick="() => MarkAsRead(notification.ID)" class="mark-read-btn">
+                            Mark as read
+                        </button>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<NotificationDto> _notifications;
+    private int _unreadCount;
+    private string _userId = "current-user-id"; // Replace with actual user ID
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNotifications();
+        await LoadUnreadCount();
+        SetupPusherListener();
+    }
+
+    private async Task LoadNotifications()
+    {
+        var result = await NotificationService.GetAllForUserAsync(_userId);
+        if (result.IsSuccess)
+        {
+            _notifications = result.Data;
+        }
+    }
+
+    private async Task LoadUnreadCount()
+    {
+        var result = await NotificationService.CountUnreadNotificationsAsync(_userId);
+        if (result.IsSuccess)
+        {
+            _unreadCount = result.Data;
+        }
+    }
+
+    private async Task MarkAsRead(string notificationId)
+    {
+        var result = await NotificationService.MarkAsReadAsync(int.Parse(notificationId), _userId);
+        if (result.IsSuccess)
+        {
+            await LoadNotifications();
+            await LoadUnreadCount();
+        }
+    }
+
+    private void SetupPusherListener()
+    {
+        // Subscribe to Pusher channel for real-time updates
+        // This will be implemented based on your Pusher client setup
+    }
+}
+
+<style>
+    .notification-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .unread-count {
+        background-color: #007bff;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.9em;
+    }
+
+    .notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .notification-item {
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .notification-item.unread {
+        background-color: #e3f2fd;
+        border-left: 4px solid #007bff;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .message {
+        margin: 0 0 5px 0;
+        font-weight: 500;
+    }
+
+    .type {
+        font-size: 0.8em;
+        color: #6c757d;
+        margin-right: 10px;
+    }
+
+    .time {
+        font-size: 0.8em;
+        color: #6c757d;
+    }
+
+    .mark-read-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .mark-read-btn:hover {
+        background-color: #0056b3;
+    }
+</style> 
