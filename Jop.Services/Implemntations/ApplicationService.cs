@@ -517,7 +517,7 @@ namespace Jop.Services.Implemntations
                     status = "interview",
                     created_at = app.CreationDate,
                     message = "You have an upcoming interview.",
-                    interview = app.Interviews.Select(i => new
+                    interview = app.Interviews.OrderByDescending(i => i.CreationDate).Take(1).Select(i => new
                     {
                         id = i.ID,
                         type = i.Type.ToString().ToLower(),
@@ -526,7 +526,7 @@ namespace Jop.Services.Implemntations
                         duration = $"{i.durationInMinutes} minutes",
                         location = i.Mode == InterviewMode.Online ? "Zoom" : i.Location,
                         zoom_link = i.ZoomMeetinLink,
-                        notes=i.Notes,
+                        notes = i.Notes,
                         interviewername = i.InterviewerName,
                     }).ToList(),
                     job = new
