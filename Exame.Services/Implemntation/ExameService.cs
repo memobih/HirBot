@@ -29,6 +29,45 @@ namespace Exame.Services.Implemntation
         
         }
 
+        public async Task<APIOperationResponse<object>> CreateExame(ExameDto exame)
+        {
+            try
+            {
+                var user =await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                Exam exam = new Exam();
+                exam.duration = exame.duration;
+                exam.Name=exame.Name;
+                exam.Type = ExamType.Interview;
+                exam.CreatedBy = user.Id;
+                _unitOfWork._context.Exams.Add(exam);
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("the exame created succuful ", "the exame created succuful ");
+            }
+            catch
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured"); 
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> DeleteExame(int exameID)
+        {
+            try
+            { 
+                var user=await _authenticationService.GetCurrentUserAsync();
+                var exame=_unitOfWork._context.Exams.Where(e=>e.ID==exameID).FirstOrDefault();
+                if (exame!=null  || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
+                    return APIOperationResponse<object>.NotFound("this exam is not found"); 
+                _unitOfWork._context.Exams.Remove(exame);
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("this exame deleted sussful ", "this exame deleted sussful ");
+            }
+            catch
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
+
         public async Task<APIOperationResponse<object>> DoExame(int skillId)
         {
             try
@@ -159,6 +198,26 @@ namespace Exame.Services.Implemntation
             }
         }
 
+        public async Task<APIOperationResponse<object>> EditExame(int exameID , ExameDto exame)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                Exam exam = _unitOfWork._context.Exams.First(e=>e.ID==exameID);
+                exam.duration = exame.duration;
+                exam.Name = exame.Name;
+                exam.Type = ExamType.Interview;
+                exam.CreatedBy = user.Id;
+                _unitOfWork._context.Exams.Update(exam);
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("the exame updated succuful ", "the exame updated succuful ");
+            }
+            catch
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
+
         public async Task<APIOperationResponse<object>> FinishExame(int id, List<AnswerDto> answers)
         {
             try
@@ -195,7 +254,40 @@ namespace Exame.Services.Implemntation
             {
                 return APIOperationResponse<Object>.ServerError("there are error accured"); 
             }
-        } 
+        }
 
+        public async Task<APIOperationResponse<object>> GetExame(int exameID)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var exame = _unitOfWork._context.Exams.Include(exame=>exame.Questions).ThenInclude(q=>q.Options).Where(e => e.ID == exameID).FirstOrDefault();
+                if (exame != null || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
+                    return APIOperationResponse<object>.NotFound("this exam is not found");
+                var response =new  InterviewExameResponse();
+                response.id = exameID;
+                response.name = exame.Name;
+                response.QuestionsNumber=exame.Questions.Count();
+                foreach(var question in exame.Questions)
+                {
+
+                   var addquestion=new InterviewExamQuestion { id=question.ID , question=question.Content };
+                     foreach(var option in  question.Options)
+                    {
+                        addquestion.options.Add(new InterviewExamoption { id=option.ID , option=option.Content });
+                        if (option.IsCorrect == true)
+                        {
+                            addquestion.Correctanswer=option.Content;
+                        }
+                    }
+                     response.Questions.Add(addquestion);
+                }
+                return APIOperationResponse<object>.Success(response);
+            }
+            catch
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
     }
 }
