@@ -112,6 +112,8 @@ namespace Jop.Services.Implemntations
                 .FirstOrDefaultAsync(a => a.ID == dto.ApplicationId);
             if (application == null)
                 return APIOperationResponse<GetInterviewDto>.NotFound("Application not found.");
+            if(application.status!=ApplicationStatus.approved)
+                return APIOperationResponse<GetInterviewDto>.BadRequest("Application is not approved yet.");
             if(application.Interviews.Any(i=> i.Type == dto.Type && i.ApplicationID == dto.ApplicationId))
             {
                 return APIOperationResponse<GetInterviewDto>.BadRequest($"the {dto.Type} already exists for this application ");
