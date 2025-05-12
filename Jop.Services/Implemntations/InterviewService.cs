@@ -23,7 +23,7 @@ namespace Jop.Services.Implemntations
         private readonly IAuthenticationService _authenticationService;
         private readonly INotificationService _notificationService;
 
-        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom , IAuthenticationService authenticationService, INotificationService notificationService)
+        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom, IAuthenticationService authenticationService, INotificationService notificationService)
         {
 
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
@@ -107,16 +107,21 @@ namespace Jop.Services.Implemntations
             if (validation != null)
                 return APIOperationResponse<GetInterviewDto>.UnprocessableEntity("Validation errors occurred.", validation.Errors as List<string>);
 
-            var application = await _unitOfWork._context.Applications.FindAsync(dto.ApplicationId);
+            var application = await _unitOfWork._context.Applications
+                .Include(a => a.Interviews)
+                .FirstOrDefaultAsync(a => a.ID == dto.ApplicationId);
             if (application == null)
                 return APIOperationResponse<GetInterviewDto>.NotFound("Application not found.");
+            if(application.Interviews.Any(i=> i.Type == dto.Type && i.ApplicationID == dto.ApplicationId))
+            {
+                return APIOperationResponse<GetInterviewDto>.BadRequest($"the {dto.Type} already exists for this application ");
+            }
 
             var exists = await _unitOfWork._context.Interviews
                 .AnyAsync(i => i.ApplicationID == dto.ApplicationId && i.StartTime == dto.StartTime);
 
             if (exists)
                 return APIOperationResponse<GetInterviewDto>.BadRequest("An interview already exists for this application at the specified time.");
-
             try
             {
                 string? zoomLink = null;
@@ -163,15 +168,16 @@ namespace Jop.Services.Implemntations
                     ZoomMeetinLink = interview.ZoomMeetinLink,
                     Notes = interview.Notes,
                     ApplicationId = interview.ApplicationID,
-                    InterviewerName = interview.InterviewerName?? string.Empty,
+                    InterviewerName = interview.InterviewerName ?? string.Empty,
                 };
-                try{
-                await _notificationService.SendNotificationAsync(
-                    "New interview created",
-                    NotificationType.Interview,
-                    interview.ID.ToString(),
-                    new List<string> { application.User.Id }
-                );
+                try
+                {
+                    await _notificationService.SendNotificationAsync(
+                        "New interview created",
+                        NotificationType.Interview,
+                        interview.ID.ToString(),
+                        new List<string> { application.User.Id }
+                    );
                 }
                 catch (Exception ex)
                 {
@@ -186,20 +192,20 @@ namespace Jop.Services.Implemntations
         }
 
 
-        public async Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(int  id, InterviewDto dto)
+        public async Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(int id, InterviewDto dto)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-            var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
-            var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == id).FirstOrDefault();
-            if (application == null || application.Interviews == null || application.Job.CompanyID != company.ID)
-                return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.");
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == id).FirstOrDefault();
+                if (application == null || application.Interviews == null || application.Job.CompanyID != company.ID)
+                    return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.");
 
-            application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
-            var interview = application.Interviews.Last();
+                application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
+                var interview = application.Interviews.Last();
 
-           
+
                 interview.CandidateEmail = dto.CandidateEmail;
                 interview.CandidateName = dto.CandidateName;
                 interview.Type = dto.Type;
@@ -208,7 +214,7 @@ namespace Jop.Services.Implemntations
                 interview.durationInMinutes = dto.durationInMinutes;
                 interview.Location = dto.Location;
                 interview.Notes = dto.Notes;
-                interview.InterviewerName = dto.InterviewerName?? string.Empty;
+                interview.InterviewerName = dto.InterviewerName ?? string.Empty;
                 interview.ModificationDate = DateTime.UtcNow;
                 interview.ModifiedBy = user.Id;
                 if (dto.Mode == InterviewMode.Online && string.IsNullOrEmpty(interview.ZoomMeetinLink))
@@ -226,15 +232,15 @@ namespace Jop.Services.Implemntations
                     interview.ZoomMeetinLink = null;
                 }
 
-                await _unitOfWork._context.SaveChangesAsync(); 
-                    await _notificationService.SendNotificationAsync(
-                        "Interview updated",
-                        NotificationType.Interview,
-                        id.ToString(),
-                        new List<string> { user.Id }
-                    );
-                 return APIOperationResponse<GetInterviewDto>.Updated("Interview updated successfully.");
-                
+                await _unitOfWork._context.SaveChangesAsync();
+                await _notificationService.SendNotificationAsync(
+                    "Interview updated",
+                    NotificationType.Interview,
+                    id.ToString(),
+                    new List<string> { user.Id }
+                );
+                return APIOperationResponse<GetInterviewDto>.Updated("Interview updated successfully.");
+
             }
             catch (Exception ex)
             {
@@ -249,15 +255,15 @@ namespace Jop.Services.Implemntations
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-            var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
-            var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == id).FirstOrDefault();
-            if (application == null || application.Interviews == null || application.Job.CompanyID != company.ID)
-                return APIOperationResponse<bool>.NotFound("Interview not found.");
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == id).FirstOrDefault();
+                if (application == null || application.Interviews == null || application.Job.CompanyID != company.ID)
+                    return APIOperationResponse<bool>.NotFound("Interview not found.");
 
-            application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
-            var interview = application.Interviews.Last();
+                application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
+                var interview = application.Interviews.Last();
 
-            
+
                 _unitOfWork._context.Interviews.Remove(interview);
 
                 await _unitOfWork._context.SaveChangesAsync();

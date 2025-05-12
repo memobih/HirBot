@@ -30,6 +30,7 @@ namespace HirBot.EntityFramework.DataBaseContext
            .HasOne(u => u.CurentJop)
            .WithOne(e=>e.UserJop)
            .OnDelete(DeleteBehavior.SetNull); // Set to NULL on delete
+           
         } 
           
         public DbSet<ApplicationUser> users { get; set; }
