@@ -52,5 +52,13 @@ namespace Job.APi.Controllers
                 return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }
+        [HttpGet("all")]
+        public async Task<IActionResult> TrackAllApplications()
+        {
+            var response = await _applicationService.TrackAllApplications();
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
     }
 }

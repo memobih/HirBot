@@ -102,6 +102,7 @@ namespace Jop.Services.Implemntations
 
         public async Task<APIOperationResponse<GetInterviewDto>> CreateAsync(InterviewDto dto)
         {
+            var user = await _authenticationService.GetCurrentUserAsync();
             var validation = ValidateInterviewDto(dto);
             if (validation != null)
                 return APIOperationResponse<GetInterviewDto>.UnprocessableEntity("Validation errors occurred.", validation.Errors as List<string>);
@@ -141,7 +142,9 @@ namespace Jop.Services.Implemntations
                     Notes = dto.Notes,
                     Location = dto.Location,
                     ApplicationID = dto.ApplicationId,
-                    InterviewerName = string.IsNullOrWhiteSpace(dto.InterviewerName) ? "Unknown" : dto.InterviewerName.Trim()
+                    InterviewerName = string.IsNullOrWhiteSpace(dto.InterviewerName) ? "Unknown" : dto.InterviewerName.Trim(),
+                    CreationDate = DateTime.UtcNow,
+                    CreatedBy = user.Id,
                 };
 
                 _unitOfWork._context.Interviews.Add(interview);
@@ -206,6 +209,8 @@ namespace Jop.Services.Implemntations
                 interview.Location = dto.Location;
                 interview.Notes = dto.Notes;
                 interview.InterviewerName = dto.InterviewerName?? string.Empty;
+                interview.ModificationDate = DateTime.UtcNow;
+                interview.ModifiedBy = user.Id;
                 if (dto.Mode == InterviewMode.Online && string.IsNullOrEmpty(interview.ZoomMeetinLink))
                 {
                     interview.ZoomMeetinLink = await _zoom.CreateMeetingAsync(
