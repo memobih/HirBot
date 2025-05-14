@@ -33,6 +33,8 @@ namespace Jop.Services.DataTransferObjects
         public string? Location { get; set; }
         public List<string>? Notes { get; set; } = new List<string>();  
         public int ApplicationId { get; set; }
-        public string? InterviewerName { get; set; } = string.Empty;
+        public string? InterviewerName { get; set; } = string.Empty; 
+
+        public int ?ExameID { get; set;  }
     }
 }

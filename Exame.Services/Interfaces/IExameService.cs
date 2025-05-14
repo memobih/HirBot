@@ -11,13 +11,17 @@ namespace Exame.Services.Interfaces
     public interface IExameService
     {
         public Task<APIOperationResponse<Object>> DoExame(int skillId);
-        public Task<APIOperationResponse<object>> FinishExame(int id, List<AnswerDto> answers);
+        public Task<APIOperationResponse<object>> GetALLExams();
+
         public Task<APIOperationResponse<object>> CreateExame(ExameDto exame);  
         public Task<APIOperationResponse<object>> GetExame(int exameID); 
         public Task<APIOperationResponse<object>> DeleteExame(int exameID);
         public Task<APIOperationResponse<object>> EditExame (int exameID , ExameDto exame);
+        public Task<APIOperationResponse<object>> FinishExame(int id, List<AnswerDto> answers);
 
-        
+        public Task<APIOperationResponse<object>> FinishInterviewExame(int id, List<AnswerDto> answers);
+        public Task<APIOperationResponse<object>> FinishSkillExame(int id, List<AnswerDto> answers);
+
     }
 
 }

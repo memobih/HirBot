@@ -145,6 +145,7 @@ namespace Jop.Services.Implemntations
                     InterviewerName = string.IsNullOrWhiteSpace(dto.InterviewerName) ? "Unknown" : dto.InterviewerName.Trim(),
                     CreationDate = DateTime.UtcNow,
                     CreatedBy = user.Id,
+                    ExamID=dto.ExameID
                 };
 
                 _unitOfWork._context.Interviews.Add(interview);
@@ -170,7 +171,7 @@ namespace Jop.Services.Implemntations
                     "New interview created",
                     NotificationType.Interview,
                     interview.ID.ToString(),
-                    new List<string> { application.User.Id }
+                    new List<string> { application.UserID }
                 );
                 }
                 catch (Exception ex)

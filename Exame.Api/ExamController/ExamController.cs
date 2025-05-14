@@ -39,5 +39,56 @@ namespace Exame.Api.ExamController
                 return Ok(new { status = true,  data = response.Data });
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllExams()
+        {
+            var response = await _exameServices.GetALLExams();
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, data = response.Data });
+
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
+        [Authorize]
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateExam( ExameDto exame)
+        {
+            var response = await _exameServices.CreateExame(exame);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, message = response.Message });
+
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
+        [Authorize]
+        [HttpDelete("{exameID}/delete")]
+        public async Task<IActionResult> DeleteExam(int exameID)
+        {
+            var response = await _exameServices.DeleteExame(exameID);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, message = response.Message });
+
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
+
+
+        [Authorize]
+        [HttpPut("{exameID}/edit")]
+        public async Task<IActionResult> EditExam(int exameID, ExameDto exame)
+        {
+            var response = await _exameServices.EditExame(exameID, exame);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, message = response.Message });
+
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetExame(int id)
+        {
+            var response = await _exameServices.GetExame(id);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, data = response.Data });
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
     }
 }

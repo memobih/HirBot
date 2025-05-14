@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Exame.Services.DataTransferObjects;
 using Exame.Services.Response;
+using ZstdSharp.Unsafe;
 
 namespace Exame.Services.Implemntation
 {
@@ -56,7 +57,7 @@ namespace Exame.Services.Implemntation
             { 
                 var user=await _authenticationService.GetCurrentUserAsync();
                 var exame=_unitOfWork._context.Exams.Where(e=>e.ID==exameID).FirstOrDefault();
-                if (exame!=null  || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
+                if (exame==null  || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
                     return APIOperationResponse<object>.NotFound("this exam is not found"); 
                 _unitOfWork._context.Exams.Remove(exame);
                 await _unitOfWork.SaveAsync();
@@ -218,12 +219,67 @@ namespace Exame.Services.Implemntation
             }
         }
 
-        public async Task<APIOperationResponse<object>> FinishExame(int id, List<AnswerDto> answers)
+        public Task<APIOperationResponse<object>> FinishExame(int id, List<AnswerDto> answers)
+        {
+            
+                var exame = _unitOfWork._context.Exams.Where(e => e.ID == id).FirstOrDefault();
+                if (exame != null && exame.Type != ExamType.Interview)
+                    return FinishInterviewExame(id, answers);
+                else return FinishInterviewExame(id, answers);
+            
+        }
+
+        public async Task<APIOperationResponse<object>> FinishInterviewExame(int id, List<AnswerDto> answers)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var exam = _unitOfWork._context.Exams.Include(e => e.Questions).Where(e => e.ID == id).FirstOrDefault();
+                if (exam == null || exam.Type != ExamType.Interview)
+                    return APIOperationResponse<Object>.NotFound("this exame is not found");
+                var interviews=_unitOfWork._context.Interviews.Include(a=>a.Application).Where(i=>i.ExamID==exam.ID).ToList();
+                var interview= interviews.Where(e=>e.Application.UserID==user.Id).FirstOrDefault();
+               if(interview==null)
+                    return APIOperationResponse<Object>.NotFound("this exame is not found");
+
+                var response = new ResultResponse();
+                foreach (var answer in answers)
+                {
+                    var question = _unitOfWork._context.Questions.FirstOrDefault(q => q.ID == answer.questionId);
+                    var option = _unitOfWork._context.Options.FirstOrDefault(q => q.ID == answer.optionId);
+                    if (option != null && question != null)
+                    {
+                        UserAnwer userAnswer = new UserAnwer();
+                        userAnswer.QuestionID = question.ID;
+                        userAnswer.OptionID = question.ID;
+                        if (option.QuestionID == question.ID && option.IsCorrect == true)
+                        {
+                            response.CorrectQuestion += 1;
+                            userAnswer.Point += question.Points;
+                            
+                        }
+                        _unitOfWork._context.UserAnswers.Add(userAnswer);
+                    }
+
+                }
+                response.TotalQuestion = exam.Questions.Count();
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<Object>.Success(new { response.CorrectQuestion, response.TotalQuestion });
+
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<Object>.ServerError("there are error accured");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> FinishSkillExame(int id, List<AnswerDto> answers)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var exam = _unitOfWork._context.Exams.Include(e=>e.Questions).Include(e=>e.UserSkill).ThenInclude(e=>e.Skill).Where(e => e.ID == id).FirstOrDefault();
+
                 if (exam == null || exam.UserSkill.UserID != user.Id)
                     return APIOperationResponse<Object>.NotFound("this exame is not found");
                 var response = new ResultResponse();
@@ -256,13 +312,27 @@ namespace Exame.Services.Implemntation
             }
         }
 
+        public async Task<APIOperationResponse<object>> GetALLExams()
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var exames = _unitOfWork._context.Exams.Where(e => e.CreatedBy == user.Id).ToList();
+                return APIOperationResponse<object>.Success(exames);
+            }
+            catch
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
+
         public async Task<APIOperationResponse<object>> GetExame(int exameID)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var exame = _unitOfWork._context.Exams.Include(exame=>exame.Questions).ThenInclude(q=>q.Options).Where(e => e.ID == exameID).FirstOrDefault();
-                if (exame != null || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
+                if (exame == null || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
                     return APIOperationResponse<object>.NotFound("this exam is not found");
                 var response =new  InterviewExameResponse();
                 response.id = exameID;
@@ -289,5 +359,6 @@ namespace Exame.Services.Implemntation
                 return APIOperationResponse<object>.ServerError("there are error accured");
             }
         }
+       
     }
 }

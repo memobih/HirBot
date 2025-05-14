@@ -21,7 +21,7 @@ namespace HirBot.Data.Entities
         [ForeignKey("Application")]
         public int ApplicationID { get; set; } 
         public virtual Exam ?Exam { get; set; } 
-        public virtual Application? Application { get; set; }
+        public virtual Application Application { get; set; }
         public  DateTime StartTime {  get; set; } 
         public int durationInMinutes { get; set; }
         public string? Location { get; set; }
@@ -32,5 +32,6 @@ namespace HirBot.Data.Entities
         public List<string>Notes { get; set; } = new List<string>();
         public string ? ZoomMeetinLink { get; set; }
         public string? InterviewerName { get; set; } 
+        
     }
 }

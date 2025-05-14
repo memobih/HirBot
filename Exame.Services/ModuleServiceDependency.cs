@@ -15,6 +15,7 @@ namespace Exame.Services
         {
             service.AddTransient<IExameService , ExameService>();
             service.AddTransient<IDailyChanalgeService , DailyChanalgeService>();
+            service.AddTransient<IQuestionService, QuestionService>();
             return service;
         }
     }
