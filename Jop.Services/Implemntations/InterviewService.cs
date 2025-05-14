@@ -102,13 +102,14 @@ namespace Jop.Services.Implemntations
 
         public async Task<APIOperationResponse<GetInterviewDto>> CreateAsync(InterviewDto dto)
         {
-            var user = await _authenticationService.GetCurrentUserAsync();
+            var Companyuser = await _authenticationService.GetCurrentUserAsync();
             var validation = ValidateInterviewDto(dto);
             if (validation != null)
                 return APIOperationResponse<GetInterviewDto>.UnprocessableEntity("Validation errors occurred.", validation.Errors as List<string>);
 
             var application = await _unitOfWork._context.Applications
                 .Include(a => a.Interviews)
+                .Include(u=> u.User)
                 .FirstOrDefaultAsync(a => a.ID == dto.ApplicationId);
             if (application == null)
                 return APIOperationResponse<GetInterviewDto>.NotFound("Application not found.");
@@ -151,7 +152,7 @@ namespace Jop.Services.Implemntations
                     ApplicationID = dto.ApplicationId,
                     InterviewerName = string.IsNullOrWhiteSpace(dto.InterviewerName) ? "Unknown" : dto.InterviewerName.Trim(),
                     CreationDate = DateTime.UtcNow,
-                    CreatedBy = user.Id,
+                    CreatedBy = Companyuser.Id,
                 };
 
                 _unitOfWork._context.Interviews.Add(interview);
@@ -167,8 +168,8 @@ namespace Jop.Services.Implemntations
                     StartTime = interview.StartTime.ToLocalTime(),
                     DurationInMinutes = interview.durationInMinutes,
                     Location = interview.Location,
-                    ZoomMeetinLink = interview.ZoomMeetinLink,
-                    Notes = interview.Notes,
+                    ZoomMeetinLink = interview.ZoomMeetinLink?? string.Empty,
+                    Notes = interview.Notes ?? new List<string> { "No notes available" },
                     ApplicationId = interview.ApplicationID,
                     InterviewerName = interview.InterviewerName ?? string.Empty,
                 };
@@ -178,12 +179,12 @@ namespace Jop.Services.Implemntations
                         "New interview created",
                         NotificationType.Interview,
                         interview.ID.ToString(),
-                        new List<string> { application.User.Id }
+                        application.User != null ? new List<string> { application.User.Id } : new List<string>()
                     );
                 }
                 catch (Exception ex)
                 {
-                    return APIOperationResponse<GetInterviewDto>.ServerError("An error occurred while creating the interview.", new List<string> { ex.Message });
+                    return APIOperationResponse<GetInterviewDto>.ServerError("An error occurred while sending the notification to the user ", new List<string> { ex.Message });
                 }
                 return APIOperationResponse<GetInterviewDto>.Success(interviewDto, "Interview created successfully.");
             }

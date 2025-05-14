@@ -30,9 +30,14 @@ namespace Jop.Services.DataTransferObjects
         [Required(ErrorMessage = "Duration is required.")]
         public int durationInMinutes { get; set; }
         
-        public string? Location { get; set; }
+        public string? Location { get; set; }= string.Empty;
         public List<string>? Notes { get; set; } = new List<string>();  
+        [Required(ErrorMessage = "Application ID is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Application ID must be a positive integer.")]
+
         public int ApplicationId { get; set; }
+        [Required(ErrorMessage = "Interviewer name is required.")]
+        [StringLength(100, ErrorMessage = "Interviewer name cannot exceed 100 characters.")]
         public string? InterviewerName { get; set; } = string.Empty;
     }
 }
