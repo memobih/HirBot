@@ -14,7 +14,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HirBot")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8fb884b7b261ae9b8fe7e899141d9399e1c6b062")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6edf7109a0e5eff7a4bf533cacebd276522b82e5")]
+>>>>>>> 8f6292a1062dba3eb696caab10dd0bea59f24e3c
 [assembly: System.Reflection.AssemblyProductAttribute("HirBot")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HirBot")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
