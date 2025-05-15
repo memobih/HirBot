@@ -41,9 +41,10 @@ namespace Exame.Services.Implemntation
                 exam.Name=exame.Name;
                 exam.Type = ExamType.Interview;
                 exam.CreatedBy = user.Id;
+                exam.CategoryID=exame.CategoryID;
                 _unitOfWork._context.Exams.Add(exam);
                 await _unitOfWork.SaveAsync();
-                return APIOperationResponse<object>.Success("the exame created succuful ", "the exame created succuful ");
+                return APIOperationResponse<object>.Success(exam, "the exame created succuful ");
             }
             catch
             {
@@ -209,9 +210,11 @@ namespace Exame.Services.Implemntation
                 exam.Name = exame.Name;
                 exam.Type = ExamType.Interview;
                 exam.CreatedBy = user.Id;
+                exam.CategoryID = exame.CategoryID;
+
                 _unitOfWork._context.Exams.Update(exam);
                 await _unitOfWork.SaveAsync();
-                return APIOperationResponse<object>.Success("the exame updated succuful ", "the exame updated succuful ");
+                return APIOperationResponse<object>.Success(exam, "the exame updated succuful ");
             }
             catch
             {
@@ -312,12 +315,17 @@ namespace Exame.Services.Implemntation
             }
         }
 
-        public async Task<APIOperationResponse<object>> GetALLExams()
+        public async Task<APIOperationResponse<object>> GetALLExams(int categoryID)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var exames = _unitOfWork._context.Exams.Where(e => e.CreatedBy == user.Id).ToList();
+ 
+                var caategory = _unitOfWork._context.Categories.Include(c=>c.exams).ThenInclude(c=>c.Questions).ThenInclude(c=>c.Options).Where(e => e.ID ==categoryID&&e.UserID==user.Id).FirstOrDefault();
+                if (caategory == null)
+                    return APIOperationResponse<object>.NotFound("this category is not found");
+                var exames = caategory.exams;
+               
                 return APIOperationResponse<object>.Success(exames);
             }
             catch

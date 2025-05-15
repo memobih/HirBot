@@ -40,10 +40,10 @@ namespace Exame.Api.ExamController
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }
         [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetAllExams()
+        [HttpGet("{categoryID}/exams")]
+        public async Task<IActionResult> GetAllExams(int categoryID)
         {
-            var response = await _exameServices.GetALLExams();
+            var response = await _exameServices.GetALLExams( categoryID);
             if (response.StatusCode == 200)
                 return Ok(new { status = true, data = response.Data });
 
@@ -55,7 +55,7 @@ namespace Exame.Api.ExamController
         {
             var response = await _exameServices.CreateExame(exame);
             if (response.StatusCode == 200)
-                return Ok(new { status = true, message = response.Message });
+                return Ok(new { status = true, message = response.Message, response.Data });
 
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }
@@ -77,7 +77,7 @@ namespace Exame.Api.ExamController
         {
             var response = await _exameServices.EditExame(exameID, exame);
             if (response.StatusCode == 200)
-                return Ok(new { status = true, message = response.Message });
+                return Ok(new { status = true, message = response.Message, response.Data });
 
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }

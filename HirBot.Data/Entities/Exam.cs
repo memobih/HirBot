@@ -30,7 +30,6 @@ namespace HirBot.Data.Entities
         [JsonIgnore]
 
         public virtual  UserSkill ? UserSkill { get; set; }
-        [JsonIgnore]
 
         public int duration { get; set; }
         [JsonIgnore]
@@ -42,5 +41,9 @@ namespace HirBot.Data.Entities
         [JsonIgnore]
 
         public bool IsAnswerd { get; set; }
+        [ForeignKey("Category")]
+        public int ?  CategoryID { get; set; }
+        [JsonIgnore]
+        public virtual Category ? Category { get; set; }
     }
 }

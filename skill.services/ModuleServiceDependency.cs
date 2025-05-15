@@ -19,6 +19,8 @@ namespace skill.services
             service.AddScoped<ISkillService, SkillService>();
             service.AddScoped<IImageHandler, ImageHandler>();
             service.AddScoped<ILevelService , LevelService>();
+
+
             return service;
         }
     }

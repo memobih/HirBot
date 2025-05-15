@@ -17,6 +17,9 @@ namespace Exame.Services.DataTransferObjects
         [Required(ErrorMessage = "the duration is required")]
 
         public int duration { get; set; }
+        [Required(ErrorMessage = "the duration is required")]
+
+        public int CategoryID { get; set; }
 
     }
 }

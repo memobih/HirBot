@@ -36,11 +36,6 @@ namespace Jop.Services.DataTransferObjects
         [Range(1, int.MaxValue, ErrorMessage = "Application ID must be a positive integer.")]
 
         public int ApplicationId { get; set; }
-        [Required(ErrorMessage = "Interviewer name is required.")]
-        [StringLength(100, ErrorMessage = "Interviewer name cannot exceed 100 characters.")]
         public string? InterviewerName { get; set; } = string.Empty;
-
-        public int? ExameID { get; set; }
-
     }
 }

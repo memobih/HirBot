@@ -1,4 +1,5 @@
-﻿using Exame.Services.DataTransferObjects;
+﻿using Exame.services.Response;
+using Exame.Services.DataTransferObjects;
 using Exame.Services.Interfaces;
 using HirBot.Data.Entities;
 using HirBot.Data.Enums;
@@ -43,7 +44,12 @@ namespace Exame.Services.Implemntation
                 }
                 _unitOfWork._context.Questions.Add(newQuestion);
                await _unitOfWork.SaveAsync();
-                return APIOperationResponse<object>.Success("new question added sussful");
+                return APIOperationResponse<object>.Success(new
+                {
+                    newQuestion.ID,
+                    newQuestion.Content,
+                    Options = newQuestion.Options
+                }, "new question added sussful");
 
             }
             catch (Exception ex)
@@ -115,7 +121,12 @@ namespace Exame.Services.Implemntation
                 _unitOfWork._context.Questions.Update(question);
                 await _unitOfWork.SaveAsync();
 
-                return APIOperationResponse<object>.Success("Question updated successfully");
+                return APIOperationResponse<object>.Success(new
+                {
+                    question.ID,
+                    question.Content,
+                    Options = question.Options
+                },"Question updated successfully");
             }
             catch (Exception)
             {
