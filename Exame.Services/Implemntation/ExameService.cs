@@ -205,13 +205,15 @@ namespace Exame.Services.Implemntation
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                Exam exam = _unitOfWork._context.Exams.First(e=>e.ID==exameID);
+                Exam exam = _unitOfWork._context.Exams.FirstOrDefault(e=>e.ID==exameID);
+                if (exam == null || exam.CreatedBy != user.Id)
+                    return APIOperationResponse<object>.NotFound("this exam is not found");
                 exam.duration = exame.duration;
                 exam.Name = exame.Name;
                 exam.Type = ExamType.Interview;
                 exam.CreatedBy = user.Id;
-                exam.CategoryID = exame.CategoryID;
-
+                exam.CategoryID = exam.CategoryID;
+                
                 _unitOfWork._context.Exams.Update(exam);
                 await _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success(exam, "the exame updated succuful ");
@@ -339,34 +341,40 @@ namespace Exame.Services.Implemntation
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var exame = _unitOfWork._context.Exams.Include(exame=>exame.Questions).ThenInclude(q=>q.Options).Where(e => e.ID == exameID).FirstOrDefault();
+                var exame = _unitOfWork._context.Exams.Where(e => e.ID == exameID).FirstOrDefault();
                 if (exame == null || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
                     return APIOperationResponse<object>.NotFound("this exam is not found");
-                var response =new  InterviewExameResponse();
-                response.id = exameID;
-                response.name = exame.Name;
-                response.QuestionsNumber=exame.Questions.Count();
-                foreach(var question in exame.Questions)
-                {
-
-                   var addquestion=new InterviewExamQuestion { id=question.ID , question=question.Content };
-                     foreach(var option in  question.Options)
-                    {
-                        addquestion.options.Add(new InterviewExamoption { id=option.ID , option=option.Content });
-                        if (option.IsCorrect == true)
-                        {
-                            addquestion.Correctanswer=option.Content;
-                        }
-                    }
-                     response.Questions.Add(addquestion);
-                }
-                return APIOperationResponse<object>.Success(response);
+               
+                return APIOperationResponse<object>.Success(new { exame.ID, exame.Name, exame.duration, Questions = exame.Questions.Count() });
             }
             catch
             {
                 return APIOperationResponse<object>.ServerError("there are error accured");
             }
         }
-       
+        public async Task<APIOperationResponse<object>> GetQuestions(int exameID)
+        {
+
+            var user = await _authenticationService.GetCurrentUserAsync();
+            var exame = _unitOfWork._context.Exams.Include(exame => exame.Questions).ThenInclude(q => q.Options).Where(e => e.ID == exameID).FirstOrDefault();
+            if (exame == null || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
+                return APIOperationResponse<object>.NotFound("this exam is not found");
+            var response = new InterviewExameResponse();
+            response.id = exameID;
+            
+            foreach (var question in exame.Questions)
+            {
+
+                var addquestion = new InterviewExamQuestion { id = question.ID, question = question.Content ,createdAt=question.CreationDate , updatedAt=question.ModificationDate};
+                foreach (var option in question.Options)
+                {
+                    addquestion.options.Add(new InterviewExamoption { id = option.ID, option = option.Content , isCorrect=option.IsCorrect });
+                    
+                }
+                response.Questions.Add(addquestion);
+            }
+            return APIOperationResponse<object>.Success(response);
+        }
+
     }
 }

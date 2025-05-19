@@ -61,8 +61,17 @@ namespace Exame.Api.ExamController
 
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var response = await _categoryService.GetCategory(id);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, message = response.Message, data = response.Data });
 
-      
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
+
+
     }
 
 }

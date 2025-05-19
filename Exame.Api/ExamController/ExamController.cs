@@ -90,5 +90,14 @@ namespace Exame.Api.ExamController
                 return Ok(new { status = true, data = response.Data });
             return StatusCode(response.StatusCode, new { status = false, message = response.Message });
         }
+        [Authorize]
+        [HttpGet("{id}/question")]
+        public async Task<IActionResult> GetQuestion(int id)
+        {
+            var response = await _exameServices.GetQuestions(id);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, data = response.Data });
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message });
+        }
     }
 }

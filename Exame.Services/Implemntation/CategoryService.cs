@@ -96,7 +96,7 @@ namespace Exame.Services.Implemntation
                         c.image ,
                         c.UserID , 
                         c.CreationDate ,
-                       
+                      c.exams
                        
                     }).Where(c=>c.UserID==user.Id)
                     .ToList();
@@ -105,7 +105,7 @@ namespace Exame.Services.Implemntation
                 List<object> respone= new List<object>();
                 foreach (var category in categories)
                 {
-                    respone.Add(new { name = category.Name, description = category.Description, id = category.ID, createdAt = category.CreationDate, image = category.image });
+                    respone.Add(new { numofexams= category.exams.Count(),  name = category.Name, description = category.Description, id = category.ID, createdAt = category.CreationDate, image = category.image });
                 }
                  
                 return APIOperationResponse<object>.Success(respone);
@@ -152,6 +152,11 @@ namespace Exame.Services.Implemntation
                     return APIOperationResponse<object>.NotFound("this category is not found");
                 category.Name = dto.Name;
                 category.Description = dto.Description;
+                if(dto.removeImage==true)
+                {
+                    category.image = null;
+                    
+                }
                 if (dto.image != null && (dto.image.Length > 0))
                 {
                     try
@@ -187,6 +192,36 @@ namespace Exame.Services.Implemntation
             catch (Exception ex)
             {
                 return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
+        public async Task<APIOperationResponse<object>> GetCategory(int id)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                if (user.role != UserType.Company)
+                    return APIOperationResponse<object>.UnOthrized("this email is not company");
+
+                var category = _unitOfWork._context.Categories
+                    .Where(c => c.ID == id)
+                    .Select(c => new
+                    {
+                        c.ID,
+                        c.Name,
+                        c.Description,
+                        c.image , 
+                        c.exams
+                    })
+                    .FirstOrDefault();
+
+                if (category == null)
+                    return APIOperationResponse<object>.NotFound("Category not found");
+
+                return APIOperationResponse<object>.Success(new {category.Name , category.Description , category.image , category.ID , numofexams = category.exams.Count() });
+            }
+            catch (Exception)
+            {
+                return APIOperationResponse<object>.ServerError("There was an error fetching the category");
             }
         }
     }

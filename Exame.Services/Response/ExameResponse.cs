@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyModel;
+﻿using HirBot.Data.Entities;
+using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,13 @@ namespace Exame.services.Response
     public class ExameResponse
     {
         public int id { get; set; }
-        public List<Questions> Questions { get; set; }=new List<Questions>();
-        public int  QuestionsNumber {get; set; }
+        public List<Questions> Questions { get; set; } = new List<Questions>();
+        public int QuestionsNumber { get; set; }
         public string skill;
         public string name;
-        public string  ? icon;
+        public string? icon;
 
-        public string level; 
+        public string level;
         public int points { get; set; }
     } 
     public class Questions

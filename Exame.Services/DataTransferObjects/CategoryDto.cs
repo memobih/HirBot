@@ -14,5 +14,6 @@ namespace Exame.Services.DataTransferObjects
         [Required(ErrorMessage ="this field is Required")]
         public string Name { get; set; }
         public string  ? Description { get; set; }
+        public bool  ? removeImage { get; set; }= false;
     }
 }

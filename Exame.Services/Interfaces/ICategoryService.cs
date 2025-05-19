@@ -14,6 +14,7 @@ namespace Exame.Services.Interfaces
         Task<APIOperationResponse<object>> update(int id , CategoryDto dto);
         Task<APIOperationResponse<object>> GetALL(string ? search=null);
         Task<APIOperationResponse<object>> Delete(int id );
+        Task<APIOperationResponse<object>> GetCategory(int id);
 
     }
 }
