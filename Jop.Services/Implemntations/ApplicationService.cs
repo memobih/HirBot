@@ -27,12 +27,14 @@ namespace Jop.Services.Implemntations
         private readonly UnitOfWork unitOfWork;
         private readonly IExperienceServices _experienceServices;
         private readonly INotificationService _notificationService;
-        public ApplicationService(IAuthenticationService authenticationService, UnitOfWork unitOfWork, IExperienceServices experienceServices, INotificationService notificationService)
+        private readonly IEmployeeService _employeeService;
+        public ApplicationService(IAuthenticationService authenticationService, UnitOfWork unitOfWork, IExperienceServices experienceServices, INotificationService notificationService, IEmployeeService employeeService)
         {
             _experienceServices = experienceServices;
             _authenticationService = authenticationService;
             this.unitOfWork = unitOfWork;
             _notificationService = notificationService;
+            _employeeService = employeeService;
         }
         public async Task<APIOperationResponse<object>> ApplicateOnJob(int jobId)
         {
@@ -68,7 +70,7 @@ namespace Jop.Services.Implemntations
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var company = unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
                 if (company == null)
-                   return APIOperationResponse<object>.UnOthrized("this user is not a company");
+                    return APIOperationResponse<object>.UnOthrized("this user is not a company");
                 var job = await unitOfWork._context.Jobs.
                     Include(j => j.Applications)
                     .ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefaultAsync(j => j.ID == jobid);
@@ -113,7 +115,7 @@ namespace Jop.Services.Implemntations
             try
             {
                 return await changeStatus(ids, ApplicationStatus.waiting);
-               
+
             }
             catch (Exception ex)
             {
@@ -121,7 +123,7 @@ namespace Jop.Services.Implemntations
             }
         }
 
-         public async Task<APIOperationResponse<object>> RejectApplication(List<int> ids)
+        public async Task<APIOperationResponse<object>> RejectApplication(List<int> ids)
         {
             try
             {
@@ -153,8 +155,8 @@ namespace Jop.Services.Implemntations
 
             }
         }
-        
-        public async Task<APIOperationResponse<object>> GetAllApprovedApplications(int JobId,string? search = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
+
+        public async Task<APIOperationResponse<object>> GetAllApprovedApplications(int JobId, string? search = null, string columnsort = "score", string? sort = null, int page = 1, int perpage = 10)
         {
             try
             {
@@ -162,7 +164,7 @@ namespace Jop.Services.Implemntations
                 var company = unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this email can not show this job ");
-                var job = unitOfWork._context.Jobs.Include(j => j.Applications).ThenInclude(a=>a.Interviews).Include(a=>a.Applications).ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefault(j => j.ID == JobId);
+                var job = unitOfWork._context.Jobs.Include(j => j.Applications).ThenInclude(a => a.Interviews).Include(a => a.Applications).ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefault(j => j.ID == JobId);
                 if (job == null || company.ID != job.CompanyID)
                     return APIOperationResponse<object>.NotFound("this job is not found");
                 var applications = new List<ApprovedApplication>();
@@ -172,25 +174,25 @@ namespace Jop.Services.Implemntations
                     {
                         if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
                         if (application.status == ApplicationStatus.approved)
-                            if (application.Interviews != null) application.Interviews=application.Interviews.OrderBy(a => a.CreationDate).ToList();
-                            applications.Add(
-                                new ApprovedApplication
-                                {
-                                    id = application.ID,
-                                    name = application.User.FullName,
-                                    email = application.User.Email,
-                                    Score = 80,
-                                    status = application.status,
-                                    created_at = application.CreationDate,
-                                    CVLink = application.User.Portfolio.CVUrl,
-                                    imageLink = application.User.ImagePath,
-                                    userName = application.User.UserName
-                                    ,
-                                    
-                                    interviewType = application.Interviews?.LastOrDefault()?.Type ?? null
-                                }
+                            if (application.Interviews != null) application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
+                        applications.Add(
+                            new ApprovedApplication
+                            {
+                                id = application.ID,
+                                name = application.User.FullName,
+                                email = application.User.Email,
+                                Score = 80,
+                                status = application.status,
+                                created_at = application.CreationDate,
+                                CVLink = application.User.Portfolio.CVUrl,
+                                imageLink = application.User.ImagePath,
+                                userName = application.User.UserName
+                                ,
 
-                              );
+                                interviewType = application.Interviews?.LastOrDefault()?.Type ?? null
+                            }
+
+                          );
                     }
                     if (applications.Count == 0)
                         return APIOperationResponse<object>.NotFound("there are no applications aproved");
@@ -221,7 +223,7 @@ namespace Jop.Services.Implemntations
                     Email = application.User.Email,
                     jobTitle = application.User.Portfolio.Title,
                     image = application.User.ImagePath,
-                    
+
                 };
                 return APIOperationResponse<AppuserDto>.Success(applicant, "the applicant details are fetched succefuly");
 
@@ -233,8 +235,8 @@ namespace Jop.Services.Implemntations
             }
         }
 
-        
-      
+
+
         #region Helber  
         private List<T> Paginate<T>(List<T> source, int page, int pageSize)
         {
@@ -320,22 +322,22 @@ namespace Jop.Services.Implemntations
             if (application.status != ApplicationStatus.approved)
                 return APIOperationResponse<object>.BadRequest("this application is not approved yet");
 
-                var user = await unitOfWork._context.Users.Include(c=>c.experiences).FirstOrDefaultAsync(u => u.Id == application.UserID);
-                if (user == null)
-                    return APIOperationResponse<object>.NotFound("this user is not found");
+            var user = await unitOfWork._context.Users.Include(c => c.experiences).FirstOrDefaultAsync(u => u.Id == application.UserID);
+            if (user == null)
+                return APIOperationResponse<object>.NotFound("this user is not found");
             user.experiences.Add(new Experience()
             {
                 Title = application.Job.Title,
                 companyName = application.Job.Company.Name,
                 location = application.Job.location,
                 Start_Date = DateTime.Now,
-                 End_Date = null,
+                End_Date = null,
                 workType = application.Job.LocationType,
                 privacy = PrivacyEnum.Public,
                 employeeType = application.Job.EmployeeType,
             });
             application.status = ApplicationStatus.accepted;
-            try 
+            try
             {
                 unitOfWork._context.Applications.Update(application);
                 unitOfWork._context.Users.Update(user);
@@ -380,36 +382,36 @@ namespace Jop.Services.Implemntations
                         jobTitle = a.Job.Title,
                         companyName = a.Job.Company.Name,
                         ApprovedTime = a.ModificationDate,
-                        TimeAgo = DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes < 60 
-                            ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes:F0} minutes ago" 
-                            : DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours < 24 
-                                ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours:F0} hours ago" 
+                        TimeAgo = DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes < 60
+                            ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes:F0} minutes ago"
+                            : DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours < 24
+                                ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours:F0} hours ago"
                                 : $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalDays:F0} days ago",
                         Companyimage = a.Job.Company.Logo,
                     })
                     .ToListAsync();
                 var interviews = await unitOfWork._context.Interviews
                     .Include(i => i.Application)
-                    .Where(i => i.Application.UserID == user.Id 
+                    .Where(i => i.Application.UserID == user.Id
                            && i.Application.status == ApplicationStatus.approved
                            && i.StartTime.Date >= DateTime.Now.Date)
                            .Select(i => new
                            {
-                            id = i.ID,
-                            jobTitle = i.Application.Job.Title,
-                            companyName = i.Application.Job.Company.Name,
-                            interviewDate = i.StartTime,
-                            companyImage = i.Application.Job.Company.Logo,
-                            status = i.Type,
-                            TimeAgo = DateTime.Now.Subtract(i.CreationDate).TotalMinutes < 60 
-                                ? $"{DateTime.Now.Subtract(i.CreationDate).TotalMinutes:F0} minutes ago" 
-                                : DateTime.Now.Subtract(i.CreationDate).TotalHours < 24 
-                                    ? $"{DateTime.Now.Subtract(i.CreationDate).TotalHours:F0} hours ago" 
+                               id = i.ID,
+                               jobTitle = i.Application.Job.Title,
+                               companyName = i.Application.Job.Company.Name,
+                               interviewDate = i.StartTime,
+                               companyImage = i.Application.Job.Company.Logo,
+                               status = i.Type,
+                               TimeAgo = DateTime.Now.Subtract(i.CreationDate).TotalMinutes < 60
+                                ? $"{DateTime.Now.Subtract(i.CreationDate).TotalMinutes:F0} minutes ago"
+                                : DateTime.Now.Subtract(i.CreationDate).TotalHours < 24
+                                    ? $"{DateTime.Now.Subtract(i.CreationDate).TotalHours:F0} hours ago"
                                     : $"{DateTime.Now.Subtract(i.CreationDate).TotalDays:F0} days ago"
                            })
                     .ToListAsync();
                 if (!applications.Any() && !interviews.Any())
-                  return APIOperationResponse<object>.NotFound("No Approved applications found or interviews found");
+                    return APIOperationResponse<object>.NotFound("No Approved applications found or interviews found");
 
                 return APIOperationResponse<object>.Success(new
                 {
@@ -422,8 +424,8 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<object>.ServerError("An error occurred", new List<string> { ex.Message });
             }
         }
-         public async Task<APIOperationResponse<object>> TrackRejectedApplications()
-         {
+        public async Task<APIOperationResponse<object>> TrackRejectedApplications()
+        {
             var user = await _authenticationService.GetCurrentUserAsync();
             try
             {
@@ -436,11 +438,11 @@ namespace Jop.Services.Implemntations
                         id = a.ID,
                         jobTitle = a.Job.Title,
                         companyName = a.Job.Company.Name,
-                        Companyimage=a.Job.Company.Logo,
-                        TimeAgo = DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes < 60 
-                            ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes:F0} minutes ago" 
-                            : DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours < 24 
-                                ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours:F0} hours ago" 
+                        Companyimage = a.Job.Company.Logo,
+                        TimeAgo = DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes < 60
+                            ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalMinutes:F0} minutes ago"
+                            : DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours < 24
+                                ? $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalHours:F0} hours ago"
                                 : $"{DateTime.Now.Subtract(a.ModificationDate ?? DateTime.Now).TotalDays:F0} days ago",
                     })
                     .ToListAsync();
@@ -454,8 +456,8 @@ namespace Jop.Services.Implemntations
             {
                 return APIOperationResponse<object>.ServerError("An error occurred", new List<string> { ex.Message });
 
-         }
-               
+            }
+
         }
         public async Task<APIOperationResponse<object>> TrackInprogressApplications()
         {
@@ -471,12 +473,12 @@ namespace Jop.Services.Implemntations
                         id = a.ID,
                         jobTitle = a.Job.Title,
                         companyName = a.Job.Company.Name,
-                        appliedDateAgo = DateTime.Now.Subtract(a.CreationDate).TotalMinutes < 60 
-                            ? $"{DateTime.Now.Subtract(a.CreationDate).TotalMinutes:F0} minutes ago" 
-                            : DateTime.Now.Subtract(a.CreationDate).TotalHours < 24 
-                                ? $"{DateTime.Now.Subtract(a.CreationDate).TotalHours:F0} hours ago" 
+                        appliedDateAgo = DateTime.Now.Subtract(a.CreationDate).TotalMinutes < 60
+                            ? $"{DateTime.Now.Subtract(a.CreationDate).TotalMinutes:F0} minutes ago"
+                            : DateTime.Now.Subtract(a.CreationDate).TotalHours < 24
+                                ? $"{DateTime.Now.Subtract(a.CreationDate).TotalHours:F0} hours ago"
                                 : $"{DateTime.Now.Subtract(a.CreationDate).TotalDays:F0} days ago",
-                        Companyimage=a.Job.Company.Logo
+                        Companyimage = a.Job.Company.Logo
                     })
                     .ToList();
 
@@ -490,94 +492,95 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<object>.ServerError("An error occurred", new List<string> { ex.Message });
             }
         }
- public async Task<APIOperationResponse<object>> TrackAllApplications()
-{
-    var user = await _authenticationService.GetCurrentUserAsync();
-
-    try
-    {
-        var allApplications = await unitOfWork._context.Applications
-            .Include(a => a.Job)
-                .ThenInclude(j => j.Company)
-            .Include(a => a.Interviews)
-            .Where(a => a.UserID == user.Id)
-            .ToListAsync();
-
-        if (!allApplications.Any())
-            return APIOperationResponse<object>.NotFound("No applications found");
-
-        var Applications = allApplications.Select<Application, object>(app =>
+        public async Task<APIOperationResponse<object>> TrackAllApplications()
         {
-            bool isApprovedWithInterview = app.status == ApplicationStatus.approved && app.Interviews.Any(i => i.StartTime > DateTime.Now);
+            var user = await _authenticationService.GetCurrentUserAsync();
 
-            return isApprovedWithInterview 
-                ? new
+            try
+            {
+                var allApplications = await unitOfWork._context.Applications
+                    .Include(a => a.Job)
+                        .ThenInclude(j => j.Company)
+                    .Include(a => a.Interviews)
+                    .Where(a => a.UserID == user.Id)
+                    .ToListAsync();
+
+                if (!allApplications.Any())
+                    return APIOperationResponse<object>.NotFound("No applications found");
+
+                var Applications = allApplications.Select<Application, object>(app =>
                 {
-                    Applicationid = app.ID,
-                    status = "interview",
-                    created_at = app.CreationDate,
-                    message = "You have an upcoming interview.",
-                    interview = app.Interviews.OrderByDescending(i => i.CreationDate).Take(1).Select(i => new
-                    {
-                        id = i.ID,
-                        type = i.Type.ToString().ToLower(),
-                        date = i.StartTime.ToString("yyyy-MM-dd"),
-                        time = i.StartTime.ToString("hh:mm tt"),
-                        duration = $"{i.durationInMinutes} minutes",
-                        location = i.Mode == InterviewMode.Online ? "Zoom" : i.Location,
-                        zoom_link = i.ZoomMeetinLink,
-                        notes = i.Notes,
-                        interviewername = i.InterviewerName,
-                    }).ToList(),
-                    job = new
-                    {
-                        id = app.Job.ID,
-                        title = app.Job.Title,
-                    },
-                    company = new
-                    {
-                        id = app.Job.Company.ID,
-                        name = app.Job.Company.Name,
-                        logo = app.Job.Company.Logo,
-                        websiteurl = app.Job.Company.websiteUrl,
-                        location=new 
+                    bool isApprovedWithInterview = app.status == ApplicationStatus.approved && app.Interviews.Any(i => i.StartTime > DateTime.Now);
+
+                    return isApprovedWithInterview
+                        ? new
                         {
-                            street=app.Job.Company.street,
-                            country = app.Job.Company.country,
-                            governorate = app.Job.Company.Governate,
+                            Applicationid = app.ID,
+                            status = "interview",
+                            created_at = app.CreationDate,
+                            message = "You have an upcoming interview.",
+                            interview = app.Interviews.OrderByDescending(i => i.CreationDate).Take(1).Select(i => new
+                            {
+                                id = i.ID,
+                                type = i.Type.ToString().ToLower(),
+                                date = i.StartTime.ToString("yyyy-MM-dd"),
+                                time = i.StartTime.ToString("hh:mm tt"),
+                                duration = $"{i.durationInMinutes} minutes",
+                                location = i.Mode == InterviewMode.Online ? "Zoom" : i.Location,
+                                zoom_link = i.ZoomMeetinLink,
+                                notes = i.Notes,
+                                interviewername = i.InterviewerName,
+                            }).ToList(),
+                            job = new
+                            {
+                                id = app.Job.ID,
+                                title = app.Job.Title,
+                                Type = app.Job.LocationType.ToString(),
+                            },
+                            company = new
+                            {
+                                id = app.Job.Company.ID,
+                                name = app.Job.Company.Name,
+                                logo = app.Job.Company.Logo,
+                                websiteurl = app.Job.Company.websiteUrl,
+                                location = new
+                                {
+                                    street = app.Job.Company.street,
+                                    country = app.Job.Company.country,
+                                    governorate = app.Job.Company.Governate,
+                                }
+                            }
                         }
-                    }
-                }
-                : new
-                {
-                    Applicationid = app.ID,
-                    status = app.status.ToString().ToLower(),
-                    created_at = app.CreationDate,
-                    job = new
-                    {
-                        id = app.Job.ID,
-                        title = app.Job.Title,
-                        location = app.Job.location,
-                        salary = app.Job.Salary,
-                        type = app.Job.LocationType.ToString()
-                    },
-                    company = new
-                    {
-                        id = app.Job.Company.ID,
-                        name = app.Job.Company.Name,
-                        logo = app.Job.Company.Logo
-                    }               
-                    
-                 };
-        }).ToList();
+                        : new
+                        {
+                            Applicationid = app.ID,
+                            status = app.status.ToString().ToLower(),
+                            created_at = app.CreationDate,
+                            job = new
+                            {
+                                id = app.Job.ID,
+                                title = app.Job.Title,
+                                location = app.Job.location,
+                                salary = app.Job.Salary,
+                                type = app.Job.LocationType.ToString()
+                            },
+                            company = new
+                            {
+                                id = app.Job.Company.ID,
+                                name = app.Job.Company.Name,
+                                logo = app.Job.Company.Logo
+                            }
 
-        return APIOperationResponse<object>.Success(new { applications = Applications });
-    }
-    catch (Exception ex)
-    {
-        return APIOperationResponse<object>.ServerError("An error occurred while fetching applications", new List<string> { ex.Message });
-    }
-}
+                        };
+                }).ToList();
+
+                return APIOperationResponse<object>.Success(new { applications = Applications });
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("An error occurred while fetching applications", new List<string> { ex.Message });
+            }
+        }
 
         public async Task<APIOperationResponse<object>> StartProcess(int ApplicationId)
         {
@@ -586,7 +589,7 @@ namespace Jop.Services.Implemntations
             var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId && a.UserID == user.Id);
             if (application == null)
                 return APIOperationResponse<object>.NotFound("this application is not found or not yours");
-            if(application.status== ApplicationStatus.approved)
+            if (application.status == ApplicationStatus.approved)
                 return APIOperationResponse<object>.BadRequest("this application is already approved");
             application.status = ApplicationStatus.approved;
             try
@@ -600,7 +603,44 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
             }
         }
-        
+        public async Task<APIOperationResponse<object>> AcceptTheApplication(string Applicationid)
+        {
+            var companyuser = await _authenticationService.GetCurrentUserAsync();
+            var application = await unitOfWork._context.Applications.Include(a => a.Interviews).Include(a => a.Job)
+            .ThenInclude(j => j.Company).Include(a=>a.User)
+            .FirstOrDefaultAsync(a => a.ID.ToString() == Applicationid);
+            if (application == null)
+                return APIOperationResponse<object>.NotFound("this application is not found");
+            if (application.Job.Company.ID!= companyuser.Company.ID)
+                return APIOperationResponse<object>.NotFound("this application doesn't belong to a job in your company");
+              if(application.status== ApplicationStatus.accepted)
+                return APIOperationResponse<object>.BadRequest("this application is already accepted");
+            if (application.status != ApplicationStatus.approved)
+                return APIOperationResponse<object>.BadRequest("this application is not approved yet");
+            var user = await unitOfWork._context.Users.Include(c => c.experiences).FirstOrDefaultAsync(u => u.Id == application.UserID);
+            if (user == null)
+                return APIOperationResponse<object>.NotFound("this user is not found for this application");
+            try
+            {
+                await changeStatus(new List<int> { application.ID }, ApplicationStatus.accepted);
+                var employee = new AddEmployeeDto();
+                employee.email = application.User != null ? application.User.Email : string.Empty;
+                employee.jobType = application.Job.EmployeeType;
+                employee.workType = application.Job.LocationType;
+                employee.startDate = DateTime.Now;
+                employee.endDate = null;
+                employee.rate = 50;
+                employee.title = application.Job.Title;
+                employee.location = application.Job.location;
+                await _employeeService.AddEmployee(employee);
+                return APIOperationResponse<object>.Success("the application is accepted succefuly", "the application is accepted succefuly");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
+            }
+            
+        }
 
         #endregion
     }

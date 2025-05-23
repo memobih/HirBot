@@ -18,18 +18,18 @@ namespace Job.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public  class ApplicationController : ApiControllerBase
+    public class ApplicationController : ApiControllerBase
     {
-        private readonly IApplicationService _applicationService; 
+        private readonly IApplicationService _applicationService;
         public ApplicationController(IApplicationService applicationService)
         {
             _applicationService = applicationService;
         }
         [Authorize]
-        [HttpGet("{jobId}")] 
-        public async Task<IActionResult>GetALLApplications(int jobId, string? search = null, ApplicationStatus? status = null, string sort = "score", string ?sortDirection=null, int page = 1, int perpage = 10)
+        [HttpGet("{jobId}")]
+        public async Task<IActionResult> GetALLApplications(int jobId, string? search = null, ApplicationStatus? status = null, string sort = "score", string? sortDirection = null, int page = 1, int perpage = 10)
         {
-            var response = await _applicationService.GetALLAplications(jobId, search, status, sort,sortDirection, page, perpage);
+            var response = await _applicationService.GetALLAplications(jobId, search, status, sort, sortDirection, page, perpage);
             if (response.StatusCode == 200)
                 return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
@@ -45,7 +45,7 @@ namespace Job.Api.Controllers
         }
         [Authorize]
         [HttpPut("approve")]
-        public async Task<IActionResult> approved(List<int> ids )
+        public async Task<IActionResult> approved(List<int> ids)
         {
             var response = await _applicationService.ApproveApplocations(ids);
             if (response.StatusCode == 200)
@@ -79,16 +79,16 @@ namespace Job.Api.Controllers
                 return Ok(new { status = true, response.Data });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
-        [Authorize("Company")]
+     
         [HttpPut("accept")]
-        public async Task<IActionResult> AcceptTheApplication(int ApplicationId)
+        public async Task<IActionResult> AcceptTheApplication(string ApplicationId)
         {
             var response = await _applicationService.AcceptTheApplication(ApplicationId);
             if (response.StatusCode == 200)
                 return Ok(new { status = true, response.Message });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
-        [Authorize("Company")]
+        [Authorize]
         [HttpPut("reject")]
         public async Task<IActionResult> RejectTheApplication(int ApplicationId)
         {
@@ -97,5 +97,7 @@ namespace Job.Api.Controllers
                 return Ok(new { status = true, response.Message });
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
+      
+
     }
 }

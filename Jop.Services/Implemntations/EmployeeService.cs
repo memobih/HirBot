@@ -64,6 +64,9 @@ namespace Jop.Services.Implemntations
                 newExperience.UserID = user.Id;
                 newExperience.rate=employee.rate;
                 newExperience.IsStill=true;
+                newExperience.companyName = company.Name;
+                newExperience.privacy = PrivacyEnum.Public;
+                
                 await _unitOfWork.Experiences.AddAsync(newExperience);
                 await _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success("employee added Successful", "employee added Successful");
