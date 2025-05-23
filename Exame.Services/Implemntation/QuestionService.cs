@@ -40,14 +40,14 @@ namespace Exame.Services.Implemntation
                 newQuestion.Content=dto.question;
                 foreach (var item in dto.options)
                 {
-                    newQuestion.Options.Add(new Option { IsCorrect = item.IsCorrect, Content = item.option });
+                    newQuestion.Options.Add(new Option { IsCorrect = item.IsCorrect, option = item.option });
                 }
                 _unitOfWork._context.Questions.Add(newQuestion);
                await _unitOfWork.SaveAsync();
                 return APIOperationResponse<object>.Success(new
                 {
                     newQuestion.ID,
-                    newQuestion.Content,
+                   question= newQuestion.Content,
                     Options = newQuestion.Options
                 }, "new question added sussful");
 
@@ -115,7 +115,7 @@ namespace Exame.Services.Implemntation
                 // Add new options
                 question.Options = dto.options.Select(o => new Option
                 {
-                    Content = o.option,
+                    option = o.option,
                     IsCorrect = o.IsCorrect
                 }).ToList();
                 _unitOfWork._context.Questions.Update(question);
@@ -124,7 +124,7 @@ namespace Exame.Services.Implemntation
                 return APIOperationResponse<object>.Success(new
                 {
                     question.ID,
-                    question.Content,
+                    question=question.Content,
                     Options = question.Options
                 },"Question updated successfully");
             }
@@ -147,7 +147,7 @@ namespace Exame.Services.Implemntation
                         q.ID,
                         q.Content,
                         Exam = q.Exam,
-                        Options = q.Options.Select(o => new { o.ID, o.Content, o.IsCorrect }).ToList()
+                        Options = q.Options.Select(o => new { o.ID, o.option, o.IsCorrect }).ToList()
                     })
                     .FirstOrDefault();
 

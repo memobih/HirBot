@@ -9,7 +9,6 @@ namespace Exame.Services.Response
 {
     public class InterviewExameResponse
     {   
-        public int id { get; set; }
         public List<InterviewExamQuestion> Questions { get; set; } = new List<InterviewExamQuestion>();
       
        
@@ -18,6 +17,8 @@ namespace Exame.Services.Response
     }
     public class InterviewExamQuestion
     {
+        public int examId { get; set; }
+
         public int id { get; set; }
         public string question { get; set; }
         public DateTime? createdAt { get; set; }

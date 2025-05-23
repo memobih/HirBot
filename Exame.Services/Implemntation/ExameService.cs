@@ -81,10 +81,12 @@ namespace Exame.Services.Implemntation
                 {
                     userSkill = new UserSkill();
                     var skill = await _unitOfWork.Skills.GetLastOrDefaultAsync(s => s.ID == skillId);
-                    userSkill.Skill = skill; 
-                    userSkill.SkillID= skillId;
+                    userSkill.Skill = skill;
+                    userSkill.SkillID = skillId;
                     userSkill.UserID = user.Id;
                 }
+                else
+                    return APIOperationResponse<object>.Conflict("you are do this exame before");
                 //ID Name    Type Points  UserSkillID
 
                 Exam newExam = new
@@ -105,10 +107,10 @@ namespace Exame.Services.Implemntation
                     Points = 10,
                     QuestionType = QuestionType.MCQ,
                     Options = new List<Option> {
-        new Option { Content = "int x = 10;", IsCorrect = true },
-        new Option { Content = "x = 10;", IsCorrect = false },
-        new Option { Content = "int x; x == 10;", IsCorrect = false },
-        new Option { Content = "integer x = 10;", IsCorrect = false }
+        new Option { option = "int x = 10;", IsCorrect = true },
+        new Option { option = "x = 10;", IsCorrect = false },
+        new Option { option = "int x; x == 10;", IsCorrect = false },
+        new Option { option = "integer x = 10;", IsCorrect = false }
     }
                 });
 
@@ -119,10 +121,10 @@ namespace Exame.Services.Implemntation
                     Points = 10,
                     QuestionType = QuestionType.MCQ,
                     Options = new List<Option> {
-        new Option { Content = "private", IsCorrect = false },
-        new Option { Content = "protected", IsCorrect = false },
-        new Option { Content = "internal", IsCorrect = true },
-        new Option { Content = "public", IsCorrect = false }
+        new Option { option = "private", IsCorrect = false },
+        new Option { option = "protected", IsCorrect = false },
+        new Option { option = "internal", IsCorrect = true },
+        new Option { option = "public", IsCorrect = false }
     }
                 });
 
@@ -133,10 +135,10 @@ namespace Exame.Services.Implemntation
                     Points = 10,
                     QuestionType = QuestionType.MCQ,
                     Options = new List<Option> {
-        new Option { Content = "void", IsCorrect = true },
-        new Option { Content = "null", IsCorrect = false },
-        new Option { Content = "return", IsCorrect = false },
-        new Option { Content = "empty", IsCorrect = false }
+        new Option { option = "void", IsCorrect = true },
+        new Option { option = "null", IsCorrect = false },
+        new Option { option = "return", IsCorrect = false },
+        new Option { option = "empty", IsCorrect = false }
     }
                 });
 
@@ -147,10 +149,10 @@ namespace Exame.Services.Implemntation
                     Points = 10,
                     QuestionType = QuestionType.MCQ,
                     Options = new List<Option> {
-        new Option { Content = "int", IsCorrect = false },
-        new Option { Content = "float", IsCorrect = false },
-        new Option { Content = "real", IsCorrect = true },
-        new Option { Content = "decimal", IsCorrect = false }
+        new Option { option = "int", IsCorrect = false },
+        new Option { option = "float", IsCorrect = false },
+        new Option { option = "real", IsCorrect = true },
+        new Option { option = "decimal", IsCorrect = false }
     }
                 });
 
@@ -161,10 +163,10 @@ namespace Exame.Services.Implemntation
                     Points = 10,
                     QuestionType = QuestionType.MCQ,
                     Options = new List<Option> {
-        new Option { Content = "Arrays in C# are fixed-size", IsCorrect = true },
-        new Option { Content = "Arrays can only store integers", IsCorrect = false },
-        new Option { Content = "Arrays are allocated on the stack", IsCorrect = false },
-        new Option { Content = "Arrays cannot have null values", IsCorrect = false }
+        new Option { option = "Arrays in C# are fixed-size", IsCorrect = true },
+        new Option { option = "Arrays can only store integers", IsCorrect = false },
+        new Option { option = "Arrays are allocated on the stack", IsCorrect = false },
+        new Option { option = "Arrays cannot have null values", IsCorrect = false }
     }
                 });
                 newExam.Questions= Questions; 
@@ -186,7 +188,7 @@ namespace Exame.Services.Implemntation
                         respone.points += question.Points; 
                         foreach (var option in question.Options)
                         {
-                            ques.options.Add(new services.Response.Options { id = option.ID, option = option.Content });
+                            ques.options.Add(new services.Response.Options { id = option.ID, option = option.option });
                         }
                         respone.Questions.Add( ques );
                     }
@@ -229,7 +231,7 @@ namespace Exame.Services.Implemntation
             
                 var exame = _unitOfWork._context.Exams.Where(e => e.ID == id).FirstOrDefault();
                 if (exame != null && exame.Type != ExamType.Interview)
-                    return FinishInterviewExame(id, answers);
+                    return FinishSkillExame(id, answers);
                 else return FinishInterviewExame(id, answers);
             
         }
@@ -360,15 +362,14 @@ namespace Exame.Services.Implemntation
             if (exame == null || exame.Type != ExamType.Interview || exame.CreatedBy != user.Id)
                 return APIOperationResponse<object>.NotFound("this exam is not found");
             var response = new InterviewExameResponse();
-            response.id = exameID;
             
             foreach (var question in exame.Questions)
             {
 
-                var addquestion = new InterviewExamQuestion { id = question.ID, question = question.Content ,createdAt=question.CreationDate , updatedAt=question.ModificationDate};
+                var addquestion = new InterviewExamQuestion {examId=exame.ID, id = question.ID, question = question.Content ,createdAt=question.CreationDate , updatedAt=question.ModificationDate};
                 foreach (var option in question.Options)
                 {
-                    addquestion.options.Add(new InterviewExamoption { id = option.ID, option = option.Content , isCorrect=option.IsCorrect });
+                    addquestion.options.Add(new InterviewExamoption { id = option.ID, option = option.option , isCorrect=option.IsCorrect });
                     
                 }
                 response.Questions.Add(addquestion);
