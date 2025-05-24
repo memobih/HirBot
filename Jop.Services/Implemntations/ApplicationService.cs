@@ -1,7 +1,10 @@
-﻿using HirBot.Data.Entities;
+﻿using HirBot.Comman.Idenitity;
+using HirBot.Data.Entities;
 using HirBot.Data.Enums;
+using HirBot.Data.IGenericRepository_IUOW;
 using HirBot.ResponseHandler.Models;
 using Jop.Services.DataTransferObjects;
+using Jop.Services.Helpers;
 using Jop.Services.Interfaces;
 using Jop.Services.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +76,7 @@ namespace Jop.Services.Implemntations
                     return APIOperationResponse<object>.UnOthrized("this user is not a company");
                 var job = await unitOfWork._context.Jobs.
                     Include(j => j.Applications)
-                    .ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).FirstOrDefaultAsync(j => j.ID == jobid);
+                    .ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).Include(j=>j.JobRequirments).ThenInclude(j=>j.Skill).FirstOrDefaultAsync(j => j.ID == jobid);
                 if (job == null || company.ID != job.CompanyID)
                     return APIOperationResponse<object>.NotFound("this job is not found");
                 var applications = new List<Applications>();
@@ -82,6 +85,9 @@ namespace Jop.Services.Implemntations
                     foreach (var application in job.Applications)
                     {
                         if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
+                        var candidate = GetUserInformations(application.User);
+                        var ids = candidate.Skills.Select(s => s.SkillID).ToList();
+                        var skills = unitOfWork._context.Skills.Where(s => ids.Contains(s.ID)).Select(s => s.Name).ToList();
                         if (application.status != ApplicationStatus.approved)
                             applications.Add(
                                 new Applications
@@ -89,7 +95,7 @@ namespace Jop.Services.Implemntations
                                     id = application.ID,
                                     name = application.User.FullName,
                                     email = application.User.Email,
-                                    Score = 80,
+                                    Score =JobMatcher.GetScore(candidate  , job  , skills ),
                                     status = application.status,
                                     created_at = application.CreationDate,
                                     CVLink = application.User.Portfolio.CVUrl,
@@ -314,6 +320,14 @@ namespace Jop.Services.Implemntations
                 else applications = applications.OrderBy(j => j.Score).ToList();
             }
         }
+        private ApplicationUser GetUserInformations(ApplicationUser user )
+        {
+            user.Skills=unitOfWork._context.UserSkills.Where(s=>s.UserID==user.Id).ToList();
+            user.experiences=unitOfWork._context.Experiences.Where(e=>e.UserID==user.Id).ToList();
+            return user;
+        }
+        #endregion
+
         public async Task<APIOperationResponse<object>> AcceptTheApplication(int ApplicationId)
         {
             var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId);
@@ -642,6 +656,5 @@ namespace Jop.Services.Implemntations
             
         }
 
-        #endregion
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HirBot.Comman.Enums;
 using HirBot.Data.Entities;
 using HirBot.Data.Enums;
+using HirBot.Data.IGenericRepository_IUOW;
 using HirBot.ResponseHandler.Models;
 using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
@@ -332,8 +333,8 @@ namespace Jop.Services.Implemntations
                     foreach (var jop in all)
                     {
                         if (jop.status == JobStatus.published)
-                        { 
-
+                        {
+                            
 
                             var added = new JobRecomendations
                             {
