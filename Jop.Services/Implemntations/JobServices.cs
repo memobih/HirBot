@@ -9,6 +9,7 @@ using Jop.Services.Responses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.IdentityModel.Tokens;
+using Notification.Services.Interfaces;
 using Project.Repository.Repository;
 using Project.Services.Interfaces;
 namespace Jop.Services.Implemntations
@@ -17,8 +18,10 @@ namespace Jop.Services.Implemntations
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly UnitOfWork unitOfWork;
-        public JobServices(IAuthenticationService authenticationService, UnitOfWork unitOfWork)
+        private readonly INotificationService _notificationService;
+        public JobServices(IAuthenticationService authenticationService, UnitOfWork unitOfWork, INotificationService notificationService)
         {
+            _notificationService = notificationService;
             _authenticationService = authenticationService;
             this.unitOfWork = unitOfWork;
         }
@@ -65,6 +68,16 @@ namespace Jop.Services.Implemntations
                 await unitOfWork.Jobs.AddAsync(newJob);
                 await unitOfWork.SaveAsync();
                 unitOfWork._context.Database.CommitTransaction();
+                var users=await unitOfWork._context.Users.Include(i=>i.Portfolio).Where(u => u.Portfolio.Title==job.Title).ToListAsync();
+                if (users != null && users.Count > 0)
+                {
+                    List<string> recievers = new List<string>();
+                    foreach (var userw in users)
+                    {
+                        recievers.Add(userw.Id);
+                    }
+                    await _notificationService.SendNotificationAsync($"New Job is added with title {job.Title}", NotificationType.job, newJob.ID.ToString(), recievers);
+                }
                 return APIOperationResponse<object>.Success("Jop is Created", "Jop is Created Succesful !");
             }
             catch (Exception ex)

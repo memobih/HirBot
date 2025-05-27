@@ -38,10 +38,10 @@ namespace Notification.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost("mark-as-read/{notificationId}/{userId}")]
-        public async Task<ActionResult<APIOperationResponse<bool>>> MarkAsRead(int notificationId, string userId)
+        [HttpPost("mark-as-read")]
+        public async Task<ActionResult<APIOperationResponse<bool>>> MarkAsRead(List<string>ids, string userId)
         {
-            var result = await _notificationService.MarkAsReadAsync(notificationId, userId);
+            var result = await _notificationService.MarkAsReadAsync(ids, userId);
             return StatusCode(result.StatusCode, result);
         }
 

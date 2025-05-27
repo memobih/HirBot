@@ -2,6 +2,7 @@ using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using Notification.Services.DataTransferObjects;
 using Notification.Services.Interfaces;
 using Project.Repository.Repository;
@@ -168,34 +169,54 @@ namespace Notification.Services.Implementation
     return APIOperationResponse<List<NotificationDto>>.Success(notificationDtos);
 }
 
-        public async Task<APIOperationResponse<bool>> MarkAsReadAsync(int notificationId, string userId)
+        public async Task<APIOperationResponse<bool>> MarkAsReadAsync(List<string> notificationsids)
         {
-            var receiver = await _context._context.NotificationRecivers
-                .FirstOrDefaultAsync(n => n.NotificationID == notificationId && n.ReciverID == userId);
-            if (receiver == null || receiver.read_at.HasValue)
-                return APIOperationResponse<bool>.NotFound("Notification receiver not found or already read");
-
-            receiver.read_at = DateTime.UtcNow;
+            var user = await _authenticationService.GetCurrentUserAsync();
+            if (user == null)
+                return APIOperationResponse<bool>.UnOthrized("Unauthorized access");
+            
+            var notificationRecivers = await _context._context.NotificationRecivers
+                .Where(n => n.ReciverID == user.Id && notificationsids.Contains(n.NotificationID.ToString()))
+                .ToListAsync();
+            if (!notificationRecivers.Any())
+                return APIOperationResponse<bool>.NotFound("No notifications found for the given IDs");
+            foreach (var receiver in notificationRecivers)
+            {
+                receiver.read_at = DateTime.UtcNow;
+            }
             try
             {
                 await _context._context.SaveChangesAsync();
-                return APIOperationResponse<bool>.Success(true, "Notification marked as read");
+                return APIOperationResponse<bool>.Success(true, "Notifications marked as read successfully");
             }
             catch (Exception ex)
             {
-                return APIOperationResponse<bool>.ServerError("Error marking notification as read", new List<string> { ex.Message });
+                return APIOperationResponse<bool>.ServerError("Error marking notifications as read", new List<string> { ex.Message });
             }
         }
 
         public async Task<APIOperationResponse<bool>> SendNotificationAsync(string message, NotificationType type, string referenceId, List<string> userIds)
         {
-            var notification = new HirBot.Data.Entities.Notification
+            string typ = string.Empty;
+            if (type == NotificationType.Application)
             {
-                massage = message,
-                Notifiable_Type = type,
-                Notifiable_ID = referenceId,
-                CreationDate = DateTime.UtcNow
-            };
+                typ = "Application";
+            }
+            else if (type == NotificationType.Interview)
+            {
+                typ = "Interview";
+            }
+            else if (type == NotificationType.job)
+            {
+                typ = "Job";
+            }
+                var notification = new HirBot.Data.Entities.Notification
+                {
+                    massage = message,
+                    Notifiable_Type= type,
+                    Notifiable_ID = referenceId,
+                    CreationDate = DateTime.UtcNow
+                };
 
             await _context._context.Notifications.AddAsync(notification);
             try
@@ -221,7 +242,7 @@ namespace Notification.Services.Implementation
                 await _pusher.TriggerNotificationAsync($"{userId}", "new-notification", new
                 {
                     message,
-                    type,
+                    typ,
                     referenceId,
                     notificationId = notification.ID,
                 });
