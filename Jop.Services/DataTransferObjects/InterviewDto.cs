@@ -17,25 +17,29 @@ namespace Jop.Services.DataTransferObjects
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Candidate name can only contain letters and spaces.")]
         [MinLength(2, ErrorMessage = "Candidate name must be at least 2 characters long.")]
         public string CandidateName { get; set; }
-        [Required(ErrorMessage ="Interview Type is required.")]
-        
+        [Required(ErrorMessage = "Interview Type is required.")]
+
         public InterviewType Type { get; set; }
         [Required(ErrorMessage = "Interview Mode is required.")]
-        
+
 
         public InterviewMode Mode { get; set; }
-        [Required(ErrorMessage ="Interview Date is required.")]
+        [Required(ErrorMessage = "Interview Date is required.")]
         [DataType(DataType.DateTime, ErrorMessage = "Invalid date format.")]
         public DateTime StartTime { get; set; }
         [Required(ErrorMessage = "Duration is required.")]
         public int durationInMinutes { get; set; }
-        
-        public string? Location { get; set; }= string.Empty;
-        public List<string>? Notes { get; set; } = new List<string>();  
+
+        public string? Location { get; set; } = string.Empty;
+        public List<string>? Notes { get; set; } = new List<string>();
         [Required(ErrorMessage = "Application ID is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Application ID must be a positive integer.")]
 
         public int ApplicationId { get; set; }
         public string? InterviewerName { get; set; } = string.Empty;
+        public int ExamId { get; set; } = 0;
+        
+        public DateTime? TechStartTime { get; set; } = null;
+        
     }
 }

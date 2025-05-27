@@ -24,6 +24,6 @@
             public virtual Job Job { get; set; }
             public virtual ApplicationUser User { get; set; } 
         
-            public virtual ICollection<Interview>? Interviews { get; set; }
+            public virtual ICollection<Interview>? Interviews { get; set; }= new List<Interview>();
         }
     }

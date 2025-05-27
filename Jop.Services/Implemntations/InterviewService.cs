@@ -137,7 +137,13 @@ namespace Jop.Services.Implemntations
                         dto.durationInMinutes
                     );
                 }
-
+                if (dto.Type == InterviewType.Technical && dto.TechStartTime.HasValue)
+                {
+                    if (dto.TechStartTime <= dto.StartTime)
+                    {
+                        return APIOperationResponse<GetInterviewDto>.BadRequest("Tech Start Time must be after the Interview Start Time.");
+                    }
+                }
                 var interview = new Interview
                 {
                     CandidateEmail = dto.CandidateEmail,
@@ -152,6 +158,8 @@ namespace Jop.Services.Implemntations
                     ApplicationID = dto.ApplicationId,
                     InterviewerName = string.IsNullOrWhiteSpace(dto.InterviewerName) ? "Unknown" : dto.InterviewerName.Trim(),
                     CreationDate = DateTime.UtcNow,
+                    ExamID = dto.ExamId > 0 ? dto.ExamId : null,
+                    TechStartTime = dto.TechStartTime,
                 };
 
                 _unitOfWork._context.Interviews.Add(interview);
@@ -167,10 +175,13 @@ namespace Jop.Services.Implemntations
                     StartTime = interview.StartTime.ToLocalTime(),
                     DurationInMinutes = interview.durationInMinutes,
                     Location = interview.Location,
-                    ZoomMeetinLink = interview.ZoomMeetinLink?? string.Empty,
+                    ZoomMeetinLink = interview.ZoomMeetinLink ?? string.Empty,
                     Notes = interview.Notes ?? new List<string> { "No notes available" },
                     ApplicationId = interview.ApplicationID,
                     InterviewerName = interview.InterviewerName ?? string.Empty,
+                    ExamId = interview.ExamID ?? 0,
+                    TechStartTime = interview.TechStartTime
+                    
                 };
                 try{
                 await _notificationService.SendNotificationAsync(
@@ -218,6 +229,8 @@ namespace Jop.Services.Implemntations
                 interview.InterviewerName = dto.InterviewerName ?? string.Empty;
                 interview.ModificationDate = DateTime.UtcNow;
                 interview.ModifiedBy = user.Id;
+                interview.ExamID = dto.ExamId > 0 ? dto.ExamId : null;
+                interview.TechStartTime = dto.TechStartTime;
                 if (dto.Mode == InterviewMode.Online && string.IsNullOrEmpty(interview.ZoomMeetinLink))
                 {
                     interview.ZoomMeetinLink = await _zoom.CreateMeetingAsync(
