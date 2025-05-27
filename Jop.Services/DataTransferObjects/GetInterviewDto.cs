@@ -18,11 +18,13 @@ namespace Jop.Services.DataTransferObjects
         public InterviewMode Mode { get; set; }
 
         public DateTime StartTime { get; set; }
-        public int? DurationInMinutes { get; set; } 
-        public string? Location { get; set; }= string.Empty;
+        public int? DurationInMinutes { get; set; }
+        public string? Location { get; set; } = string.Empty;
         public List<string> Notes { get; set; } = new List<string>();
         public string? ZoomMeetinLink { get; set; }
         public int ApplicationId { get; set; }
         public string? InterviewerName { get; set; } = string.Empty;
+        public int ExamId { get; set; } = 0;
+        public DateTime? TechStartTime { get; set; } = null;
     }
 }

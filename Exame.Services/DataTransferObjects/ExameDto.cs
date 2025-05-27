@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Exame.Services.DataTransferObjects
 {
     public class ExameDto
@@ -19,7 +18,8 @@ namespace Exame.Services.DataTransferObjects
         public int duration { get; set; }
         [Required(ErrorMessage = "the duration is required")]
 
-        public int CategoryID { get; set; }
+        public int CategoryID { get; set; } 
+        
 
     }
 }
