@@ -28,6 +28,8 @@ namespace Jop.Services.Responses
     }
     public class Skills
     {
+        public int SkillID { get; set; }
+        public int levelID { get; set; }
         public string name {  get; set; } 
         public string evaluation { get; set; }
 

@@ -196,7 +196,7 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { name = skill.Skill.Name, evaluation = skill.Level.Name });
+                                    added.Skills.Add(new Skills { SkillID=skill.ID , levelID=skill.LevelID,name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
                             added.ApplicantNumber = 100;
@@ -254,7 +254,7 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { name = skill.Skill.Name, evaluation = skill.Level.Name });
+                                    added.Skills.Add(new Skills { SkllID = skill.ID, levelID = skill.LevelID, name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
                             jobs.Add(added);
@@ -298,6 +298,7 @@ namespace Jop.Services.Implemntations
                 response.Experience = job.Experience;
                 response.Salary = job.Salary;
                 response.ID = job.ID;
+                
                 var JobCompany = await unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.ID == job.CompanyID,c=>c.account );
                 response.Company.name = JobCompany.account.FullName;
                 response.Company.logo = JobCompany.account.ImagePath;
@@ -306,7 +307,7 @@ namespace Jop.Services.Implemntations
                     response.requiremnts = new List<Requiremnts>();
                     foreach (var requirment in job.JobRequirments)
                     {
-                        response.requiremnts.Add(new Requiremnts { Skill = requirment.Skill.Name, level = requirment.Level.Name });
+                        response.requiremnts.Add(new Requiremnts { skillID=requirment.Skill.ID , levelID=requirment.LevelID,Skill = requirment.Skill.Name, level = requirment.Level.Name });
                     }
                 }
                 return APIOperationResponse<object>.Success(response);
