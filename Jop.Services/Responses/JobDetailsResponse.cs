@@ -23,7 +23,7 @@ namespace Jop.Services.Responses
 
            public List<Requiremnts> ? requiremnts { get; set; }
         public Company Company { get; set; } = new Company();
-
+       
             
         }
         public class Requiremnts

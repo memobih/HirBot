@@ -70,6 +70,15 @@ namespace Job.Api.Controllers
             return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
         }
         [Authorize]
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> JobDetailsCompany(int id)
+        {
+            var response = await _jobService.JobDetailsCompany(id);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Data });
+            return StatusCode(response.StatusCode, new { status = false, massage = response.Message });
+        }
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> DeleteRanges(List<int> ids)
         {

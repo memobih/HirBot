@@ -545,7 +545,7 @@ namespace Jop.Services.Implemntations
                                 notes = i.Notes,
                                 interviewername = i.InterviewerName,
                                 examId =  i.ExamID ,
-                                TechStartTime = i.TechStartTime.HasValue ? i.TechStartTime.Value.ToString("yyyy-MM-dd HH:mm:ss") : null
+                                //TechStartTime = i.TechStartTime.HasValue ? i.TechStartTime.Value.ToString("yyyy-MM-dd HH:mm:ss") : null
                             }).ToList(),
                             job = new
                             {

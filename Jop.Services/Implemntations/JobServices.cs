@@ -4,6 +4,7 @@ using HirBot.Data.Enums;
 using HirBot.Data.IGenericRepository_IUOW;
 using HirBot.ResponseHandler.Models;
 using Jop.Services.DataTransferObjects;
+using Jop.Services.Helpers;
 using Jop.Services.Interfaces;
 using Jop.Services.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace Jop.Services.Implemntations
             try
             {
                 unitOfWork._context.Database.BeginTransaction();
-                var newJob = new Job();
+                var newJob = new HirBot.Data.Entities.Job();
                 #region mapping 
                 newJob.Description = job.Description;
                 newJob.Title = job.Title;
@@ -254,7 +255,7 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { SkllID = skill.ID, levelID = skill.LevelID, name = skill.Skill.Name, evaluation = skill.Level.Name });
+                                    added.Skills.Add(new Skills { SkillID = skill.ID, levelID = skill.LevelID, name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
                             jobs.Add(added);
@@ -276,7 +277,7 @@ namespace Jop.Services.Implemntations
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
+                var company =  unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
                 var job = await unitOfWork._context.Jobs
                     .Include(j => j.JobRequirments).
                     ThenInclude(r => r.Level).
@@ -284,7 +285,12 @@ namespace Jop.Services.Implemntations
                 if (job == null)
                     return APIOperationResponse<object>.NotFound("this job is not found");
                 if (user == null || job == null ||
-                  ((job.status == JobStatus.drafted || job.status == JobStatus.closed) && (company == null || job.CompanyID != company.ID)))
+                    (
+                    (job.status == JobStatus.drafted || job.status == JobStatus.closed)
+                    &&
+                    (company == null || job.CompanyID != company.ID)
+                    )
+                    )
                     return APIOperationResponse<object>.UnOthrized("this user is un outhorized to show this job");
 
                 JobDetailsResponse response = new JobDetailsResponse();
@@ -313,6 +319,91 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<object>.Success(response);
             }
             catch (Exception ex) {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
+        public async Task<APIOperationResponse<object>> JobDetailsCompany(int id)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
+                var job = await unitOfWork._context.Jobs
+                    .Include(j => j.JobRequirments).
+                    ThenInclude(r => r.Level).
+                    Include(j => j.JobRequirments).ThenInclude(r => r.Skill).OrderByDescending(j => j.CreationDate).Include(j=>j.Applications).ThenInclude(a=>a.User).FirstOrDefaultAsync(j => j.ID == id);
+                if (job == null)
+                    return APIOperationResponse<object>.NotFound("this job is not found");
+                if (user == null || job == null ||
+                    (
+                    (job.status == JobStatus.drafted || job.status == JobStatus.closed)
+                    &&
+                    (company == null || job.CompanyID != company.ID)
+                    )
+                    )
+                    return APIOperationResponse<object>.UnOthrized("this user is un outhorized to show this job");
+
+                JobDetailsResponse response = new JobDetailsResponse();
+                response.Title = job.Title;
+                response.Description = job.Description;
+                response.location = job.location;
+                response.status = job.status;
+
+                response.LocationType = job.LocationType;
+                response.EmployeeType = job.EmployeeType;
+                response.Experience = job.Experience;
+                response.Salary = job.Salary;
+                response.ID = job.ID;
+                
+                var JobCompany = await unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.ID == job.CompanyID, c => c.account);
+                response.Company.name = JobCompany.account.FullName;
+                response.Company.logo = JobCompany.account.ImagePath;
+              List<Applications> applications = new List<Applications>();
+                if (job.JobRequirments != null)
+                {
+                    response.requiremnts = new List<Requiremnts>();
+                    foreach (var requirment in job.JobRequirments)
+                    {
+                        response.requiremnts.Add(new Requiremnts { skillID = requirment.Skill.ID, levelID = requirment.LevelID, Skill = requirment.Skill.Name, level = requirment.Level.Name });
+                    }
+                }
+                if (job.Applications != null)
+                {
+                      
+                    foreach (var application in job.Applications)
+                    {
+                       
+                        var portofolio=unitOfWork._context.Portfolios.FirstOrDefault(p=>p.UserID==application.UserID);
+                        var experiences=unitOfWork._context.Experiences.Where(e=>e.UserID==application.UserID).ToList();
+                        application.User.Portfolio=portofolio;
+                        application.User.experiences=experiences;
+                        var skills = unitOfWork._context.UserSkills.Include(s => s.Skill).Where(e => e.UserID == application.UserID).Select(s => s.Skill.Name).ToList();
+                        applications.Add(
+                            new Applications
+                            {
+                                id = application.ID
+                            ,
+                                name = application.User.FullName,
+                                email = application.User.Email,
+                                Score = JobMatcher.GetScore(user, job, skills)
+                            ,
+                                status = application.status,
+                                CVLink = portofolio?.CVUrl,
+                                created_at = application.CreationDate,
+                                imageLink = application.User.ImagePath,
+                                userName = application.User.UserName
+                            }
+
+                          );
+                    }
+
+    }
+                sortApplication(ref applications);
+
+                return APIOperationResponse<object>.Success(new {details =response , topApplications=new { numberOfApplications = job.Applications?.Count() ?? 0, applications } });
+            }
+            catch (Exception ex)
+            {
                 return APIOperationResponse<object>.ServerError("there are error accured");
             }
         }
@@ -417,6 +508,13 @@ namespace Jop.Services.Implemntations
         private List<T> Paginate<T>(List<T> source, int page, int pageSize)
         {
             return source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
+        private void sortApplication(ref  List< Applications>  Applications )
+        {
+          
+                Applications=Applications.OrderByDescending(a=>a.created_at).ToList();
+                Applications = Paginate(Applications, 1, 10);
+            Applications = Applications.OrderByDescending(a=>a.Score).ToList();
         }
         private void FilterRecomendationsJobs(ref List<JobRecomendations> jobs ,string? search = null, string? experience = null, string? location = null, List<LocationType>? locationType = null, List<EmployeeType>? JobType = null, int page = 1, int perpage = 10, int? minSalary = null, int? maxSalary = null )
         {
