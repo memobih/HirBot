@@ -14,6 +14,8 @@
     <ProjectReference Include="..\HirBot.Data\HirBot.Data.csproj" />
     <ProjectReference Include="..\HirBot.Infrastructure\Project.Repository\HireBot.Repository.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
+    <ProjectReference Include="D:\GrPro\cc\HirBot\User.Services\User.Services.csproj" />
+    
     
   </ItemGroup>
 

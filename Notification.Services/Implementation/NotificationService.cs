@@ -6,6 +6,7 @@ using Notification.Services.DataTransferObjects;
 using Notification.Services.Interfaces;
 using Project.Repository.Repository;
 using Project.ResponseHandler.Models;
+using Project.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,11 @@ namespace Notification.Services.Implementation
     {
         private readonly PusherNotificationService _pusher;
         private readonly UnitOfWork _context;
+        private readonly IAuthenticationService _authenticationService;
 
-        public NotificationService(PusherNotificationService pusherNotificationService, UnitOfWork context)
+        public NotificationService(PusherNotificationService pusherNotificationService, UnitOfWork context, IAuthenticationService authenticationService)
         {
+            _authenticationService = authenticationService;
             _context = context;
             _pusher = pusherNotificationService;
         }
@@ -56,11 +59,14 @@ namespace Notification.Services.Implementation
             }
         }
 
-        public async Task<APIOperationResponse<List<NotificationDto>>> GetAllForUserAsync(string userId)
+       public async Task<APIOperationResponse<List<NotificationDto>>> GetAllForUserAsync(string userId)
 {
-    var user = await _context._context.Users.FindAsync(userId);
-    if (user == null)
-        return APIOperationResponse<List<NotificationDto>>.NotFound("User not found");
+    var tokuser = await _authenticationService.GetCurrentUserAsync();
+    if (tokuser == null)
+        return APIOperationResponse<List<NotificationDto>>.UnOthrized("Unauthorized access");
+
+    if (tokuser.Id != userId)
+        return APIOperationResponse<List<NotificationDto>>.UnOthrized("You are not allowed to access these notifications.");
 
     var notificationReceivers = await _context._context.NotificationRecivers
         .Where(n => n.ReciverID == userId)
@@ -72,6 +78,9 @@ namespace Notification.Services.Implementation
     foreach (var receiver in notificationReceivers)
     {
         var notification = receiver.Notification;
+        if (notification == null)
+            continue;
+
         var dto = new NotificationDto
         {
             ID = notification.ID.ToString(),
@@ -84,63 +93,72 @@ namespace Notification.Services.Implementation
             Metadata = new Dictionary<string, object>()
         };
 
-        // 🔁 Enrich Metadata based on notification type
         switch (notification.Notifiable_Type)
         {
             case NotificationType.job:
-                var job = await _context._context.Jobs
-                    .Where(j => j.ID.ToString() == notification.Notifiable_ID)
-                    .Select(j => new { j.ID, j.Title, j.CreationDate,j.Company})
-                    
-                    .FirstOrDefaultAsync();
-                if (job != null)
+                if (int.TryParse(notification.Notifiable_ID, out int jobId))
                 {
-                    dto.Metadata["JobTitle"] = job.Title;
-                    dto.Metadata["PostedDate"] = job.CreationDate;
+                    var job = await _context._context.Jobs
+                        .Where(j => j.ID == jobId)
+                        .Include(j => j.Company)
+                        .FirstOrDefaultAsync();
+
+                    if (job != null)
+                    {
+                        dto.Metadata["JobTitle"] = job.Title;
+                        dto.Metadata["PostedDate"] = job.CreationDate;
+                        dto.Metadata["CompanyLogo"] = job.Company?.Logo ?? string.Empty;
+                        dto.Metadata["CompanyName"] = job.Company?.Name ?? string.Empty;
+                    }
                 }
                 break;
 
             case NotificationType.Interview:
-                var interview = await _context._context.Interviews
-                    .Where(i => i.ID.ToString() == notification.Notifiable_ID)
-                    .Select(i => new { i.ID, i.CandidateName, i.StartTime ,i.Mode,i.Application})
-                    .Include(i => i.Application)
-                    .ThenInclude(a => a.Job)
-                    .ThenInclude(j => j.Company)
-                    .FirstOrDefaultAsync();
-                if (interview != null)
+                if (Guid.TryParse(notification.Notifiable_ID, out Guid interviewId))
                 {
-                    
-                    dto.Metadata["Date"] = interview.StartTime;
-                    dto.Metadata["Mode"] = interview.Mode;
-                    dto.Metadata["CompanyLogo"] = interview.Application.Job.Company.Logo??string.Empty;
-                    dto.Metadata["CompanyName"] = interview.Application.Job.Company.Name??string.Empty;
-                    dto.Metadata["JobTitle"] = interview.Application.Job.Title??string.Empty;
+                    var interview = await _context._context.Interviews
+                        .Where(i => i.ID == interviewId.ToString())
+                        .Include(i => i.Application)
+                            .ThenInclude(a => a.Job)
+                                .ThenInclude(j => j.Company)
+                                   .FirstOrDefaultAsync();
 
+                    if (interview != null && interview.Application?.Job?.Company != null)
+                    {   
+                        dto.Metadata["Date"] = interview.StartTime;
+                        dto.Metadata["Mode"] = interview.Mode;
+                        dto.Metadata["CompanyLogo"] = interview.Application.Job.Company.Logo ?? string.Empty;
+                        dto.Metadata["CompanyName"] = interview.Application.Job.Company.Name ?? string.Empty;
+                        dto.Metadata["JobTitle"] = interview.Application.Job.Title ?? string.Empty;
+                    }
+                }
+                break;
+
+            case NotificationType.Application:
+                if (int.TryParse(notification.Notifiable_ID, out int appId))
+                {
+                    var application = await _context._context.Applications
+                        .Where(a => a.ID == appId)
+                        .Include(a => a.Job)
+                            .ThenInclude(j => j.Company)
+                        .FirstOrDefaultAsync();
+
+                    if (application != null && application.Job?.Company != null)
+                    {
+                        dto.Metadata["CompanyLogo"] = application.Job.Company.Logo ?? string.Empty;
+                        dto.Metadata["CompanyName"] = application.Job.Company.Name ?? string.Empty;
+                        dto.Metadata["JobTitle"] = application.Job.Title ?? string.Empty;
+                        dto.Metadata["ApplicationStatus"] = application.status.ToString();
+                    }
                 }
                 break;
 
             case NotificationType.post:
-                // Add logic here for post enrichment if needed
+               
                 break;
-            case NotificationType.Application:
-                var application = await _context._context.Applications
-                    .Where(a => a.ID.ToString() == notification.Notifiable_ID)
-                    .Include(a => a.Job)
-                    .ThenInclude(j => j.Company)
-                    .FirstOrDefaultAsync();
-                if (application != null)
-                {
-                    dto.Metadata["CompanyLogo"] = application.Job.Company.Logo??string.Empty;
-                    dto.Metadata["CompanyName"] = application.Job.Company.Name??string.Empty;
-                    dto.Metadata["JobTitle"] = application.Job.Title??string.Empty;
-                    dto.Metadata["ApplicationStatus"] = application.status.ToString();
-                }
-                break;
-
-            // Add more types as needed...
         }
 
+        dto.Metadata["Source"] = "ASP.NET";
         notificationDtos.Add(dto);
     }
 
@@ -149,7 +167,6 @@ namespace Notification.Services.Implementation
 
     return APIOperationResponse<List<NotificationDto>>.Success(notificationDtos);
 }
-
 
         public async Task<APIOperationResponse<bool>> MarkAsReadAsync(int notificationId, string userId)
         {

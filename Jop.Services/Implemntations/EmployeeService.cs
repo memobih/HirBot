@@ -99,9 +99,11 @@ namespace Jop.Services.Implemntations
                             workType = experience.workType,
                             Rate = experience.rate,
                             Title = experience.Title,
-                            start_date = experience.Start_Date ,
-                            end_date=experience.End_Date ,
-                            id=experience.ID
+                            start_date = experience.Start_Date,
+                            id = experience.ID,
+                            image = experience.User.ImagePath,
+                            email = experience.User.Email,
+                            location = experience.location,
                         }
                         ); 
                 }

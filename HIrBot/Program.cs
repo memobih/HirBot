@@ -94,7 +94,6 @@ builder.Services.AddSingleton<RedisService>(sp =>
     return new RedisService(redisHost, redisPassword, redisPort, redisUsername);
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 #region Dependency Injection
 builder.Services.AddInfrastructureServices().AddUsersServices().AddSkillServices().AddJopServices().AddExameServices().AddNotificationService();
