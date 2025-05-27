@@ -1,3 +1,4 @@
+
 using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
@@ -6,7 +7,6 @@ using Microsoft.VisualBasic;
 using Notification.Services.DataTransferObjects;
 using Notification.Services.Interfaces;
 using Project.Repository.Repository;
-using Project.ResponseHandler.Models;
 using Project.Services.Interfaces;
 using System;
 using System.Collections.Generic;
