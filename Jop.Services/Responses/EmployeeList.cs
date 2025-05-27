@@ -10,15 +10,19 @@ namespace Jop.Services.Responses
 {
     public class EmployeeList
     {
-       public int id { get; set; }
-        public string  ? name {  get; set; }  
-        public string Title { get; set; } 
+        public int id { get; set; }
+        public string? name { get; set; }
+        public string Title { get; set; }
 
-        public  EmployeeType  jobType { get; set; } 
-        public LocationType workType { get; set; } 
+        public EmployeeType jobType { get; set; }
+        public LocationType workType { get; set; }
 
-        public int Rate { get; set; } 
-        public DateTime ?  start_date { get; set; }
+        public int Rate { get; set; }
+        public DateTime? start_date { get; set; }
+        public DateTime? end_date { get; set; }
+        public string? image { get; set; }
+        public string? location { get; set; }
+        public string? email { get; set; }
 
     } 
 }

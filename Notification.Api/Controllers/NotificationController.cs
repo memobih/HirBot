@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HirBot.ResponseHandler.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Notification.Services.DataTransferObjects;
 using Notification.Services.Interfaces;
@@ -22,9 +23,11 @@ namespace Notification.Api.Controllers
         }
 
         [HttpGet("{userId}")]
+        [Authorize]
         public async Task<ActionResult<APIOperationResponse<List<NotificationDto>>>> GetUserNotifications(string userId)
         {
             var result = await _notificationService.GetAllForUserAsync(userId);
+
             return StatusCode(result.StatusCode, result);
         }
 
