@@ -104,6 +104,7 @@ namespace Jop.Services.Implemntations
                             image = experience.User.ImagePath,
                             email = experience.User.Email,
                             location = experience.location,
+                            end_date=experience.End_Date
                         }
                         ); 
                 }
