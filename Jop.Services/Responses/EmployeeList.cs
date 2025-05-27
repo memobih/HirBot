@@ -19,6 +19,8 @@ namespace Jop.Services.Responses
 
         public int Rate { get; set; } 
         public DateTime ?  start_date { get; set; }
+        public DateTime? end_date { get; set; }
 
-    } 
+
+    }
 }

@@ -100,6 +100,7 @@ namespace Jop.Services.Implemntations
                             Rate = experience.rate,
                             Title = experience.Title,
                             start_date = experience.Start_Date ,
+                            end_date=experience.End_Date ,
                             id=experience.ID
                         }
                         ); 
