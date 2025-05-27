@@ -39,9 +39,10 @@ namespace Notification.Api.Controllers
         }
 
         [HttpPost("mark-as-read")]
-        public async Task<ActionResult<APIOperationResponse<bool>>> MarkAsRead(List<string>ids, string userId)
+        [Authorize]
+        public async Task<ActionResult<APIOperationResponse<bool>>> MarkAsRead(List<string> ids, string userId)
         {
-            var result = await _notificationService.MarkAsReadAsync(ids, userId);
+            var result = await _notificationService.MarkAsReadAsync(ids);
             return StatusCode(result.StatusCode, result);
         }
 
