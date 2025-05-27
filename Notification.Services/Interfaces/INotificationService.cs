@@ -11,7 +11,7 @@ namespace Notification.Services.Interfaces
     public interface INotificationService
     {
         Task<APIOperationResponse<List<NotificationDto>>> GetAllForUserAsync(string userId);
-        Task<APIOperationResponse<bool>> MarkAsReadAsync(int notificationId, string userId);
+        Task<APIOperationResponse<bool>> MarkAsReadAsync(List<string>Notificationsids);
         Task<APIOperationResponse<bool>> DeleteNotificationAsync(int notificationId);
         Task<APIOperationResponse<bool>> SendNotificationAsync(string message, NotificationType type, string referenceId, List<string> RecieversIds);
         Task<APIOperationResponse<int>> CountUnreadNotificationsAsync(string userId);
