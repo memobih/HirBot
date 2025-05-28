@@ -21,6 +21,8 @@ namespace HirBot.Data.Entities
          
         public string? Notifiable_ID {  get; set; } 
          public string ? massage { get ; set; } 
+         
+        public int ? type { get; set; }
        public  ICollection<NotificationReciver>Recivers { get; set; }
     }
 }
