@@ -87,9 +87,8 @@ namespace Notification.Services.Implementation
             ID = receiver.ID,
             notification_id = notification.ID,
             Message = notification.massage, 
-           
             Created_at = notification.CreationDate,
-            IsRead = receiver.read_at.HasValue,
+            Isread = receiver.read_at.HasValue,
             Metadata = new Dictionary<string, object>()
         };
                 dto.type.category = notification.Notifiable_Type;

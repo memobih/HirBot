@@ -27,7 +27,7 @@ namespace Job.APi.Controllers
         public async Task<ActionResult<List<GetInterviewDto>>> GetAll()
         {
             var interviews = await _interviewService.GetAllAsync();
-            if (interviews == null )
+            if (interviews == null)
             {
                 return NotFound("No interviews found.");
             }
@@ -38,9 +38,9 @@ namespace Job.APi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<GetInterviewDto>> GetById(int id)
         {
-         
+
             var response = await _interviewService.GetByIdAsync(id);
-            if (response.StatusCode !=200)
+            if (response.StatusCode != 200)
             {
                 return NotFound("there are no interviews");
             }
@@ -57,34 +57,34 @@ namespace Job.APi.Controllers
             }
 
             var response = await _interviewService.CreateAsync(dto);
-            if(!response.Succeeded)
+            if (!response.Succeeded)
             {
                 return StatusCode(response.StatusCode, new { status = false, message = response.Message, errors = response.Errors });
             }
-            return StatusCode(response.StatusCode, new 
-            { 
-                status = response.StatusCode == 200, 
-                message = response.Message, 
-                data = response.Data, 
-                errors = response.Errors 
+            return StatusCode(response.StatusCode, new
+            {
+                status = response.StatusCode == 200,
+                message = response.Message,
+                data = response.Data,
+                errors = response.Errors
             });
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int  id,  InterviewDto dto)
+        public async Task<ActionResult> Update(int id, InterviewDto dto)
         {
-           
+
             if (!ModelState.IsValid)
             {
-                 return BadRequest(new { Error = "Invalid data. Please check the input and try again.", Details = ModelState });
+                return BadRequest(new { Error = "Invalid data. Please check the input and try again.", Details = ModelState });
             }
 
             var response = await _interviewService.UpdateAsync(id, dto);
-            if(response.StatusCode != 200)
+            if (response.StatusCode != 200)
             {
                 return StatusCode(response.StatusCode, new { status = false, message = response.Message, errors = response.Errors });
             }
-            else 
+            else
             {
                 return Ok(new { status = true, message = response.Message, data = response.Data });
             }
@@ -93,20 +93,20 @@ namespace Job.APi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-          
+
             var deleted = await _interviewService.DeleteAsync(id);
             if (!deleted.Succeeded)
             {
                 return NotFound($"Interview with ID {id} not found.");
             }
-           else 
+            else
             {
                 return Ok(new { status = true, message = deleted.Message });
             }
-            
+
         }
         [HttpGet("candidate")]
-        public async Task<ActionResult<InterviewCandidateinfoDto>> GetInterviewCandidateInfo([FromQuery]string applicationId)
+        public async Task<ActionResult<InterviewCandidateinfoDto>> GetInterviewCandidateInfo([FromQuery] string applicationId)
         {
             if (string.IsNullOrEmpty(applicationId))
             {
@@ -120,6 +120,22 @@ namespace Job.APi.Controllers
             }
 
             return Ok(interviewInfo);
+        }
+        [HttpGet("exam/{interviewId}")]
+        public async Task<ActionResult<object>> GetExamByInterviewId(string interviewId)
+        {
+            if (string.IsNullOrEmpty(interviewId))
+            {
+                return BadRequest("Invalid Interview ID. ID cannot be null or empty.");
+            }
+
+            var result = await _interviewService.GetExamByInterviewIdAsync(interviewId);
+            if (result.StatusCode != 200)
+            {
+                return StatusCode(result.StatusCode, new { status = false, message = result.Message, errors = result.Errors });
+            }
+            
+            return Ok(result);
         }
     }
 }

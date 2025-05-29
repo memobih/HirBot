@@ -16,6 +16,7 @@ namespace Jop.Services.Interfaces
         Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(int id, InterviewDto dto);
         Task<APIOperationResponse<bool>> DeleteAsync(int id);
         Task<APIOperationResponse<InterviewCandidateinfoDto>> GetInterviewCandidateInfoAsync(string applicationId);
+        Task<APIOperationResponse<object>>GetExamByInterviewIdAsync(string interviewId);
         
     }
 }

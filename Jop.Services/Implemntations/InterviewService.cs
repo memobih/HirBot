@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Exame.Services.Interfaces;
 using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
@@ -22,14 +23,16 @@ namespace Jop.Services.Implemntations
         private readonly ZoomMeetingService _zoom;
         private readonly IAuthenticationService _authenticationService;
         private readonly INotificationService _notificationService;
+        private readonly IExameService _exameService;
 
-        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom, IAuthenticationService authenticationService, INotificationService notificationService)
+        public InterviewService(UnitOfWork unitOfWork, ZoomMeetingService zoom, IAuthenticationService authenticationService, INotificationService notificationService, IExameService exameService)
         {
 
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _zoom = zoom ?? throw new ArgumentNullException(nameof(zoom));
             _authenticationService = authenticationService;
             _notificationService = notificationService;
+            _exameService = exameService;
         }
 
         public async Task<APIOperationResponse<List<GetInterviewDto>>> GetAllAsync()
@@ -321,6 +324,29 @@ namespace Jop.Services.Implemntations
             };
 
             return APIOperationResponse<InterviewCandidateinfoDto>.Success(interviewCandidateInfoDto, "Candidate information retrieved successfully.");
+        }
+         
+        public async Task<APIOperationResponse<object>> GetExamByInterviewIdAsync(string interviewId)
+        {
+            var user = await _authenticationService.GetCurrentUserAsync();
+           var interview = await _unitOfWork._context.Interviews
+                .Include(i => i.Exam).Include(i=>i.Application)
+                .FirstOrDefaultAsync(i => i.ID == interviewId); 
+            if (interview == null || interview.Exam == null)
+                return APIOperationResponse<object>.NotFound("Exam not found for the specified interview.");
+            if(interview.Application == null)
+                return APIOperationResponse<object>.NotFound("Application not found for the specified interview.");
+            if (interview.Application.UserID != user.Id)
+                return APIOperationResponse<object>.BadRequest("You are not authorized to access this interview's exam.");
+            if (interview.TechStartTime.HasValue && interview.TechStartTime > DateTime.UtcNow)
+                return APIOperationResponse<object>.BadRequest("The exam cannot be accessed before the technical start time.");
+            if (interview.TechStartTime.HasValue && interview.TechStartTime.Value.AddMinutes(interview.Exam.duration) < DateTime.UtcNow)
+                return APIOperationResponse<object>.BadRequest("The exam cannot be accessed after the exam duration has passed.");
+            int examId = interview.ExamID?? 0;
+            var exam = await _exameService.GetExamForinterview(examId);
+            if (exam == null)
+                return APIOperationResponse<object>.NotFound("Exam not found for the specified interview.");
+            return APIOperationResponse<object>.Success(exam, "Exam retrieved successfully.");
         }
         private APIOperationResponse<Interview>? ValidateInterviewDto(InterviewDto dto)
         {

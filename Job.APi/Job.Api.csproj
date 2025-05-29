@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Exame.Services\Exame.Services.csproj" />
     <ProjectReference Include="..\Jop.Services\Jop.Services.csproj" />
     <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
   </ItemGroup>
