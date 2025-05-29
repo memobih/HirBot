@@ -13,9 +13,8 @@ namespace Notification.Services.DataTransferObjects
         public Type type { get; set; } = new Type();
         public string? Message { get; set; }
    
-        public string ReferenceID { get; set; }
         public DateTime  Created_at { get; set; }
-        public bool IsRead { get; set; }
+        public bool Isread { get; set; }
         public DateTime ? read_at {  get; set; }
         public Dictionary<string, object> Metadata { get; set; }
     }

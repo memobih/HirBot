@@ -175,7 +175,6 @@ namespace Notification.Services.Implementation
                 break;
         }
 
-        dto.Metadata["Source"] = "ASP.NET";
         notificationDtos.Add(dto);
     }
 
