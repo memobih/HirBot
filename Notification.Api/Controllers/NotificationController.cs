@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Notification.Services.DataTransferObjects;
 using Notification.Services.Interfaces;
 using Project.ResponseHandler.Models;
+using StackExchange.Redis;
 
 namespace Notification.Api.Controllers
 {
@@ -22,25 +23,26 @@ namespace Notification.Api.Controllers
             _notificationService = notificationService;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet]
         [Authorize]
-        public async Task<ActionResult<APIOperationResponse<List<NotificationDto>>>> GetUserNotifications(string userId)
+        public async Task<IActionResult> GetUserNotifications()
         {
-            var result = await _notificationService.GetAllForUserAsync(userId);
-
-            return StatusCode(result.StatusCode, result);
+            var result = await _notificationService.GetAllForUserAsync();
+            if(result.StatusCode==200)
+              return Ok(new {status=true , data = result.Data});
+            else return StatusCode(result.StatusCode  , new {status=false , Message = result.Message});
         }
 
-        [HttpGet("unread-count/{userId}")]
-        public async Task<ActionResult<APIOperationResponse<int>>> GetUnreadCount(string userId)
+        [HttpGet("unread-count")]
+        public async Task<ActionResult<APIOperationResponse<int>>> GetUnreadCount()
         {
-            var result = await _notificationService.CountUnreadNotificationsAsync(userId);
+            var result = await _notificationService.CountUnreadNotificationsAsync();
             return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost("mark-as-read")]
         [Authorize]
-        public async Task<ActionResult<APIOperationResponse<bool>>> MarkAsRead(List<string> ids, string userId)
+        public async Task<ActionResult<APIOperationResponse<bool>>> MarkAsRead(List<int> ids)
         {
             var result = await _notificationService.MarkAsReadAsync(ids);
             return StatusCode(result.StatusCode, result);
@@ -53,16 +55,6 @@ namespace Notification.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost("send")]
-        public async Task<ActionResult<APIOperationResponse<bool>>> SendNotification([FromBody] SendNotificationDto dto)
-        {
-            var result = await _notificationService.SendNotificationAsync(
-                dto.Message,
-                dto.Type,
-                dto.NotifiableID,
-                dto.RecieversIds
-            );
-            return StatusCode(result.StatusCode, result);
-        }
+     
     }
 }

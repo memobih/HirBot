@@ -184,12 +184,14 @@ namespace Jop.Services.Implemntations
                     
                 };
                 try{
-                await _notificationService.SendNotificationAsync(
-                    "New interview created",
-                    NotificationType.Interview,
-                    interview.ID.ToString(),
-                    new List<string> { application.User.Id }
-                );
+                    await _notificationService.SendNotificationAsync(
+                        "New interview created",
+                        NotificationType.Interview,
+                         NotficationStatus.created,
+                        interview.ID.ToString(),
+                        new List<string> { application.User.Id }
+                     
+                    );
                 }
                 catch (Exception ex)
                 {
@@ -250,6 +252,7 @@ namespace Jop.Services.Implemntations
                 await _notificationService.SendNotificationAsync(
                     "Interview updated",
                     NotificationType.Interview,
+                    NotficationStatus.updated , 
                     id.ToString(),
                     new List<string> { user.Id }
                 );

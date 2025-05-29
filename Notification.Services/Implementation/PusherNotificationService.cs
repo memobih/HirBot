@@ -32,7 +32,7 @@ namespace Notification.Services.Implementation
             var channel = $"user-{userId}";
                 var result = await _pusher.TriggerAsync(channel, eventName, data);
                 
-            
+       
 
         }
     }

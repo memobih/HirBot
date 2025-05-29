@@ -28,10 +28,13 @@ namespace Notification.Services.Implementation
             _pusher = pusherNotificationService;
         }
 
-        public async Task<APIOperationResponse<int>> CountUnreadNotificationsAsync(string userId)
+        public async Task<APIOperationResponse<int>> CountUnreadNotificationsAsync()
         {
+            var user = await _authenticationService.GetCurrentUserAsync();
+            if (user == null)
+                return APIOperationResponse<int>.UnOthrized("Unauthorized access");
             var count = await _context._context.NotificationRecivers
-                .CountAsync(n => n.ReciverID == userId && !n.read_at.HasValue);
+                .CountAsync(n => n.ReciverID == user.Id && !n.read_at.HasValue);
 
             return APIOperationResponse<int>.Success(count);
         }
@@ -60,15 +63,12 @@ namespace Notification.Services.Implementation
             }
         }
 
-       public async Task<APIOperationResponse<List<NotificationDto>>> GetAllForUserAsync(string userId)
+       public async Task<APIOperationResponse<List<NotificationDto>>> GetAllForUserAsync()
 {
-    var tokuser = await _authenticationService.GetCurrentUserAsync();
-    if (tokuser == null)
+    var user = await _authenticationService.GetCurrentUserAsync();
+    if (user == null)
         return APIOperationResponse<List<NotificationDto>>.UnOthrized("Unauthorized access");
-
-    if (tokuser.Id != userId)
-        return APIOperationResponse<List<NotificationDto>>.UnOthrized("You are not allowed to access these notifications.");
-
+            var userId = user.Id;
     var notificationReceivers = await _context._context.NotificationRecivers
         .Where(n => n.ReciverID == userId)
         .Include(n => n.Notification)
@@ -84,34 +84,44 @@ namespace Notification.Services.Implementation
 
         var dto = new NotificationDto
         {
-            ID = notification.ID.ToString(),
-            Message = notification.massage,
-            UserID = receiver.ReciverID,
-            Type = notification.Notifiable_Type,
-            ReferenceID = notification.Notifiable_ID,
-            CreatedAt = notification.CreationDate,
+            ID = receiver.ID,
+            notification_id = notification.ID,
+            Message = notification.massage, 
+           
+            Created_at = notification.CreationDate,
             IsRead = receiver.read_at.HasValue,
             Metadata = new Dictionary<string, object>()
         };
-
+                dto.type.category = notification.Notifiable_Type;
+                    dto.type.label = notification.Notifiable_Type + " " + notification.type;
+                dto.type.action = notification.type;
         switch (notification.Notifiable_Type)
         {
             case NotificationType.job:
-                if (int.TryParse(notification.Notifiable_ID, out int jobId))
-                {
-                    var job = await _context._context.Jobs
-                        .Where(j => j.ID == jobId)
-                        .Include(j => j.Company)
-                        .FirstOrDefaultAsync();
+                        if (int.TryParse(notification.Notifiable_ID, out int jobId))
+                        {
+                            var job = await _context._context.Jobs
+                                .Where(j => j.ID == jobId)
+                                .Include(j => j.Company)
+                                .FirstOrDefaultAsync();
 
-                    if (job != null)
-                    {
-                        dto.Metadata["JobTitle"] = job.Title;
-                        dto.Metadata["PostedDate"] = job.CreationDate;
-                        dto.Metadata["CompanyLogo"] = job.Company?.Logo ?? string.Empty;
-                        dto.Metadata["CompanyName"] = job.Company?.Name ?? string.Empty;
-                    }
-                }
+                            if (job != null)
+                            {
+
+                                dto.Metadata["job"] = 
+                                    new {
+                                    job = new 
+                                    { 
+                                        id = jobId,
+                                        PostedDate = job.CreationDate,
+                                        CompanyLogo = job.Company?.Logo,
+                                        CompanyName = job.Company?.Name,
+
+
+                                    }
+                            };
+                          }
+                        }
                 break;
 
             case NotificationType.Interview:
@@ -125,12 +135,11 @@ namespace Notification.Services.Implementation
                                    .FirstOrDefaultAsync();
 
                     if (interview != null && interview.Application?.Job?.Company != null)
-                    {   
-                        dto.Metadata["Date"] = interview.StartTime;
-                        dto.Metadata["Mode"] = interview.Mode;
-                        dto.Metadata["CompanyLogo"] = interview.Application.Job.Company.Logo ?? string.Empty;
-                        dto.Metadata["CompanyName"] = interview.Application.Job.Company.Name ?? string.Empty;
-                        dto.Metadata["JobTitle"] = interview.Application.Job.Title ?? string.Empty;
+                    {  
+                                dto.Metadata["interview"] = new
+                                {
+                                    interview = new {id=interview.ID ,  interview.StartTime  , interview.Mode , CompanyLogo = interview.Application.Job.Company.Logo, CompanyName= interview.Application.Job.Company.Name , jobTitle = interview.Application.Job.Title }
+                                };
                     }
                 }
                 break;
@@ -146,10 +155,17 @@ namespace Notification.Services.Implementation
 
                     if (application != null && application.Job?.Company != null)
                     {
-                        dto.Metadata["CompanyLogo"] = application.Job.Company.Logo ?? string.Empty;
-                        dto.Metadata["CompanyName"] = application.Job.Company.Name ?? string.Empty;
-                        dto.Metadata["JobTitle"] = application.Job.Title ?? string.Empty;
-                        dto.Metadata["ApplicationStatus"] = application.status.ToString();
+                                dto.Metadata["application"] = new
+                                {
+                                    application = new
+                                    {
+                                        id=application.ID ,
+                                        CompanyLogo= application.Job.Company.Logo ,
+                                        CompanyName = application.Job.Company.Name ,
+                                        JobTitle = application.Job.Title ,
+                                        ApplicationStatus = application.status,
+                                    }
+                                };
                     }
                 }
                 break;
@@ -169,14 +185,14 @@ namespace Notification.Services.Implementation
     return APIOperationResponse<List<NotificationDto>>.Success(notificationDtos);
 }
 
-        public async Task<APIOperationResponse<bool>> MarkAsReadAsync(List<string> notificationsids)
+        public async Task<APIOperationResponse<bool>> MarkAsReadAsync(List<int> notificationsids)
         {
             var user = await _authenticationService.GetCurrentUserAsync();
             if (user == null)
                 return APIOperationResponse<bool>.UnOthrized("Unauthorized access");
             
             var notificationRecivers = await _context._context.NotificationRecivers
-                .Where(n => n.ReciverID == user.Id && notificationsids.Contains(n.NotificationID.ToString()))
+                .Where(n => n.ReciverID == user.Id && notificationsids.Contains(n.ID))
                 .ToListAsync();
             if (!notificationRecivers.Any())
                 return APIOperationResponse<bool>.NotFound("No notifications found for the given IDs");
@@ -195,28 +211,18 @@ namespace Notification.Services.Implementation
             }
         }
 
-        public async Task<APIOperationResponse<bool>> SendNotificationAsync(string message, NotificationType type, string referenceId, List<string> userIds)
+        public async Task<APIOperationResponse<bool>> SendNotificationAsync(string message, NotificationType type, NotficationStatus status, string referenceId, List<string> userIds)
         {
             string typ = string.Empty;
-            if (type == NotificationType.Application)
+            typ = type.ToString();
+            var notification = new HirBot.Data.Entities.Notification
             {
-                typ = "Application";
-            }
-            else if (type == NotificationType.Interview)
-            {
-                typ = "Interview";
-            }
-            else if (type == NotificationType.job)
-            {
-                typ = "Job";
-            }
-                var notification = new HirBot.Data.Entities.Notification
-                {
-                    massage = message,
-                    Notifiable_Type= type,
-                    Notifiable_ID = referenceId,
-                    CreationDate = DateTime.UtcNow
-                };
+                massage = message,
+                Notifiable_Type = type,
+                Notifiable_ID = referenceId,
+                CreationDate = DateTime.UtcNow,
+                type = status 
+            };
 
             await _context._context.Notifications.AddAsync(notification);
             try
@@ -245,6 +251,7 @@ namespace Notification.Services.Implementation
                     typ,
                     referenceId,
                     notificationId = notification.ID,
+                    
                 });
             }
 

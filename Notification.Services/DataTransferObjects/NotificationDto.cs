@@ -8,13 +8,23 @@ namespace Notification.Services.DataTransferObjects
 {
     public class NotificationDto
     {
-         public string ID { get; set; }
+         public int  ID { get; set; }
+        public int notification_id { get; set; }
+        public Type type { get; set; } = new Type();
         public string? Message { get; set; }
-        public string? UserID { get; set; }
-        public NotificationType Type { get; set; }
+   
         public string ReferenceID { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime  Created_at { get; set; }
         public bool IsRead { get; set; }
+        public DateTime ? read_at {  get; set; }
         public Dictionary<string, object> Metadata { get; set; }
     }
+    public class Type
+    {
+        public NotficationStatus  ? action { get; set; }
+        public NotificationType category { get; set; } 
+        public string label { get; set; }
+
+    }
+
 }
