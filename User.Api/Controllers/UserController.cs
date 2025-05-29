@@ -72,15 +72,15 @@ namespace User.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> login(LoginDto request)
         {
-           
-                var response = await _authenticationService.Login(request);
-                if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
-                {
-                    SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
-                    return Ok(new { status = response.Succeeded, response.Message, Data = new {token= response.Data.Token} });
-                }
-                return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
-            
+
+            var response = await _authenticationService.Login(request);
+            if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
+            {
+                SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
+                return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
+            }
+            return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
+
         }
         [HttpPost("logout")]
         [Authorize]

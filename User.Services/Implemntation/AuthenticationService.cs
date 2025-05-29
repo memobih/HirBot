@@ -590,11 +590,13 @@ namespace User.Services.Implemntation
             var secondName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
             var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
             var signing =await  _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+
             if (signing != null)
             {
                 string token = await GenerateJwtTokenAsync(signing);
+                var   RefreshToken = GenerateRefreshToken();
 
-                return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, Email = email, Username = signing.UserName });
+                return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token,RefreshToken= RefreshToken.token ,  Email = email, Username = signing.UserName });
             }
             else
             {
@@ -614,8 +616,10 @@ namespace User.Services.Implemntation
 
                     await _userManager.AddLoginAsync(user, info);
                     string token = await GenerateJwtTokenAsync(user);
-                    return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, Email = email, Username = user.UserName });
-                } 
+                    var RefreshToken = GenerateRefreshToken();
+
+                    return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, RefreshToken = RefreshToken.token, Email = email, Username = signing.UserName });
+                }
                 else
                 {
                     return APIOperationResponse<AuthModel>.Conflict("email is already register");

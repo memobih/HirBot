@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Project.Repository.Repository;
 using User.Services.DataTransferObjects.Authencation;
+using Microsoft.AspNetCore.Http;
 
 namespace User.Api.Controllers
 {
@@ -64,13 +65,30 @@ namespace User.Api.Controllers
         public async Task<IActionResult> GoogleCallback()
         {
 
-            var result = await _authenticationService.GoogleCallback();
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (result.StatusCode == 200)
-                return Ok( new { token = result.Data.Token }   );
-           
-            return BadRequest("login with google is failed");
+            var response = await _authenticationService.GoogleCallback();
+            if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
+            {
+                SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
+                return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
+            }
+            return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
+       
         }
+        private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
 
+        {
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = expires.ToLocalTime(),
+                Secure = false,
+                IsEssential = true,
+                SameSite = SameSiteMode.None,
+                Path = "/"
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
     }
 }
