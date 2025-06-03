@@ -26,7 +26,7 @@ namespace Notification.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetUserNotifications(DateTime? after= null, int limit = 15, bool? isread = null, NotificationType? type = null, string? search = null)
+        public async Task<IActionResult> GetUserNotifications(DateTime? after= null, int limit = 15, bool? isread = null,[FromQuery]List<NotificationType>? type = null, string? search = null)
         {
             var result = await _notificationService.GetAllForUserAsync(after , limit , isread , type , search);
             if(result.StatusCode==200)

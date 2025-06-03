@@ -8,7 +8,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using User.Services.DataTransferObjects.Profile;
 using User.Services.Interfaces;
+using User.Services.Response;
 
 namespace User.Api.Controllers
 {
@@ -79,6 +81,70 @@ namespace User.Api.Controllers
             else return StatusCode(response.StatusCode, new { status = false, response.Message });
 
 
+        }
+        [Authorize]
+        [HttpPut("basic-info")]
+        public async Task<IActionResult> EditBasicInformation([FromBody] CompanyBasicInformationDto dto)
+        {
+            var response = await _companyService.EditBasicInformation(dto);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message, response.Data });
+            else
+                return StatusCode(response.StatusCode, new { status = false, response.Message });
+        }
+
+        [Authorize]
+        [HttpPut("social-media")]
+        public async Task<IActionResult> EditSocialMedia([FromBody] SocialMedia dto)
+        {
+            var response = await _companyService.EditSocialMedia(dto);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message, response.Data });
+            else
+                return StatusCode(response.StatusCode, new { status = false, response.Message });
+        }
+        [Authorize]
+        [HttpPut("contact-info")]
+        public async Task<IActionResult> EditContactInfo([FromBody] Contact dto)
+        {
+            var response = await _companyService.EditContactInfo(dto);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message, response.Data });
+            else
+                return StatusCode(response.StatusCode, new { status = false, response.Message });
+        }
+
+        [Authorize]
+        [HttpGet("basic-info")]
+        public async Task<IActionResult> GetBasicInformation()
+        {
+            var response = await _companyService.GetBasicInformation();
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message, response.Data });
+            else
+                return StatusCode(response.StatusCode, new { status = false, response.Message });
+        }
+
+        [Authorize]
+        [HttpGet("social-media")]
+        public async Task<IActionResult> GetSocialMedia()
+        {
+            var response = await _companyService.GetSocialMedia();
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message, response.Data });
+            else
+                return StatusCode(response.StatusCode, new { status = false, response.Message });
+        }
+
+        [Authorize]
+        [HttpGet("contact-info")]
+        public async Task<IActionResult> GetContactInfo()
+        {
+            var response = await _companyService.GetContactInfo();
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, response.Message, response.Data });
+            else
+                return StatusCode(response.StatusCode, new { status = false, response.Message });
         }
     }
 }

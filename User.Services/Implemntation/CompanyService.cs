@@ -202,5 +202,172 @@ namespace User.Services.Implemntation
                 return APIOperationResponse<object>.ServerError("there are error accured");
             }
         }
+
+        public async Task<APIOperationResponse<object>> EditBasicInformation(CompanyBasicInformationDto dto)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.NotFound("this company is not found");
+                user.FullName = dto.name; 
+                company.Name=dto.name;
+                company.CompanyType=dto.CompanyType;
+                await _unitOfWork.Companies.UpdateAsync(company);
+                await _unitOfWork.Users.UpdateAsync(user);
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success(dto);
+            }
+            catch (Exception e)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured"); 
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> EditSocialMedia(SocialMedia dto)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.NotFound("this company is not found");
+
+                company.FacebookLink = dto.FacebookLink;
+                company.TikTokLink = dto.TikTokLink;
+                company.InstgrameLink = dto.InstgrameLink;
+                company.TwitterLink = dto.TwitterLink;
+
+                await _unitOfWork.Companies.UpdateAsync(company);
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success(dto);
+            }
+            catch (Exception)
+            {
+                return APIOperationResponse<object>.ServerError("there is an error occurred");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> EditContactInfo(Contact dto)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.NotFound("this company is not found");
+                
+                company.websiteUrl = dto.websiteUrl;
+                company.country = dto.country;
+                company.Governate = dto.Governate;
+                company.street = dto.street;
+
+                await _unitOfWork.Companies.UpdateAsync(company);
+                
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success(dto);
+            }
+            catch (Exception)
+            {
+                return APIOperationResponse<object>.ServerError("there is an error occurred");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> GetBasicInformation()
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.NotFound("this company is not found");
+
+                var result = new CompanyBasicInformationDto
+                {
+                    name = company.Name,
+                    CompanyType = company.CompanyType
+                };
+
+                return APIOperationResponse<object>.Success(result);
+            }
+            catch (Exception)
+            {
+                return APIOperationResponse<object>.ServerError("there is an error occurred");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> GetSocialMedia()
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.NotFound("this company is not found");
+
+                var result = new SocialMedia
+                {
+                    FacebookLink = company.FacebookLink,
+                    TikTokLink = company.TikTokLink,
+                    InstgrameLink = company.InstgrameLink,
+                    TwitterLink = company.TwitterLink
+                };
+
+                return APIOperationResponse<object>.Success(result);
+            }
+            catch (Exception)
+            {
+                return APIOperationResponse<object>.ServerError("there is an error occurred");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> GetContactInfo()
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.NotFound("this company is not found");
+
+                var result = new Contact
+                {
+                    websiteUrl = company.websiteUrl,
+                    country = company.country,
+                    Governate = company.Governate,
+                    street = company.street
+                };
+
+                return APIOperationResponse<object>.Success(result);
+            }
+            catch (Exception)
+            {
+                return APIOperationResponse<object>.ServerError("there is an error occurred");
+            }
+        }
+
+        public async Task<APIOperationResponse<object>> EditTaxID(Documents dto)
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
+                if (company == null || company.status != CompanyStatus.accepted)
+                    return APIOperationResponse<object>.NotFound("this company is not found");
+
+                company.TaxIndtefierNumber = dto.TaxIndtefierNumber;
+
+                await _unitOfWork.Companies.UpdateAsync(company);
+                await _unitOfWork.SaveAsync();
+
+                return APIOperationResponse<object>.Success(new { dto.TaxIndtefierNumber });
+            }
+            catch (Exception)
+            {
+                return APIOperationResponse<object>.ServerError("there is an error occurred");
+            }
+        }
+
     }
 }

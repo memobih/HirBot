@@ -64,7 +64,7 @@ namespace Notification.Services.Implementation
             }
         }
 
-       public async Task<APIOperationResponse<object>>GetAllForUserAsync( DateTime  ? after=null , int limit =15 , bool  ? isread=null , NotificationType  ? type=null , string ? search=null)
+       public async Task<APIOperationResponse<object>>GetAllForUserAsync( DateTime  ? after=null , int limit =15 , bool  ? isread=null , List<NotificationType>  ? type=null , string ? search=null)
 {
     var user = await _authenticationService.GetCurrentUserAsync();
     if (user == null)
@@ -76,15 +76,22 @@ namespace Notification.Services.Implementation
         .ToListAsync();
 
     var notificationDtos = new List<NotificationDto>();
+            var unread_count = new Dictionary<string, int>();
+            unread_count.Add("interview", 0);
+            unread_count.Add("job", 0);
+            unread_count.Add("application", 0);
 
-    foreach (var receiver in notificationReceivers)
+
+
+
+            foreach (var receiver in notificationReceivers)
     {
         var notification = receiver.Notification;
         if (notification == null || notification.Notifiable_Type>=NotificationType.Application)
             continue;
 
-        
-        var dto = new NotificationDto
+
+                var dto = new NotificationDto
         {
             ID = receiver.ID,
             notification_id = notification.ID,
@@ -97,9 +104,12 @@ namespace Notification.Services.Implementation
                 dto.type.category = notification.Notifiable_Type;
                     dto.type.label = notification.Notifiable_Type + " " + notification.type;
                 dto.type.action = notification.type;
+              
         switch (notification.Notifiable_Type)
         {
             case NotificationType.job:
+                        if(dto.Is_read==false)
+                            unread_count["job"]++;
                         if (int.TryParse(notification.Notifiable_ID, out int jobId))
                         {
                             var job = await _context._context.Jobs
@@ -127,7 +137,10 @@ namespace Notification.Services.Implementation
                 break;
 
             case NotificationType.Interview:
-                if (Guid.TryParse(notification.Notifiable_ID, out Guid interviewId))
+                        if (dto.Is_read == false)
+                            unread_count["interview"]++;
+
+                        if (Guid.TryParse(notification.Notifiable_ID, out Guid interviewId))
                 {
                     var interview = await _context._context.Interviews
                         .Where(i => i.ID == interviewId.ToString())
@@ -140,7 +153,13 @@ namespace Notification.Services.Implementation
                     {  
                                 dto.Metadata["interview"] = new
                                 {
-                                    interview = new {id=interview.ID ,  interview.StartTime  , interview.Mode , CompanyLogo = interview.Application.Job.Company.Logo, CompanyName= interview.Application.Job.Company.Name , jobTitle = interview.Application.Job.Title }
+                                    interview = new {
+                                        id=interview.ID , 
+                                        interview.StartTime  , 
+                                        interview.Mode , CompanyLogo = 
+                                        interview.Application.Job.Company.Logo, 
+                                        CompanyName= interview.Application.Job.Company.Name , 
+                                        jobTitle = interview.Application.Job.Title }
                                 };
                     }
                 }
@@ -157,6 +176,8 @@ namespace Notification.Services.Implementation
 
                     if (application != null && application.Job?.Company != null)
                     {
+                                if (dto.Is_read == false)
+                                    unread_count["application"]++;
                                 dto.Metadata["application"] = new
                                 {
                                     application = new
@@ -177,15 +198,29 @@ namespace Notification.Services.Implementation
 
         notificationDtos.Add(dto);
     }
-
-    if (!notificationDtos.Any())
-        return APIOperationResponse<object>.NotFound("No notifications found for this user");
+         
             filter(ref notificationDtos, after, limit, isread, type, search);
 
 
             DateTime ?  nextPageCursor = null;
             if (notificationDtos.Count != 0) nextPageCursor = notificationDtos.Last().Created_at;
-            return APIOperationResponse<object>.Success(new { nextPageCursor=nextPageCursor, hashasMore=(notificationDtos.Count>limit)  , pagesize=limit , totalRecords =notificationDtos.Count() , data=Paginate(notificationDtos , 1, limit)});
+            return APIOperationResponse<object>.Success(new
+            {
+                nextPageCursor = nextPageCursor,
+                hasMore = (notificationDtos.Count > limit)
+                ,
+                pageSize = limit,
+                totalRecords = notificationDtos.Count()
+                ,
+                unread_count
+                ,
+                data = Paginate(notificationDtos, 1, limit
+                ),
+                
+                
+
+
+            });
    
 }
 
@@ -270,20 +305,20 @@ namespace Notification.Services.Implementation
             }
         }
         #region 
-        private void filter (ref List<NotificationDto> notifications , DateTime? after=null , int limit = 15, bool? isread = null, NotificationType  ? type=null , string? search = null)
+        private void filter (ref List<NotificationDto> notifications , DateTime? after=null , int limit = 15, bool? isread = null, List<NotificationType> ? type=null , string? search = null)
         {
             if(after!= null) 
                 notifications=notifications.Where(n=>n.Created_at<after).ToList();
             if(isread!= null)
                 notifications = notifications.Where(n => n.Is_read ==isread).ToList();
             if(type!=null)
-                notifications=notifications.Where(n=>n.type.category==type).ToList();
+                notifications=notifications.Where(n=>type.Contains(n.type.category)).ToList();
             if(search!=null)
                 notifications=notifications.Where(n=>n.Message.Contains(search)).ToList();
             notifications = notifications.OrderByDescending(n => n.Created_at).ToList();
 
         }
-
+       
 
         private List<T> Paginate<T>(List<T> source, int page, int pageSize)
         {

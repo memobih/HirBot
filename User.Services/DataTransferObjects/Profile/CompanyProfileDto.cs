@@ -36,6 +36,7 @@ namespace User.Services.DataTransferObjects.Profile
     } 
     public class Documents
     {
+        
         public string? TaxIndtefierNumber { get; set; }
 
         public string? BusinessLicense { get; set; }
