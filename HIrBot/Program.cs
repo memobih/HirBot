@@ -131,8 +131,8 @@ builder.Services.AddAuthentication(option =>
     };
 }).AddOAuth("github", options =>
 {
-    //options.ClientId = "Ov23liRDEoQn7AlxrRew";
-    //options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
+    options.ClientId = "Ov23liRDEoQn7AlxrRew";
+    options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
     options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
     options.TokenEndpoint = "https://github.com/login/oauth/access_token";
     options.CallbackPath = "/oauth/github-cb";
@@ -159,11 +159,11 @@ builder.Services.AddAuthentication(option =>
             context.RunClaimActions(user.RootElement);
         }
     };
-
+   
 }).AddCookie("cookie").AddOAuth("google", options =>
 {
-    options.ClientId = "203861310590-n513speggmmsla4rhd6jenfp2kbg7f46.apps.googleusercontent.com";
-    options.ClientSecret = "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"; 
+    options.ClientId = configuration["google:clientId"];
+    options.ClientSecret = configuration["google:clientSecret"];
     options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
     options.TokenEndpoint = "https://accounts.google.com/o/oauth2/token";
     options.CallbackPath = "/signin-google";
