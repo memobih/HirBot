@@ -131,8 +131,8 @@ builder.Services.AddAuthentication(option =>
     };
 }).AddOAuth("github", options =>
 {
-    options.ClientId = "Ov23liRDEoQn7AlxrRew";
-    options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
+    //options.ClientId = "Ov23liRDEoQn7AlxrRew";
+    //options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
     options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
     options.TokenEndpoint = "https://github.com/login/oauth/access_token";
     options.CallbackPath = "/oauth/github-cb";
