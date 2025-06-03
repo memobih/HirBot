@@ -197,6 +197,7 @@ namespace User.Services.Implemntation
                 respon.id = newUser.Id;
 
                 newUser.refreshTokens?.Add(refreshtoken);
+                
                 await _userManager.UpdateAsync(newUser);
                 IdentityResult result = await _userManager.CreateAsync(newUser, companyRegisterDto.Password);
 
@@ -213,7 +214,6 @@ namespace User.Services.Implemntation
                 newCompany.street = companyRegisterDto.street;
                 newCompany.Governate = companyRegisterDto.Governate;
                 newCompany.websiteUrl = companyRegisterDto.websiteURL;
-              //  newCompany.SocialMeediaLink = companyRegisterDto.SocialMediaLink;
                 newCompany.CompanyType = companyRegisterDto.CompanyType;
                 newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
                 newCompany.UserID = newUser.Id;
@@ -265,9 +265,9 @@ namespace User.Services.Implemntation
                 {
                     if(user.role==UserType.Company)
                     {
-                        var company = await _unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
-                        if (company.status != CompanyStatus.accepted)
-                            return APIOperationResponse<AuthModel>.UnOthrized("this is company is not accepted");
+                        var company =  _unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
+                        if (company == null ||  company.status != CompanyStatus.accepted)
+                            return APIOperationResponse<AuthModel>.NotFound("this is company is not accepted");
                     }
                     if (user.IsVerified != true)
                         return APIOperationResponse<AuthModel>.UnOthrized("your email is not varified");
@@ -590,13 +590,14 @@ namespace User.Services.Implemntation
             var secondName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
             var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
             var signing =await  _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-
+          
             if (signing != null)
             {
                 string token = await GenerateJwtTokenAsync(signing);
                 var   RefreshToken = GenerateRefreshToken();
-
-                return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token,RefreshToken= RefreshToken.token ,  Email = email, Username = signing.UserName });
+                signing.refreshTokens?.Add(RefreshToken);
+                await _userManager.UpdateAsync(signing);
+                return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token,RefreshToken= RefreshToken.token ,  Email = email, Username = signing.UserName  , ExpiresOn=RefreshToken.expirationOn });
             }
             else
             {
@@ -617,7 +618,8 @@ namespace User.Services.Implemntation
                     await _userManager.AddLoginAsync(user, info);
                     string token = await GenerateJwtTokenAsync(user);
                     var RefreshToken = GenerateRefreshToken();
-
+                    user.refreshTokens?.Add(RefreshToken);
+                    await _userManager.UpdateAsync(user);
                     return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, RefreshToken = RefreshToken.token, Email = email, Username = signing.UserName });
                 }
                 else

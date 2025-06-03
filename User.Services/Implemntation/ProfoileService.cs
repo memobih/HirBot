@@ -12,6 +12,7 @@ using HirBot.Comman.Idenitity;
 using HirBot.Data.Entities;
 using Org.BouncyCastle.Crypto.Prng;
 using HirBot.Data.Enums;
+using Microsoft.Extensions.Azure;
 namespace User.Services.Implemntation
 {
     public class ProfoileService : IPorofileService
@@ -33,8 +34,30 @@ namespace User.Services.Implemntation
                     APIOperationResponse<object>.UnOthrized("This email is not A company");
                 var entity = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id , c=>c.account);
                 var company =GetCompanyProfile(entity); 
+                
                 if(company == null) return APIOperationResponse<object>.ServerError("ther are error accured");
+                company.ContactInfo.email = user.Email;
+                var employes = _unitOfWork._context.Experiences.Include(e=>e.User).Where(e => e.CompanyID == entity.ID && e.IsStill == true).ToList().TakeLast(4);
+                foreach (var employ in employes)
+                {
+                    company.employes.Add(new EmployeeList
+                    {
+                        email=employ.User.Email , 
+                        id=employ.ID ,
+                        image=employ.User.ImagePath , 
+                        end_date=employ.End_Date , 
+                        start_date=employ.Start_Date ,
+                        jobType=employ.employeeType , 
+                        location=employ.location , 
+                        name=employ.User.FullName , 
+                        workType=employ.workType , 
+                        Rate=employ.rate ,
+                        Title=employ.Title ,
 
+                    });
+
+
+                }
                 return APIOperationResponse<object>.Success(company);
             }
             catch (Exception ex)
@@ -161,8 +184,12 @@ namespace User.Services.Implemntation
                 company.ImagePath = entity.account.ImagePath;
                 company.status = entity.status;
                 company.CompanyType = entity.CompanyType;
+                company.SocialMedia=new SocialMedia {FacebookLink=entity.FacebookLink , TwitterLink=entity.TwitterLink , InstgrameLink=entity.InstgrameLink  , TikTokLink=entity.TikTokLink };
+
                 company.ContactInfo = new Contact { country = entity.country, street = entity.street, Governate = entity.Governate, websiteUrl = entity.websiteUrl };
                 company.Documents = new Documents { BusinessLicense = entity.BusinessLicense, TaxIndtefierNumber = entity.TaxIndtefierNumber };
+          
+               
                 company.name = entity.account.FullName; 
                 return company;
             }

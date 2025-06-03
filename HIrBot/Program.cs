@@ -159,11 +159,11 @@ builder.Services.AddAuthentication(option =>
             context.RunClaimActions(user.RootElement);
         }
     };
-
+   
 }).AddCookie("cookie").AddOAuth("google", options =>
 {
-    options.ClientId = "1025210167148-c2slbofk5jg4pk7626qkqh8avi768r1r.apps.googleusercontent.com";
-    options.ClientSecret = "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"; 
+    options.ClientId = configuration["google:clientId"];
+    options.ClientSecret = configuration["google:clientSecret"];
     options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
     options.TokenEndpoint = "https://accounts.google.com/o/oauth2/token";
     options.CallbackPath = "/signin-google";

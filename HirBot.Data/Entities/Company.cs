@@ -32,7 +32,10 @@ namespace HirBot.Data.Entities
         public CompanyStatus status { get; set; }
         public string? websiteUrl { get; set; }
 
-       // public string? SocialMeediaLink { get; set; }
+        public string? FacebookLink { get; set; }
+        public string ? TikTokLink { get; set; }
+        public string ? InstgrameLink { get; set; }
+        public string ? TwitterLink { get; set; }
 
         public string? Comments { get; set; }
 
