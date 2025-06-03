@@ -162,8 +162,8 @@ builder.Services.AddAuthentication(option =>
 
 }).AddCookie("cookie").AddOAuth("google", options =>
 {
-    options.ClientId = "1025210167148-c2slbofk5jg4pk7626qkqh8avi768r1r.apps.googleusercontent.com";
-    options.ClientSecret = "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"; 
+    options.ClientId = "203861310590-n513speggmmsla4rhd6jenfp2kbg7f46.apps.googleusercontent.com";
+    options.ClientSecret = "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"; 
     options.AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
     options.TokenEndpoint = "https://accounts.google.com/o/oauth2/token";
     options.CallbackPath = "/signin-google";

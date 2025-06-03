@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HirBot.Data.Enums;
 using HirBot.ResponseHandler.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +26,9 @@ namespace Notification.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetUserNotifications()
+        public async Task<IActionResult> GetUserNotifications(DateTime? after= null, int limit = 15, bool? isread = null, NotificationType? type = null, string? search = null)
         {
-            var result = await _notificationService.GetAllForUserAsync();
+            var result = await _notificationService.GetAllForUserAsync(after , limit , isread , type , search);
             if(result.StatusCode==200)
               return Ok(new {status=true , data = result.Data});
             else return StatusCode(result.StatusCode  , new {status=false , Message = result.Message});

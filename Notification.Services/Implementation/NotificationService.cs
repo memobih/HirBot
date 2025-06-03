@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Notification.Services.Implementation
 {
@@ -63,14 +64,14 @@ namespace Notification.Services.Implementation
             }
         }
 
-       public async Task<APIOperationResponse<List<NotificationDto>>> GetAllForUserAsync()
+       public async Task<APIOperationResponse<object>>GetAllForUserAsync( DateTime  ? after=null , int limit =15 , bool  ? isread=null , NotificationType  ? type=null , string ? search=null)
 {
     var user = await _authenticationService.GetCurrentUserAsync();
     if (user == null)
-        return APIOperationResponse<List<NotificationDto>>.UnOthrized("Unauthorized access");
+        return APIOperationResponse<object>.UnOthrized("Unauthorized access");
             var userId = user.Id;
     var notificationReceivers = await _context._context.NotificationRecivers
-        .Where(n => n.ReciverID == userId)
+        .Where(n => n.ReciverID == userId )
         .Include(n => n.Notification)
         .ToListAsync();
 
@@ -79,16 +80,18 @@ namespace Notification.Services.Implementation
     foreach (var receiver in notificationReceivers)
     {
         var notification = receiver.Notification;
-        if (notification == null)
+        if (notification == null || notification.Notifiable_Type>=NotificationType.Application)
             continue;
 
+        
         var dto = new NotificationDto
         {
             ID = receiver.ID,
             notification_id = notification.ID,
             Message = notification.massage, 
+           
             Created_at = notification.CreationDate,
-            Isread = receiver.read_at.HasValue,
+            Is_read = receiver.read_at.HasValue,
             Metadata = new Dictionary<string, object>()
         };
                 dto.type.category = notification.Notifiable_Type;
@@ -168,19 +171,22 @@ namespace Notification.Services.Implementation
                     }
                 }
                 break;
-
-            case NotificationType.post:
-               
-                break;
+                    default:
+                        break;
         }
 
         notificationDtos.Add(dto);
     }
 
     if (!notificationDtos.Any())
-        return APIOperationResponse<List<NotificationDto>>.NotFound("No notifications found for this user");
+        return APIOperationResponse<object>.NotFound("No notifications found for this user");
+            filter(ref notificationDtos, after, limit, isread, type, search);
 
-    return APIOperationResponse<List<NotificationDto>>.Success(notificationDtos);
+
+            DateTime ?  nextPageCursor = null;
+            if (notificationDtos.Count != 0) nextPageCursor = notificationDtos.Last().Created_at;
+            return APIOperationResponse<object>.Success(new { nextPageCursor=nextPageCursor, hashasMore=(notificationDtos.Count>limit)  , pagesize=limit , totalRecords =notificationDtos.Count() , data=Paginate(notificationDtos , 1, limit)});
+   
 }
 
         public async Task<APIOperationResponse<bool>> MarkAsReadAsync(List<int> notificationsids)
@@ -263,5 +269,26 @@ namespace Notification.Services.Implementation
                 return APIOperationResponse<bool>.ServerError("Error saving notification receivers", new List<string> { ex.Message });
             }
         }
+        #region 
+        private void filter (ref List<NotificationDto> notifications , DateTime? after=null , int limit = 15, bool? isread = null, NotificationType  ? type=null , string? search = null)
+        {
+            if(after!= null) 
+                notifications=notifications.Where(n=>n.Created_at<after).ToList();
+            if(isread!= null)
+                notifications = notifications.Where(n => n.Is_read ==isread).ToList();
+            if(type!=null)
+                notifications=notifications.Where(n=>n.type.category==type).ToList();
+            if(search!=null)
+                notifications=notifications.Where(n=>n.Message.Contains(search)).ToList();
+            notifications = notifications.OrderByDescending(n => n.Created_at).ToList();
+
+        }
+
+
+        private List<T> Paginate<T>(List<T> source, int page, int pageSize)
+        {
+            return source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
+        #endregion
     }
 }

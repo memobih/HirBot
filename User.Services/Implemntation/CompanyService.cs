@@ -142,7 +142,6 @@ namespace User.Services.Implemntation
                     response.id = company.ID;
                     response.status = company.status;
                     response.legalInformation.BuisnessLicense=company.BusinessLicense;
-                 //   response.legalInformation.SocialMediaLink = company.SocialMeediaLink; 
                     response.legalInformation.website=company.websiteUrl;
                     return APIOperationResponse<object>.Success(response);
                 }

@@ -64,16 +64,21 @@ namespace User.Api.Controllers
         [HttpGet("google-callback")]
         public async Task<IActionResult> GoogleCallback()
         {
-
             var response = await _authenticationService.GoogleCallback();
-            if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data.RefreshToken))
+
+            if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data?.RefreshToken))
             {
                 SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
-                return Ok(new { status = response.Succeeded, response.Message, Data = new { token = response.Data.Token } });
+                string token = response.Data.RefreshToken;
+                var redirectUrl = $"http://localhost:3000/auth/login?token={response.Data.Token}?refreshToken={token}";
+                return Redirect(redirectUrl);
             }
-            return StatusCode(response.StatusCode, new { status = response.Succeeded, response.Message, response.Errors });
-       
+
+            var errorMessage = Uri.EscapeDataString(response.Message ?? "auth_failed");
+            var errorRedirect = $"http://localhost:3000/auth/login?error={errorMessage}";
+            return Redirect(errorRedirect);
         }
+
         private void SetRefreshTokenInCookie(string refreshToken, DateTime expires)
 
         {
