@@ -213,7 +213,7 @@ namespace User.Services.Implemntation
                 newCompany.street = companyRegisterDto.street;
                 newCompany.Governate = companyRegisterDto.Governate;
                 newCompany.websiteUrl = companyRegisterDto.websiteURL;
-                newCompany.SocialMeediaLink = companyRegisterDto.SocialMediaLink;
+              //  newCompany.SocialMeediaLink = companyRegisterDto.SocialMediaLink;
                 newCompany.CompanyType = companyRegisterDto.CompanyType;
                 newCompany.TaxIndtefierNumber = companyRegisterDto.TaxID;
                 newCompany.UserID = newUser.Id;

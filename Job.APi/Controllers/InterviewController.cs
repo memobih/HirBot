@@ -36,13 +36,13 @@ namespace Job.APi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetInterviewDto>> GetById(int id)
+        public async Task<ActionResult<GetInterviewDto>> GetById(string id)
         {
 
             var response = await _interviewService.GetByIdAsync(id);
-            if (response.StatusCode != 200)
+           if(response.StatusCode != 200)
             {
-                return NotFound("there are no interviews");
+                return StatusCode(response.StatusCode, new { status = false, message = response.Message, errors = response.Errors });
             }
 
             return Ok(response);

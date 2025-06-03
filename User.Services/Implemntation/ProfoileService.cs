@@ -161,7 +161,7 @@ namespace User.Services.Implemntation
                 company.ImagePath = entity.account.ImagePath;
                 company.status = entity.status;
                 company.CompanyType = entity.CompanyType;
-                company.ContactInfo = new Contact { country = entity.country, street = entity.street, SocialMeediaLink = entity.SocialMeediaLink, Governate = entity.Governate, websiteUrl = entity.websiteUrl };
+                company.ContactInfo = new Contact { country = entity.country, street = entity.street, Governate = entity.Governate, websiteUrl = entity.websiteUrl };
                 company.Documents = new Documents { BusinessLicense = entity.BusinessLicense, TaxIndtefierNumber = entity.TaxIndtefierNumber };
                 company.name = entity.account.FullName; 
                 return company;
