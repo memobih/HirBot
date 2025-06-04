@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HirBot.Comman.Idenitity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,41 +17,70 @@ namespace Notification.Api.Controllers
     [Authorize]
     public class PusherAuthController : ApiControllerBase
     {
-        private readonly Pusher _pusher;
-        private readonly IAuthenticationService _authenticationService;
+         private readonly Pusher _pusher;
+        private readonly IAuthenticationService _authService; 
 
-        public PusherAuthController(IConfiguration config, IAuthenticationService authenticationService)
+        public PusherAuthController(Pusher pusher, IAuthenticationService authService)
         {
-            _authenticationService = authenticationService;
-
-            var options = new PusherOptions
-            {
-                Cluster = config["Pusher:Cluster"],
-                Encrypted = true
-            };
-
-            _pusher = new Pusher(
-                config["Pusher:AppId"],
-                config["Pusher:Key"],
-                config["Pusher:Secret"],
-                options
-            );
+            _pusher = pusher;
+            _authService = authService;
         }
+
         [HttpPost]
-        public IActionResult Authenticate([FromForm] string channel_name, [FromForm] string socket_id)
+        [Authorize]
+        public async Task<IActionResult> Auth([FromForm] string channel_name, [FromForm] string socket_id)
         {
+            var currentUser = await _authService.GetCurrentUserAsync();
 
-            var userId = User.Identity?.Name;
-            var expectedChannel = $"private-user.{userId}";
-
-            if (channel_name == expectedChannel)
+            if (currentUser == null)
             {
-                var auth = _pusher.Authenticate(socket_id, channel_name);
-                return new JsonResult(auth);
+                return Unauthorized("User not found");
             }
 
-            return Unauthorized();
+            // Now you have access to all user properties
+            var userId = currentUser.Id; // or currentUser.UserName, currentUser.Email, etc.
+
+            // Check if the user is allowed to subscribe to this channel
+            if (!await IsUserAuthorizedForChannel(currentUser, channel_name))
+            {
+                return Forbid("Access denied to this channel");
+            }
+
+            // Generate auth signature
+            var auth = _pusher.Authenticate(channel_name, socket_id);
+            
+            return Ok(auth);
         }
 
+        private async Task<bool> IsUserAuthorizedForChannel(ApplicationUser user, string channelName)
+        {
+            // Example authorization logic using the full user object
+            switch (channelName)
+            {
+                case var ch when ch.StartsWith("private-user-"):
+                    // Extract user ID from channel name and compare
+                    var channelUserId = ch.Replace("private-user-", "");
+                    return channelUserId == user.Id;
+
+                case var ch when ch.StartsWith("private-admin-"):
+                    // Check if user has admin role
+                    return await IsUserInRole(user, "Admin");
+
+                case var ch when ch.StartsWith("private-company-"):
+                    // Check if user belongs to the company
+                    var companyId = ch.Replace("private-company-", "");
+                    return user.Company.ID == companyId;
+
+                default:
+                    return false;
+            }
+        }
+
+        private async Task<bool> IsUserInRole(ApplicationUser user, string roleName)
+        {
+        
+            return user.role.ToString().Equals(roleName, StringComparison.OrdinalIgnoreCase);
+        }
     }
+    
 }

@@ -374,6 +374,29 @@ namespace Jop.Services.Implemntations
             {
                 unitOfWork._context.Applications.Update(application);
                 await unitOfWork.SaveAsync();
+                await _notificationService.SendNotificationAsync(
+                    $"Your application for the job {application.Job.Title} at {application.Job.Company.Name} has been rejected",
+                    NotificationType.Application,
+                    NotficationStatus.rejected,
+                    application.ID.ToString(),
+                    new List<string> { application.UserID },
+                    new
+                    {
+                        message = $"Your application for the job {application.Job.Title} at {application.Job.Company.Name} has been rejected",
+                        Created_at = DateTime.Now,
+                        metadata = new
+                        {
+                            application = new
+                            {
+                                id = application.ID,
+                                CompanyLogo = application.Job.Company.Logo,
+                                CompanyName = application.Job.Company.Name,
+                                JobTitle = application.Job.Title,
+                                ApplicationStatus = application.status,
+                            }
+                        }
+                    }
+                );
                 return APIOperationResponse<object>.Success("the application is rejected succefuly", "the application is rejected succefuly");
             }
             catch (Exception ex)
@@ -621,13 +644,17 @@ namespace Jop.Services.Implemntations
         }
         public async Task<APIOperationResponse<object>> AcceptTheApplication(string Applicationid)
         {
-            var companyuser = await _authenticationService.GetCurrentUserAsync();
+            var user1 = await _authenticationService.GetCurrentUserAsync();
             var application = await unitOfWork._context.Applications.Include(a => a.Interviews).Include(a => a.Job)
             .ThenInclude(j => j.Company).Include(a=>a.User)
             .FirstOrDefaultAsync(a => a.ID.ToString() == Applicationid);
+            var companyuser = await unitOfWork._context.Companies.FirstOrDefaultAsync(c => c.UserID == user1.Id);
+            if (companyuser == null || companyuser.status != CompanyStatus.accepted)
+                return APIOperationResponse<object>.UnOthrized("this user is not a company");
             if (application == null)
                 return APIOperationResponse<object>.NotFound("this application is not found");
-            if (application.Job.Company.ID!= companyuser.Company.ID)
+            
+            if (application.Job.Company.ID != companyuser.ID)
                 return APIOperationResponse<object>.NotFound("this application doesn't belong to a job in your company");
               if(application.status== ApplicationStatus.accepted)
                 return APIOperationResponse<object>.BadRequest("this application is already accepted");
@@ -649,6 +676,30 @@ namespace Jop.Services.Implemntations
                 employee.title = application.Job.Title;
                 employee.location = application.Job.location;
                 await _employeeService.AddEmployee(employee);
+                 await  _notificationService.SendNotificationAsync(
+                    $"You have been accepted for the job {application.Job.Title} at {application.Job.Company.Name}",
+                    NotificationType.Application,
+                    NotficationStatus.accepted,
+                    application.ID.ToString(),
+                    new List<string> { application.UserID },
+                    new 
+                    {
+                        message=$"You have been accepted for the {application.Job.Title} at {application.Job.Company.Name}",
+                        Created_at = DateTime.Now,
+                        metadata=new
+                        {
+                            application = new
+                            {
+                                id = application.ID,
+                                CompanyLogo = application.Job.Company.Logo,
+                                CompanyName = application.Job.Company.Name,
+                                JobTitle = application.Job.Title,
+                                ApplicationStatus = application.status,
+                            }
+                        }
+                        
+                    }
+                );
                 return APIOperationResponse<object>.Success("the application is accepted succefuly", "the application is accepted succefuly");
             }
             catch (Exception ex)

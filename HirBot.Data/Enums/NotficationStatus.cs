@@ -9,7 +9,9 @@ namespace HirBot.Data.Enums
 {
     public enum NotficationStatus
     {
-         created =16 , 
-     updated=17 , 
+        created = 16,
+        updated = 17, 
+        accepted = 18,
+        rejected = 19,
     }
 }

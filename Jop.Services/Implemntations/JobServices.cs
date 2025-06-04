@@ -77,7 +77,30 @@ namespace Jop.Services.Implemntations
                     {
                         recievers.Add(userw.Id);
                     }
-                    await _notificationService.SendNotificationAsync($"New Job is added with title {job.Title}", NotificationType.job,NotficationStatus.created, newJob.ID.ToString(), recievers);
+                    await _notificationService.SendNotificationAsync($"New Job is added with title {job.Title}", NotificationType.job,NotficationStatus.created, newJob.ID.ToString(), recievers,
+                    new
+                    {
+                        message = $"New Job is added with title {job.Title}",
+                        Created_at = DateTime.Now,
+                        type = new
+                        {
+                            action = "Created",
+                            category = "job",
+                            label = "New Job"
+                        },
+                        metadata = new
+                        {
+                            job=new
+                            {
+                                id = newJob.ID,
+                                PostedDate = DateTime.Now,
+                                CompanyLogo = company.Logo,
+                                CompanyName = company.Name,
+
+                            }
+                        }
+                    }
+                    );
                 }
                 return APIOperationResponse<object>.Success("Jop is Created", "Jop is Created Succesful !");
             }

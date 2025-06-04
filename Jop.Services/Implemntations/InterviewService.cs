@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Exame.Services.Interfaces;
 using HirBot.Data.Entities;
 using HirBot.Data.Enums;
+using HirBot.EntityFramework.Migrations;
 using HirBot.ResponseHandler.Models;
 using Jop.Services.DataTransferObjects;
 using Jop.Services.Interfaces;
@@ -116,8 +117,9 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<GetInterviewDto>.UnprocessableEntity("Validation errors occurred.", validation.Errors as List<string>);
 
             var application = await _unitOfWork._context.Applications
-                .Include(a => a.Interviews)
-                .Include(u=> u.User)
+                .Include(a => a.Interviews).Include(a => a.User)
+                .Include(j => j.Job)
+                .ThenInclude(c => c.Company)
                 .FirstOrDefaultAsync(a => a.ID == dto.ApplicationId);
             if (application == null)
                 return APIOperationResponse<GetInterviewDto>.NotFound("Application not found.");
@@ -195,10 +197,38 @@ namespace Jop.Services.Implemntations
                     await _notificationService.SendNotificationAsync(
                         "New interview created",
                         NotificationType.Interview,
-                         NotficationStatus.created,
+                        NotficationStatus.created,
                         interview.ID.ToString(),
-                        new List<string> { application.User.Id }
-                     
+                        new List<string> { application.User.Id}
+                        , new
+                        {
+                            id = interview.ID,
+                            notificationId = interview.ID,
+                            type = new
+                            {
+                                action = "created",
+                                category = "interview",
+                                label = "Interview Created"
+                            },
+                            message = "New interview created",
+                            craeted_at = DateTime.UtcNow,
+                            metadata = new
+                            {
+                                interview = new
+                                {
+                                    id = interview.ID,
+                                    start_time = interview.StartTime,
+                                    mode = interview.Mode.ToString(),
+                                    type = interview.Type.ToString(),
+                                    companyLogo = application.Job.Company.Logo,
+                                    companyName = application.Job.Company.Name,
+                                    jobTitle = interview.Application.Job.Title,
+                                }
+
+                            }
+
+                        }
+
                     );
                 }
                 catch (Exception ex)
@@ -262,7 +292,31 @@ namespace Jop.Services.Implemntations
                     NotificationType.Interview,
                     NotficationStatus.updated , 
                     id.ToString(),
-                    new List<string> { user.Id }
+                    new List<string> { user.Id },
+                    new
+                    {
+                        type = new
+                        {
+                            action = "updated",
+                            category = "interview",
+                            label = "Interview Updated"
+                        },
+                        message = $"Interview for {application.Job.Title} in {application.Job.Company.Name} Company has been updated.",
+                        created_at = DateTime.UtcNow,
+                        metadata = new
+                        {
+                            interview = new
+                            {
+                                id = interview.ID,
+                                start_time = interview.StartTime,
+                                mode = interview.Mode.ToString(),
+                                type = interview.Type.ToString(),
+                                companyLogo = application.Job.Company.Logo,
+                                companyName = application.Job.Company.Name,
+                                jobTitle = interview.Application.Job.Title,
+                            }
+                        }
+                    }
                 );
                 return APIOperationResponse<GetInterviewDto>.Updated("Interview updated successfully.");
 
