@@ -36,7 +36,7 @@ namespace Job.APi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetInterviewDto>> GetById(string id)
+        public async Task<ActionResult<GetInterviewDto>> GetById(int id)
         {
 
             var response = await _interviewService.GetByIdAsync(id);
@@ -70,8 +70,8 @@ namespace Job.APi.Controllers
             });
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, InterviewDto dto)
+        [HttpPut("update")]
+        public async Task<ActionResult> Update(InterviewDto dto)
         {
 
             if (!ModelState.IsValid)
@@ -79,7 +79,7 @@ namespace Job.APi.Controllers
                 return BadRequest(new { Error = "Invalid data. Please check the input and try again.", Details = ModelState });
             }
 
-            var response = await _interviewService.UpdateAsync(id, dto);
+            var response = await _interviewService.UpdateAsync( dto);
             if (response.StatusCode != 200)
             {
                 return StatusCode(response.StatusCode, new { status = false, message = response.Message, errors = response.Errors });

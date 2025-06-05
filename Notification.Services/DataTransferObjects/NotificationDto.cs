@@ -14,7 +14,7 @@ namespace Notification.Services.DataTransferObjects
         public string? Message { get; set; }
    
         public DateTime  Created_at { get; set; }
-        public bool Is_read { get; set; }
+        public bool Is_read{ get; set; }
         public DateTime ? read_at {  get; set; }
         public Dictionary<string, object> Metadata { get; set; }
     }

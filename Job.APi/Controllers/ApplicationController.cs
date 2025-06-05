@@ -81,7 +81,7 @@ namespace Job.Api.Controllers
         }
      
         [HttpPut("accept")]
-        public async Task<IActionResult> AcceptTheApplication(string ApplicationId)
+        public async Task<IActionResult> AcceptTheApplication(int ApplicationId)
         {
             var response = await _applicationService.AcceptTheApplication(ApplicationId);
             if (response.StatusCode == 200)
