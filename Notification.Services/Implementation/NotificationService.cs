@@ -254,7 +254,7 @@ namespace Notification.Services.Implementation
             }
         }
 
-        public async Task<APIOperationResponse<bool>> SendNotificationAsync(string message, NotificationType type, NotficationStatus status, string referenceId, List<string> userIds, object dataa)
+        public async Task<APIOperationResponse<bool>> SendNotificationAsync(string message, NotificationType type, NotficationStatus status, string referenceId, List<string> userIds, object data)
         {
             string typ = string.Empty;
             typ = type.ToString();
@@ -287,21 +287,14 @@ namespace Notification.Services.Implementation
                     CreationDate = DateTime.UtcNow,
                 };
                 await _context._context.NotificationRecivers.AddAsync(receiver);
-                object data2 =
-                new
-                {
-                    id = notification.ID,
-                    notification_id = notification.ID,
-                    data = dataa,
-                };
                 await _pusher.TriggerNotificationAsync($"{userId}", "new-notification", new
                 {
-                    message,
                     typ,
                     referenceId,
                     notificationId = notification.ID,
-                    data = data2
-
+                    id = notification.ID,
+                    notification_id = notification.ID,
+                    data
                 });
             }
 

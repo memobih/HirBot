@@ -2,6 +2,7 @@
 using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using HirBot.Data.IGenericRepository_IUOW;
+using HirBot.EntityFramework.Migrations;
 using HirBot.ResponseHandler.Models;
 using Jop.Services.DataTransferObjects;
 using Jop.Services.Helpers;
@@ -328,7 +329,7 @@ namespace Jop.Services.Implemntations
         }
         #endregion
 
-        public async Task<APIOperationResponse<object>> AcceptTheApplication(int ApplicationId)
+        public async Task<APIOperationResponse<object>> AcceptTheApplicationn(int ApplicationId)
         {
             var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId);
             if (application == null)
@@ -384,6 +385,12 @@ namespace Jop.Services.Implemntations
                     {
                         message = $"Your application for the job {application.Job.Title} at {application.Job.Company.Name} has been rejected",
                         Created_at = DateTime.Now,
+                        type = new
+                        {
+                            action = NotficationStatus.rejected.ToString().ToLower(),
+                            category = "Application",
+                            label = "Application Rejected"
+                        },
                         metadata = new
                         {
                             application = new
@@ -642,27 +649,35 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<object>.ServerError("there are error accured", new List<string> { ex.Message });
             }
         }
-        public async Task<APIOperationResponse<object>> AcceptTheApplication(string Applicationid)
+        public async Task<APIOperationResponse<object>> AcceptTheApplication(int Applicationid)
         {
             var user1 = await _authenticationService.GetCurrentUserAsync();
-            var application = await unitOfWork._context.Applications.Include(a => a.Interviews).Include(a => a.Job)
-            .ThenInclude(j => j.Company).Include(a=>a.User)
-            .FirstOrDefaultAsync(a => a.ID.ToString() == Applicationid);
+            if (user1 == null)
+                return APIOperationResponse<object>.UnOthrized("User is not authenticated");
+
+            var application = await unitOfWork._context.Applications
+                .Include(a => a.Interviews)
+                .Include(a => a.Job).ThenInclude(j => j.Company)
+                .Include(a => a.User)
+                .FirstOrDefaultAsync(a => a.ID == Applicationid);
+
             var companyuser = await unitOfWork._context.Companies.FirstOrDefaultAsync(c => c.UserID == user1.Id);
             if (companyuser == null || companyuser.status != CompanyStatus.accepted)
                 return APIOperationResponse<object>.UnOthrized("this user is not a company");
             if (application == null)
                 return APIOperationResponse<object>.NotFound("this application is not found");
-            
+
             if (application.Job.Company.ID != companyuser.ID)
                 return APIOperationResponse<object>.NotFound("this application doesn't belong to a job in your company");
-              if(application.status== ApplicationStatus.accepted)
+            if (application.status == ApplicationStatus.accepted)
                 return APIOperationResponse<object>.BadRequest("this application is already accepted");
             if (application.status != ApplicationStatus.approved)
                 return APIOperationResponse<object>.BadRequest("this application is not approved yet");
+
             var user = await unitOfWork._context.Users.Include(c => c.experiences).FirstOrDefaultAsync(u => u.Id == application.UserID);
             if (user == null)
                 return APIOperationResponse<object>.NotFound("this user is not found for this application");
+
             try
             {
                 await changeStatus(new List<int> { application.ID }, ApplicationStatus.accepted);
@@ -684,7 +699,13 @@ namespace Jop.Services.Implemntations
                     new List<string> { application.UserID },
                     new 
                     {
-                        message=$"You have been accepted for the {application.Job.Title} at {application.Job.Company.Name}",
+                        type =new
+                        {
+                            action = NotficationStatus.accepted.ToString().ToLower(),
+                            category = "Application",
+                            label="Application Accepted"  
+                        },
+                        message =$"You have been accepted for the {application.Job.Title} at {application.Job.Company.Name}",
                         Created_at = DateTime.Now,
                         metadata=new
                         {
