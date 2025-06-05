@@ -122,7 +122,6 @@ namespace Jop.Services.Implemntations
             try
             {
                 return await changeStatus(ids, ApplicationStatus.waiting);
-
             }
             catch (Exception ex)
             {
@@ -255,10 +254,12 @@ namespace Jop.Services.Implemntations
             {
 
                 var user = await _authenticationService.GetCurrentUserAsync();
+                if (user == null)
+                    return APIOperationResponse<object>.UnOthrized("you are not logged in");
                 var company = await unitOfWork.Companies.GetLastOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this email is not a company");
-                var applications = await unitOfWork._context.Applications.Include(a => a.Job).Where(a => ids.Contains(a.ID)).ToListAsync();
+                var applications = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(c=>c.Company).Where(a => ids.Contains(a.ID)).ToListAsync();
                 foreach (var application in applications)
                 {
                     if (application.Job.CompanyID == company.ID)
@@ -266,6 +267,43 @@ namespace Jop.Services.Implemntations
                         application.status = status;
                         application.ModificationDate = DateTime.Now;
                         application.ModifiedBy = user.Id;
+                        if (status == ApplicationStatus.waiting)
+                        {
+                            await _notificationService.SendNotificationAsync(
+                                $"Your application for the job {application.Job.Title} at {application.Job.Company.Name} has been approved",
+                                NotificationType.Application,
+                                NotficationStatus.accepted,
+                                application.ID.ToString(),
+                                new List<string> { application.UserID },
+                                new
+                                {
+                                    message = $"Your application for the job {application.Job.Title} at {application.Job.Company.Name} has been approved",
+                                    Created_at = DateTime.Now,
+                                    type = new
+                                    {
+                                        action = NotficationStatus.approved.ToString().ToLower(),
+                                        category = "Application",
+                                        label = "Application Approved"
+                                    },
+                                    metadata = new
+                                    {
+                                        application = new
+                                        {
+                                            id = application.ID,
+                                            CompanyLogo = application.Job.Company.Logo,
+                                            CompanyName = application.Job.Company.Name,
+                                            JobTitle = application.Job.Title,
+                                            ApplicationStatus = status.ToString()
+                                        }
+                                        ,company = new
+                                        {
+                                            id = application.Job.CompanyID,
+                                            name = application.Job.Company.Name?? "",
+                                            logo = application.Job.Company.Logo?? "",
+                                        },  
+                                    }
+                                });
+                        }
                     }
                 }
                 unitOfWork._context.Applications.UpdateRange(applications);
@@ -400,6 +438,13 @@ namespace Jop.Services.Implemntations
                                 CompanyName = application.Job.Company.Name,
                                 JobTitle = application.Job.Title,
                                 ApplicationStatus = application.status,
+                            }
+                            ,
+                            company = new
+                            {
+                                id = application.Job.CompanyID,
+                                name = application.Job.Company.Name?? "",
+                                logo = application.Job.Company.Logo?? ""
                             }
                         }
                     }
@@ -716,6 +761,12 @@ namespace Jop.Services.Implemntations
                                 CompanyName = application.Job.Company.Name,
                                 JobTitle = application.Job.Title,
                                 ApplicationStatus = application.status,
+                            },
+                            company = new
+                            {
+                                id = application.Job.CompanyID,
+                                name = application.Job.Company.Name?? "",
+                                logo = application.Job.Company.Logo?? ""
                             }
                         }
                         

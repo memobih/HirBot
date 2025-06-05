@@ -58,6 +58,8 @@ namespace Jop.Services.Implemntations
                     Notes = interview.Notes,
                     ApplicationId = interview.ApplicationID,
                     InterviewerName = interview.InterviewerName ?? string.Empty,
+                    ExamId = interview.ExamID ?? 0,
+                    TechStartTime = interview.TechStartTime
                 };
                 interviewsdtos.Add(interviewDto);
             }
@@ -65,24 +67,22 @@ namespace Jop.Services.Implemntations
             return APIOperationResponse<List<GetInterviewDto>>.Success(interviewsdtos);
         }
 
-        public async Task<APIOperationResponse<GetInterviewDto>> GetByIdAsync(string id)
+         public async Task<APIOperationResponse<GetInterviewDto>> GetByIdAsync(int id)
         {
             try
             {
-                var user =await _authenticationService.GetCurrentUserAsync();
+
+                var user = await _authenticationService.GetCurrentUserAsync();
+                if (user == null)
+                    return APIOperationResponse<GetInterviewDto>.UnOthrized("User not authenticated.");
                 var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
-                if (company == null)
-                    return APIOperationResponse<GetInterviewDto>.NotFound("Company not found.");
-                var interview = await _unitOfWork._context.Interviews.Include(i => i.Application)
-                    .FirstOrDefaultAsync(i => i.ID == id.ToString());
-              if (interview == null)
+                var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == id).FirstOrDefault();
+                if (application == null || application.Interviews == null || application.Interviews.Count == 0 || application.Job.CompanyID != company.ID)
                     return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.");
-                var application = await _unitOfWork._context.Applications
-                    .Include(a => a.Job)
-                    .FirstOrDefaultAsync(a => a.ID == interview.ApplicationID);
-                if (application == null || application.Job.CompanyID != company.ID)
-                    return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found or you do not have permission to view it.");
-                var interviewDto = new GetInterviewDto
+
+                application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
+                var interview = application.Interviews.Last();
+                var GetInterviewDto_1 = new GetInterviewDto
                 {
                     ID = interview.ID,
                     CandidateName = interview.CandidateName,
@@ -92,22 +92,24 @@ namespace Jop.Services.Implemntations
                     StartTime = interview.StartTime.ToLocalTime(),
                     DurationInMinutes = interview.durationInMinutes,
                     Location = interview.Location,
-                    ZoomMeetinLink = interview.ZoomMeetinLink ?? string.Empty,
-                    Notes = interview.Notes ?? new List<string> { "No notes available" },
+                    ZoomMeetinLink = interview.ZoomMeetinLink,
+                    Notes = interview.Notes,
                     ApplicationId = interview.ApplicationID,
                     InterviewerName = interview.InterviewerName ?? string.Empty,
                     ExamId = interview.ExamID ?? 0,
                     TechStartTime = interview.TechStartTime
                 };
-
-                return APIOperationResponse<GetInterviewDto>.Success(interviewDto);
+                return interview == null
+                    ? APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.")
+                    : APIOperationResponse<GetInterviewDto>.Success(GetInterviewDto_1);
             }
             catch (Exception ex)
             {
-                return APIOperationResponse<GetInterviewDto>.ServerError("An error occurred while retrieving the interview.", new List<string> { ex.Message });
+                return APIOperationResponse<GetInterviewDto>.ServerError("An error occurred while creating the interview.", new List<string> { ex.Message });
 
             }
         }
+    
 
         public async Task<APIOperationResponse<GetInterviewDto>> CreateAsync(InterviewDto dto)
         {
@@ -123,9 +125,9 @@ namespace Jop.Services.Implemntations
                 .FirstOrDefaultAsync(a => a.ID == dto.ApplicationId);
             if (application == null)
                 return APIOperationResponse<GetInterviewDto>.NotFound("Application not found.");
-            if(application.status!=ApplicationStatus.approved)
+            if (application.status != ApplicationStatus.approved)
                 return APIOperationResponse<GetInterviewDto>.BadRequest("Application is not approved yet.");
-            if(application.Interviews.Any(i=> i.Type == dto.Type && i.ApplicationID == dto.ApplicationId))
+            if (application.Interviews.Any(i => i.Type == dto.Type && i.ApplicationID == dto.ApplicationId))
             {
                 return APIOperationResponse<GetInterviewDto>.BadRequest($"the {dto.Type} already exists for this application ");
             }
@@ -191,15 +193,16 @@ namespace Jop.Services.Implemntations
                     InterviewerName = interview.InterviewerName ?? string.Empty,
                     ExamId = interview.ExamID ?? 0,
                     TechStartTime = interview.TechStartTime
-                    
+
                 };
-                try{
+                try
+                {
                     await _notificationService.SendNotificationAsync(
                         "New interview created",
                         NotificationType.Interview,
                         NotficationStatus.created,
                         interview.ID.ToString(),
-                        new List<string> { application.User.Id}
+                        new List<string> { application.User.Id }
                         , new
                         {
                             id = interview.ID,
@@ -223,6 +226,12 @@ namespace Jop.Services.Implemntations
                                     companyLogo = application.Job.Company.Logo,
                                     companyName = application.Job.Company.Name,
                                     jobTitle = interview.Application.Job.Title,
+                                },
+                                company = new
+                                {
+                                    id = application.Job.CompanyID,
+                                    name = application.Job.Company.Name?? "",
+                                    logo = application.Job.Company.Logo?? ""
                                 }
 
                             }
@@ -244,20 +253,30 @@ namespace Jop.Services.Implemntations
         }
 
 
-        public async Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(int id, InterviewDto dto)
+        public async Task<APIOperationResponse<GetInterviewDto>> UpdateAsync(InterviewDto dto)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id);
-                var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == id).FirstOrDefault();
+                 if (user == null)
+                    return APIOperationResponse<GetInterviewDto>.UnOthrized("User not authenticated.");
+                var company = await _unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.UserID == user.Id); 
+                 if (company == null)
+                    return APIOperationResponse<GetInterviewDto>.UnOthrized("Company not found for the user.");
+                var application = _unitOfWork._context.Applications.Include(c => c.Interviews).Include(a => a.Job).Where(a => a.ID == dto.ApplicationId).FirstOrDefault();
                 if (application == null || application.Interviews == null || application.Job.CompanyID != company.ID)
-                    return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found.");
+                    return APIOperationResponse<GetInterviewDto>.NotFound("Interview not found. or you don't have permission to update this interview.");
 
                 application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
                 var interview = application.Interviews.Last();
-
-
+                var exam = await _unitOfWork._context.Exams.FirstOrDefaultAsync(e => e.ID == dto.ExamId);
+                if (exam == null && dto.ExamId > 0)
+                    return APIOperationResponse<GetInterviewDto>.NotFound("Exam not found.");
+                if (dto.TechStartTime <= dto.StartTime)
+                    {
+                        return APIOperationResponse<GetInterviewDto>.BadRequest("Tech Start Time must be after the Interview Start Time.");
+                    }
+                 
                 interview.CandidateEmail = dto.CandidateEmail;
                 interview.CandidateName = dto.CandidateName;
                 interview.Type = dto.Type;
@@ -290,8 +309,8 @@ namespace Jop.Services.Implemntations
                 await _notificationService.SendNotificationAsync(
                     "Interview updated",
                     NotificationType.Interview,
-                    NotficationStatus.updated , 
-                    id.ToString(),
+                    NotficationStatus.updated,
+                    interview.ID.ToString(),
                     new List<string> { user.Id },
                     new
                     {
@@ -314,6 +333,12 @@ namespace Jop.Services.Implemntations
                                 companyLogo = application.Job.Company.Logo,
                                 companyName = application.Job.Company.Name,
                                 jobTitle = interview.Application.Job.Title,
+                            },
+                            company = new
+                            {
+                                id = application.Job.CompanyID,
+                                name = application.Job.Company.Name?? "",
+                                logo = application.Job.Company.Logo?? ""
                             }
                         }
                     }
@@ -384,24 +409,43 @@ namespace Jop.Services.Implemntations
 
             return APIOperationResponse<InterviewCandidateinfoDto>.Success(interviewCandidateInfoDto, "Candidate information retrieved successfully.");
         }
-         
+
         public async Task<APIOperationResponse<object>> GetExamByInterviewIdAsync(string interviewId)
         {
             var user = await _authenticationService.GetCurrentUserAsync();
-           var interview = await _unitOfWork._context.Interviews
-                .Include(i => i.Exam).Include(i=>i.Application)
-                .FirstOrDefaultAsync(i => i.ID == interviewId); 
+            var interview = await _unitOfWork._context.Interviews
+                 .Include(i => i.Exam).Include(i => i.Application)
+                 .FirstOrDefaultAsync(i => i.ID == interviewId);
+
             if (interview == null || interview.Exam == null)
                 return APIOperationResponse<object>.NotFound("Exam not found for the specified interview.");
-            if(interview.Application == null)
+            if (interview.Application == null)
                 return APIOperationResponse<object>.NotFound("Application not found for the specified interview.");
             if (interview.Application.UserID != user.Id)
                 return APIOperationResponse<object>.BadRequest("You are not authorized to access this interview's exam.");
             if (interview.TechStartTime.HasValue && interview.TechStartTime > DateTime.UtcNow)
-                return APIOperationResponse<object>.BadRequest("The exam cannot be accessed before the technical start time.");
+            {
+                var remaining = interview.TechStartTime.Value - DateTime.UtcNow;
+                var hours = remaining.Hours + remaining.Days * 24;
+                var minutes = remaining.Minutes;
+                var seconds = remaining.Seconds;
+                var formatted = $"{hours:D2}:{minutes:D2}:{seconds:D2}";
+
+                return APIOperationResponse<object>.BadRequest(
+                    "The exam cannot be accessed before the technical start time.",
+                    new Dictionary<string, object>
+                    {
+                        { "remaining_time", formatted },
+                        { "hours", hours },
+                        { "minutes", minutes },
+                        { "seconds", seconds },
+                        { "tech_start_time", interview.TechStartTime }
+                    }
+                );
+            }
             if (interview.TechStartTime.HasValue && interview.TechStartTime.Value.AddMinutes(interview.Exam.duration) < DateTime.UtcNow)
                 return APIOperationResponse<object>.BadRequest("The exam cannot be accessed after the exam duration has passed.");
-            int examId = interview.ExamID?? 0;
+            int examId = interview.ExamID ?? 0;
             var exam = await _exameService.GetExamForinterview(examId);
             if (exam == null)
                 return APIOperationResponse<object>.NotFound("Exam not found for the specified interview.");

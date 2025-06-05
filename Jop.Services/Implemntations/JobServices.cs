@@ -90,13 +90,19 @@ namespace Jop.Services.Implemntations
                         },
                         metadata = new
                         {
-                            job=new
+                            job = new
                             {
                                 id = newJob.ID,
                                 PostedDate = DateTime.Now,
                                 CompanyLogo = company.Logo,
                                 CompanyName = company.Name,
 
+                            },
+                            company = new
+                            {
+                                id = company.ID,
+                                name = company.Name?? "",
+                                logo = company.Logo?? "",
                             }
                         }
                     }

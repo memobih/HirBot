@@ -180,7 +180,7 @@ namespace Notification.Services.Implementation
                             if (application != null && application.Job?.Company != null)
                             {
                                 if (dto.Is_read == false)
-                                 unread_count["application"]++;
+                                    unread_count["application"]++;
                                 dto.Metadata["application"] = new
                                 {
                                     application = new
@@ -287,15 +287,16 @@ namespace Notification.Services.Implementation
                     CreationDate = DateTime.UtcNow,
                 };
                 await _context._context.NotificationRecivers.AddAsync(receiver);
-                await _pusher.TriggerNotificationAsync($"{userId}", "new-notification", new
-                {
-                    typ,
-                    referenceId,
-                    notificationId = notification.ID,
-                    id = notification.ID,
-                    notification_id = notification.ID,
-                    data
-                });
+                var flatData = new Dictionary<string, object>
+                        {
+                         { "id", notification.ID },
+                          { "notification_id", notification.ID }
+                                                    };
+                foreach (var prop in data.GetType().GetProperties())
+{
+    flatData[prop.Name] = prop.GetValue(data);
+}
+                await _pusher.TriggerNotificationAsync($"{userId}", "new.notification", flatData);
             }
 
             try
@@ -308,21 +309,21 @@ namespace Notification.Services.Implementation
                 return APIOperationResponse<bool>.ServerError("Error saving notification receivers", new List<string> { ex.Message });
             }
         }
-         #region 
-        private void filter (ref List<NotificationDto> notifications , DateTime? after=null , int limit = 15, bool? isread = null, List<NotificationType> ? type=null , string? search = null)
+        #region 
+        private void filter(ref List<NotificationDto> notifications, DateTime? after = null, int limit = 15, bool? isread = null, List<NotificationType>? type = null, string? search = null)
         {
-            if(after!= null) 
-                notifications=notifications.Where(n=>n.Created_at<after).ToList();
-            if(isread!= null)
-                notifications = notifications.Where(n => n.Is_read ==isread).ToList();
-            if(type!=null)
-                notifications=notifications.Where(n=>type.Contains(n.type.category)).ToList();
-            if(search!=null)
-                notifications=notifications.Where(n=>n.Message.Contains(search)).ToList();
+            if (after != null)
+                notifications = notifications.Where(n => n.Created_at < after).ToList();
+            if (isread != null)
+                notifications = notifications.Where(n => n.Is_read == isread).ToList();
+            if (type != null)
+                notifications = notifications.Where(n => type.Contains(n.type.category)).ToList();
+            if (search != null)
+                notifications = notifications.Where(n => n.Message.Contains(search)).ToList();
             notifications = notifications.OrderByDescending(n => n.Created_at).ToList();
 
         }
-       
+
 
         private List<T> Paginate<T>(List<T> source, int page, int pageSize)
         {
