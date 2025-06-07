@@ -129,37 +129,6 @@ builder.Services.AddAuthentication(option =>
         ValidAudience = configuration["JWT:ValidAudience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
     };
-}).AddOAuth("github", options =>
-{
-    options.ClientId = "Ov23liRDEoQn7AlxrRew";
-    options.ClientSecret = "da71b0cc44bc557fb594ac4235770e396b517d8b";
-    options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
-    options.TokenEndpoint = "https://github.com/login/oauth/access_token";
-    options.CallbackPath = "/oauth/github-cb";
-    options.UserInformationEndpoint = "https://api.github.com/user";
-    options.SignInScheme = IdentityConstants.ExternalScheme;
-
-    options.SaveTokens = true;
-    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
-    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.Events = new OAuthEvents
-    {
-        OnCreatingTicket = async context =>
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", context.AccessToken);
-            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
-            response.EnsureSuccessStatusCode();
-
-            var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-            context.RunClaimActions(user.RootElement);
-        }
-    };
-   
 }).AddCookie("cookie").AddOAuth("google", options =>
 {
     options.ClientId = "203861310590-n513speggmmsla4rhd6jenfp2kbg7f46.apps.googleusercontent.com";
