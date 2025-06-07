@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Exame.Services.DataTransferObjects;
 using Exame.Services.Response;
 using ZstdSharp.Unsafe;
+using Org.BouncyCastle.Cms;
 
 namespace Exame.Services.Implemntation
 {
@@ -71,25 +72,25 @@ namespace Exame.Services.Implemntation
             }
         }
 
-        public async Task<APIOperationResponse<object>> DoExame(int skillId)
+        public async Task<APIOperationResponse<object>> DoExame(UserSkillDto dto)
         {
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var userSkill = _unitOfWork._context.UserSkills.Include(s => s.Skill).Where(s => s.SkillID == skillId && user.Id == s.UserID).FirstOrDefault();
+                var userSkill = _unitOfWork._context.UserSkills.Include(s => s.Skill).Where(s => s.SkillID == dto.skillId && user.Id == s.UserID).FirstOrDefault();
 
                 if (userSkill == null)
                 {
                     userSkill = new UserSkill();
-                    var skill = await _unitOfWork.Skills.GetLastOrDefaultAsync(s => s.ID == skillId);
+                    var skill = await _unitOfWork.Skills.GetLastOrDefaultAsync(s => s.ID == dto.skillId);
                     userSkill.Skill = skill;
-                    userSkill.SkillID = skillId;
+                    userSkill.SkillID = dto.skillId;
                     userSkill.UserID = user.Id;
+                    
                 }
                 else
                     return APIOperationResponse<object>.Conflict("you are do this exame before");
                 //ID Name    Type Points  UserSkillID
-
                 Exam newExam = new
                     Exam
                 {
@@ -177,8 +178,11 @@ namespace Exame.Services.Implemntation
                 var respone = new ExameResponse();
                 respone.name = newExam.Name;
                 respone.skill = userSkill.Skill.Name;
-                respone.level = "immediate";
+                var level = await _unitOfWork.Levels.GetEntityByPropertyWithIncludeAsync(l => l.ID == dto.levelId);
+
+                respone.level = level.Name;
                 respone.id = newExam.ID;
+                
                 foreach (var question in newExam.Questions)
                 {
                     if (question.Options != null)

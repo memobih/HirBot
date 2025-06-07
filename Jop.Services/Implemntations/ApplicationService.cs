@@ -75,7 +75,8 @@ namespace Jop.Services.Implemntations
                 var company = unitOfWork._context.Companies.FirstOrDefault(c => c.UserID == user.Id);
                 if (company == null)
                     return APIOperationResponse<object>.UnOthrized("this user is not a company");
-                var job = await unitOfWork._context.Jobs.
+                var job = await 
+                    unitOfWork._context.Jobs.
                     Include(j => j.Applications)
                     .ThenInclude(a => a.User).ThenInclude(u => u.Portfolio).Include(j=>j.JobRequirments).ThenInclude(j=>j.Skill).FirstOrDefaultAsync(j => j.ID == jobid);
                 if (job == null || company.ID != job.CompanyID)
@@ -272,7 +273,8 @@ namespace Jop.Services.Implemntations
                             await _notificationService.SendNotificationAsync(
                                 $"Your application for the job {application.Job.Title} at {application.Job.Company.Name} has been approved",
                                 NotificationType.Application,
-                                NotficationStatus.accepted,
+                                NotficationStatus.
+                                accepted,
                                 application.ID.ToString(),
                                 new List<string> { application.UserID },
                                 new
@@ -281,7 +283,9 @@ namespace Jop.Services.Implemntations
                                     Created_at = DateTime.Now,
                                     type = new
                                     {
-                                        action = NotficationStatus.approved.ToString().ToLower(),
+                                        action = NotficationStatus.
+                                        
+                                        approved.ToString().ToLower(),
                                         category = "Application",
                                         label = "Application Approved"
                                     },

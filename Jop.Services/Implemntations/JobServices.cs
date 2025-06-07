@@ -226,7 +226,7 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { SkillID=skill.ID , levelID=skill.LevelID,name = skill.Skill.Name, evaluation = skill.Level.Name });
+                                    added.Skills.Add(new Skills { SkillID=skill.SkillID , levelID=skill.LevelID,name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
                             added.ApplicantNumber = 100;
@@ -284,7 +284,7 @@ namespace Jop.Services.Implemntations
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { SkillID = skill.ID, levelID = skill.LevelID, name = skill.Skill.Name, evaluation = skill.Level.Name });
+                                    added.Skills.Add(new Skills { SkillID = skill.SkillID, levelID = skill.LevelID, name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
                             jobs.Add(added);

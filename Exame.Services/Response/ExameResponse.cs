@@ -13,10 +13,10 @@ namespace Exame.services.Response
         public int id { get; set; }
         public List<Questions> Questions { get; set; } = new List<Questions>();
         public int QuestionsNumber { get; set; }
-        public string skill;
-        public string name;
-        public string? icon;
-
+        public string skill { get; set; }
+        public string name {  get; set; }
+        public string? icon {  get; set; }
+        public int duration {  get; set; }
         public string level;
         public int points { get; set; }
     } 

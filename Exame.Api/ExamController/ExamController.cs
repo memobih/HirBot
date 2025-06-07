@@ -22,10 +22,10 @@ namespace Exame.Api.ExamController
             _exameServices = exameServices;
         }
         [Authorize]
-        [HttpGet("{id}/getexame")]
-        public async Task<IActionResult> GetExame(int id , int level )
+        [HttpPost("{id}/getexame")]
+        public async Task<IActionResult> GetExame(UserSkillDto dto )
         {
-            var response=await _exameServices.DoExame(id);
+            var response=await _exameServices.DoExame(dto);
             if(response.StatusCode==200) 
                 return Ok(new {status=true , message=response.Message ,data=response.Data});
             return StatusCode(response.StatusCode , new { status = false, message = response.Message });

@@ -10,7 +10,7 @@ namespace Exame.Services.Interfaces
 {
     public interface IExameService
     {
-        public Task<APIOperationResponse<Object>> DoExame(int skillId);
+        public Task<APIOperationResponse<Object>> DoExame(UserSkillDto dto);
         public Task<APIOperationResponse<object>> GetALLExams(int categoryID);
 
         public Task<APIOperationResponse<object>> CreateExame(ExameDto exame);
