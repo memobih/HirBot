@@ -11,8 +11,15 @@ namespace Moujam.Casiher.Comman.Base
     public class AuditEntity<T> : BaseEntity<T>
     {
         [JsonIgnore]
-        public DateTime CreationDate { get; set; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Arab Standard Time")) :
-            DateTime.UtcNow;
+        public DateTime CreationDate { get; set; } =
+    TimeZoneInfo.ConvertTimeFromUtc(
+        DateTime.UtcNow,
+        TimeZoneInfo.FindSystemTimeZoneById(
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "Egypt Standard Time"
+                : "Africa/Cairo"
+        )
+    );
         [JsonIgnore]
 
         public DateTime? ModificationDate { get; set; }

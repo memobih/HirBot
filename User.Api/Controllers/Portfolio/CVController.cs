@@ -24,9 +24,9 @@ namespace User.Api.Controllers.Portfolio
         [Authorize]
         public async  Task<IActionResult> UpdateCV(FileDto CV)
         {
-            var result=await _cvService.UpdateCv(CV);
-            if (result) return Ok(new { status = true, massage = "the cv updated sucsseful" });
-            else return BadRequest(new { status = false, massage = "there are error accured" });
+            var result=await _cvService.UpdateCv(CV); 
+            if (result.StatusCode==200) return Ok(new { status = true, massage = "the cv updated sucsseful"  , data=result.Data});
+            else return BadRequest(new { status = false, massage =result.Message });
         }
         [HttpDelete("DeleteCV")]
         [Authorize]

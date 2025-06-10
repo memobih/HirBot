@@ -65,12 +65,11 @@ namespace User.Api.Controllers
         public async Task<IActionResult> GoogleCallback()
         {
             var response = await _authenticationService.GoogleCallback();
-
             if (response.StatusCode == 200 && !string.IsNullOrEmpty(response.Data?.RefreshToken))
             {
                 SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
                 string token = response.Data.RefreshToken;
-                var redirectUrl = $"http://localhost:3000/auth/login?token={response.Data.Token}?refreshToken={token}";
+                var redirectUrl = $"http://localhost:3000/auth/login?token={response.Data.Token}&refreshToken={token}";
                 return Redirect(redirectUrl);
             }
 

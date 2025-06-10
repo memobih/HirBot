@@ -15,6 +15,7 @@ namespace User.Services.Interfaces
         public Task<APIOperationResponse<object>> GetProfileWithUserName(string userName);
         public Task<APIOperationResponse<object>> UpdateCurrentJob(int id);
         public Task<APIOperationResponse<object>> DeleteCurrentJob();
+        public  Task<APIOperationResponse<object>> GetCvAync();
 
     }
 }

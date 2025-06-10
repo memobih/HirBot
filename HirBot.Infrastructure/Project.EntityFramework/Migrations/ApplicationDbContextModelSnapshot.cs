@@ -58,8 +58,8 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("ImagePath")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("IsAutoApply")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsAutoApply")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool?>("IsVerified")
                         .HasColumnType("tinyint(1)");
@@ -132,6 +132,9 @@ namespace HirBot.EntityFramework.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsAuto")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("JopID")
                         .HasColumnType("int");
@@ -844,7 +847,7 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("ExamID")
+                    b.Property<int?>("ExamID")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ModificationDate")
@@ -935,11 +938,16 @@ namespace HirBot.EntityFramework.Migrations
                     b.Property<string>("TextAnwer")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("UserID")
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("ID");
 
                     b.HasIndex("OptionID");
 
                     b.HasIndex("QuestionID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("UserAnswers");
                 });
@@ -956,6 +964,9 @@ namespace HirBot.EntityFramework.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("Delete_at")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("ModificationDate")
@@ -1351,9 +1362,7 @@ namespace HirBot.EntityFramework.Migrations
                 {
                     b.HasOne("HirBot.Data.Entities.Exam", "Exam")
                         .WithMany("Questions")
-                        .HasForeignKey("ExamID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ExamID");
 
                     b.Navigation("Exam");
                 });
@@ -1370,9 +1379,15 @@ namespace HirBot.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HirBot.Comman.Idenitity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+
                     b.Navigation("Option");
 
                     b.Navigation("Question");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HirBot.Data.Entities.UserSkill", b =>

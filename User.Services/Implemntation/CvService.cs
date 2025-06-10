@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf;
 using HirBot.Common.Helpers;
 using HirBot.Data.Entities;
+using HirBot.ResponseHandler.Models;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx.Crud;
 using Project.Repository.Repository;
@@ -28,17 +29,16 @@ namespace User.Services.Implemntation
 
         }
 
-        public async Task<bool> UpdateCv(FileDto cv)
+        public async Task<APIOperationResponse<object>> UpdateCv(FileDto cv)
         {
 
             var user = await _authenticationService.GetCurrentUserAsync();
-            if (user == null ) return false;
             user = _unitOfWork._context.users.Include(U => U.Portfolio).First(u => u.Id == user.Id);
             if (user.Portfolio == null) user.Portfolio = new HirBot.Data.Entities.Portfolio();
             if (cv.File !=null && cv.File.Length > 0)
             {
                 string extension = Path.GetExtension(cv.File.FileName);
-                if(extension!=".pdf") return false;
+                if(extension!=".pdf") return APIOperationResponse<object>.BadRequest("cv must be  pdf");
                 try
                 {
                     using var stream = cv.File.OpenReadStream();
@@ -46,14 +46,14 @@ namespace User.Services.Implemntation
                     user.Portfolio.CVUrl = await FileHelper.UpdateFileAsync(stream, user.Portfolio.CVUrl, user.Id + "CV" + extension, "cvs");
                     _unitOfWork._context.users.Update(user);
                     _unitOfWork._context.SaveChanges();
-                    return true;
+                    return APIOperationResponse<object>.Success(new { Cv = user.Portfolio.CVUrl });
                 }
                 catch (Exception ex)
                 {
-                    return false;
+                    return APIOperationResponse<object>.BadRequest("can not uploud cv try ageain");
                 }
             }
-            return false;
+            return APIOperationResponse<object>.BadRequest("cv is required");
         }
         public async Task<bool> DeleteCv()
         {

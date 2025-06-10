@@ -1,5 +1,6 @@
 ﻿using Exame.Services.DataTransferObjects;
 using Exame.Services.Interfaces;
+using MCQGenerationModel.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.X509;
@@ -16,19 +17,36 @@ namespace Exame.Api.ExamController
     [ApiController]
     public  class ExamController : ApiControllerBase
     {
+        private readonly IQuestionGenration _questionGenration;
         private readonly IExameService _exameServices; 
-        public ExamController(IExameService exameServices)
+        public ExamController(IExameService exameServices , IQuestionGenration questionGenration)
         {
             _exameServices = exameServices;
+            _questionGenration = questionGenration;
         }
         [Authorize]
-        [HttpPost("{id}/getexame")]
-        public async Task<IActionResult> GetExame(UserSkillDto dto )
+        [HttpPost("skill/create")]
+        public async Task<IActionResult> startExame(UserSkillDto dto )
         {
             var response=await _exameServices.DoExame(dto);
             if(response.StatusCode==200) 
                 return Ok(new {status=true , message=response.Message ,data=response.Data});
             return StatusCode(response.StatusCode , new { status = false, message = response.Message });
+        }
+        [HttpGet("testgeneration")]
+        public async Task<IActionResult> GetExameForUserSkill(int id , int tm)
+        {
+            var response = await _questionGenration.GenerateQuestionsAsync("generate software engineer question", id, "easy");
+            return Ok(response);
+        }
+        [Authorize]
+        [HttpGet("{id}/getexame")]
+        public async Task<IActionResult> GetExameForUserSkill(int id)
+        {
+            var response = await _exameServices.GetExameByid(id);
+            if (response.StatusCode == 200)
+                return Ok(new { status = true, message = response.Message, data = response.Data });
+            return StatusCode(response.StatusCode, new { status = false, message = response.Message, data = response.Data });
         }
         [Authorize]
         [HttpPost("{id}/finishExame")]

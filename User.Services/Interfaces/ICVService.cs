@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Bcpg.Attr;
+﻿using HirBot.ResponseHandler.Models;
+using Org.BouncyCastle.Bcpg.Attr;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace User.Services.Interfaces
 {
     public  interface ICVService
     {
-        public Task<bool> UpdateCv(FileDto cv);
+        public Task<APIOperationResponse<object>> UpdateCv(FileDto cv);
         public Task<bool> DeleteCv();
 
     }

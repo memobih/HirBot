@@ -23,7 +23,8 @@ namespace Exame.Services.Interfaces
 
         public Task<APIOperationResponse<object>> FinishInterviewExame(int id, List<AnswerDto> answers);
         public Task<APIOperationResponse<object>> FinishSkillExame(int id, List<AnswerDto> answers);
-        public Task<object> GetExamForinterview(int examid);
+        public Task<object> GetExamForinterview(int examid); 
+        public Task<APIOperationResponse<object>> GetExameByid(int exameID);
 
     }
 

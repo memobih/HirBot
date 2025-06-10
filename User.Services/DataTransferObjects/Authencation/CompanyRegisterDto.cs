@@ -64,8 +64,10 @@ namespace User.Services.DataTransferObjects.Authencation
 
         public string? websiteURL { get; set; }
 
-        public string? SocialMediaLink { get; set; }
-
+        public string? FacebookLink { get; set; }
+        public string? TikTokLink { get; set; }
+        public string? InstgrameLink { get; set; }
+        public string? TwitterLink { get; set; }
         public string? AdditionalInformation { get; set; }
 
         public IFormFile? BusinessLicense { get; set; }

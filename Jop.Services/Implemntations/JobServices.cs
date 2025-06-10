@@ -337,6 +337,14 @@ namespace Jop.Services.Implemntations
                 var JobCompany = await unitOfWork.Companies.GetEntityByPropertyWithIncludeAsync(c => c.ID == job.CompanyID,c=>c.account );
                 response.Company.name = JobCompany.account.FullName;
                 response.Company.logo = JobCompany.account.ImagePath;
+                response.Company.CompanyType = JobCompany.CompanyType;
+                response.Company.location = JobCompany.street + "/" + JobCompany.Governate + "/" + JobCompany.country;
+                var application = unitOfWork._context.Applications.FirstOrDefault(a => a.UserID == user.Id && a.JopID == job.ID);
+                if (application!=null)
+                    response.IsApplied = true;
+                else response.IsApplied = false;
+               
+                
                 if (job.JobRequirments != null)
                 {
                     response.requiremnts = new List<Requiremnts>();

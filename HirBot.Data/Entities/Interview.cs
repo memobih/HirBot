@@ -32,7 +32,7 @@ namespace HirBot.Data.Entities
         public List<string> Notes { get; set; } = new List<string>();
         public string? ZoomMeetinLink { get; set; }
         public string? InterviewerName { get; set; } 
-        public DateTime? TechStartTime { get; set; }
+        public DateTime?TechStartTime { get; set; }
         
     }
 }

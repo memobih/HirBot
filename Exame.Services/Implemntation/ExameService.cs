@@ -17,6 +17,11 @@ using Exame.Services.DataTransferObjects;
 using Exame.Services.Response;
 using ZstdSharp.Unsafe;
 using Org.BouncyCastle.Cms;
+using HirBot.Comman.Idenitity;
+using System.Runtime.InteropServices;
+using MCQGenerationModel.Interfaces;
+using Google.Protobuf.WellKnownTypes;
+using Option = HirBot.Data.Entities.Option;
 
 namespace Exame.Services.Implemntation
 {
@@ -24,11 +29,13 @@ namespace Exame.Services.Implemntation
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly UnitOfWork _unitOfWork;
-        public ExameService(IAuthenticationService authenticationService, UnitOfWork unitOfWork)
+        private readonly IQuestionGenration _questionGenration;
+        public ExameService(IAuthenticationService authenticationService, UnitOfWork unitOfWork, IQuestionGenration questionGenration)
         {
             _authenticationService = authenticationService;
 
             _unitOfWork = unitOfWork;
+            _questionGenration = questionGenration;
 
         }
 
@@ -77,19 +84,26 @@ namespace Exame.Services.Implemntation
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var userSkill = _unitOfWork._context.UserSkills.Include(s => s.Skill).Where(s => s.SkillID == dto.skillId && user.Id == s.UserID).FirstOrDefault();
+                var skill = await _unitOfWork.Skills.GetEntityByPropertyWithIncludeAsync(s => s.ID == dto.skillId);
 
+                var userSkill = _unitOfWork._context.UserSkills.Include(s => s.Skill).Where(s => s.SkillID == dto.skillId && user.Id == s.UserID).FirstOrDefault();
+                var level = await _unitOfWork.Levels.GetEntityByPropertyWithIncludeAsync(l => l.ID == dto.levelId);
+                var levels = await _unitOfWork.Levels.GetAllAsync();
+                if (level == null)
+                    return APIOperationResponse<Object>.NotFound("this level is not found");
+                if (skill == null)
+                    return APIOperationResponse<Object>.NotFound("this skill is not found");
                 if (userSkill == null)
                 {
                     userSkill = new UserSkill();
-                    var skill = await _unitOfWork.Skills.GetLastOrDefaultAsync(s => s.ID == dto.skillId);
                     userSkill.Skill = skill;
                     userSkill.SkillID = dto.skillId;
                     userSkill.UserID = user.Id;
-                    
+
                 }
-                else
-                    return APIOperationResponse<object>.Conflict("you are do this exame before");
+                else if (userSkill.Delete_at != null)
+                    return APIOperationResponse<object>.BadRequest("you need to restore this skill");
+                else return APIOperationResponse<object>.Conflict("you add this skilll before");
                 //ID Name    Type Points  UserSkillID
                 Exam newExam = new
                     Exam
@@ -97,114 +111,27 @@ namespace Exame.Services.Implemntation
                     UserSkill = userSkill,
                     Points = 0,
                     Type = ExamType.Exame,
-                    Name = "exame for" + userSkill.Skill.Name,
+                    duration=10,
+                    Name = "exame  for  " + userSkill.Skill.Name,
+
 
                 };
-                //ID ExamID  Content points  QuestionType
-                List<Question> Questions = new List<Question>();
-                //ID content IsCorrect QuestionID
-                Questions.Add(new Question
-                {
-                    ExamID = newExam.ID,
-                    Content = "Which of the following is the correct way to declare a variable in C#?",
-                    Points = 10,
-                    QuestionType = QuestionType.MCQ,
-                    Options = new List<Option> {
-        new Option { option = "int x = 10;", IsCorrect = true },
-        new Option { option = "x = 10;", IsCorrect = false },
-        new Option { option = "int x; x == 10;", IsCorrect = false },
-        new Option { option = "integer x = 10;", IsCorrect = false }
-    }
-                });
-
-                Questions.Add(new Question
-                {
-                    ExamID = newExam.ID,
-                    Content = "What is the default access modifier for a class in C#?",
-                    Points = 10,
-                    QuestionType = QuestionType.MCQ,
-                    Options = new List<Option> {
-        new Option { option = "private", IsCorrect = false },
-        new Option { option = "protected", IsCorrect = false },
-        new Option { option = "internal", IsCorrect = true },
-        new Option { option = "public", IsCorrect = false }
-    }
-                });
-
-                Questions.Add(new Question
-                {
-                    ExamID = newExam.ID,
-                    Content = "Which keyword is used to define a method that does not return a value in C#?",
-                    Points = 10,
-                    QuestionType = QuestionType.MCQ,
-                    Options = new List<Option> {
-        new Option { option = "void", IsCorrect = true },
-        new Option { option = "null", IsCorrect = false },
-        new Option { option = "return", IsCorrect = false },
-        new Option { option = "empty", IsCorrect = false }
-    }
-                });
-
-                Questions.Add(new Question
-                {
-                    ExamID = newExam.ID,
-                    Content = "Which of the following is NOT a valid data type in C#?",
-                    Points = 10,
-                    QuestionType = QuestionType.MCQ,
-                    Options = new List<Option> {
-        new Option { option = "int", IsCorrect = false },
-        new Option { option = "float", IsCorrect = false },
-        new Option { option = "real", IsCorrect = true },
-        new Option { option = "decimal", IsCorrect = false }
-    }
-                });
-
-                Questions.Add(new Question
-                {
-                    ExamID = newExam.ID,
-                    Content = "Which of the following statements about C# arrays is true?",
-                    Points = 10,
-                    QuestionType = QuestionType.MCQ,
-                    Options = new List<Option> {
-        new Option { option = "Arrays in C# are fixed-size", IsCorrect = true },
-        new Option { option = "Arrays can only store integers", IsCorrect = false },
-        new Option { option = "Arrays are allocated on the stack", IsCorrect = false },
-        new Option { option = "Arrays cannot have null values", IsCorrect = false }
-    }
-                });
-                newExam.Questions = Questions;
-                _unitOfWork._context.Exams.Add(newExam);
-                await _unitOfWork.SaveAsync();
-                var respone = new ExameResponse();
-                respone.name = newExam.Name;
-                respone.skill = userSkill.Skill.Name;
-                var level = await _unitOfWork.Levels.GetEntityByPropertyWithIncludeAsync(l => l.ID == dto.levelId);
-
-                respone.level = level.Name;
-                respone.id = newExam.ID;
-                
-                foreach (var question in newExam.Questions)
-                {
-                    if (question.Options != null)
-                    {
-                        var ques = new Questions();
-                        ques.question = question.Content;
-                        ques.id = question.ID;
-                        respone.QuestionsNumber += 1;
-                        respone.points += question.Points;
-                        foreach (var option in question.Options)
-                        {
-                            ques.options.Add(new services.Response.Options { id = option.ID, option = option.option });
-                        }
-                        respone.Questions.Add(ques);
-                    }
-
+                int questionNUmber = 5;
+                int points = 0;
+                foreach (var l in levels) {
+                    questionNUmber += 3;
+                    points = (l.min + l.max) / 2;
+                    if (l.ID == level.ID) break;
                 }
-                return APIOperationResponse<Object>.Success(respone, "the exame");
+                points += points % questionNUmber;  
+                newExam.Questions =await _questionGenration.GenerateQuestionsAsync("generate" + skill.Name + "question " , questionNUmber , "easy");
+                _unitOfWork._context.Exams.Add(newExam);
+                _unitOfWork._context.SaveChanges();
+                return APIOperationResponse<object>.Success(new { examId = newExam.ID }, "the exame");
             }
             catch (Exception e)
             {
-                return APIOperationResponse<Object>.ServerError("there are error accured");
+                return APIOperationResponse<Object>.ServerError(e.Message);
             }
         }
 
@@ -247,14 +174,31 @@ namespace Exame.Services.Implemntation
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
+                answers = answers.DistinctBy(a => a.questionId).ToList();
                 var exam = _unitOfWork._context.Exams.Include(e => e.Questions).Where(e => e.ID == id).FirstOrDefault();
                 if (exam == null || exam.Type != ExamType.Interview)
                     return APIOperationResponse<Object>.NotFound("this exame is not found");
-                var interviews = _unitOfWork._context.Interviews.Include(a => a.Application).Where(i => i.ExamID == exam.ID).ToList();
-                var interview = interviews.Where(e => e.Application.UserID == user.Id).FirstOrDefault();
-                if (interview == null)
+                var interview = _unitOfWork._context.Interviews.Include(a => a.Application).Where(i => i.ExamID == exam.ID && i.Application.UserID == user.Id).FirstOrDefault();
+                if (interview == null || interview.TechStartTime==null)
                     return APIOperationResponse<Object>.NotFound("this exame is not found");
-
+                if (interview.TechStartTime.HasValue)
+                {
+                    var endTime = interview.TechStartTime.Value.AddMinutes(exam.duration+1);
+                         DateTime now=
+TimeZoneInfo.ConvertTimeFromUtc(
+    DateTime.UtcNow,
+    TimeZoneInfo.FindSystemTimeZoneById(
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "Egypt Standard Time"
+            : "Africa/Cairo"
+    )
+);
+                    if (now > endTime)
+                    {
+                        return APIOperationResponse<Object>.BadRequest("time is expired");
+                    }
+                 
+                }
                 var response = new ResultResponse();
                 foreach (var answer in answers)
                 {
@@ -265,11 +209,10 @@ namespace Exame.Services.Implemntation
                         UserAnwer userAnswer = new UserAnwer();
                         userAnswer.QuestionID = question.ID;
                         userAnswer.OptionID = question.ID;
-                        if (option.QuestionID == question.ID && option.IsCorrect == true)
+                        if (option.QuestionID == question.ID && option.IsCorrect == true && question.ExamID== interview.ExamID)
                         {
                             response.CorrectQuestion += 1;
-                            userAnswer.Point += question.Points;
-
+                            userAnswer.Point += 1;
                         }
                         _unitOfWork._context.UserAnswers.Add(userAnswer);
                     }
@@ -292,32 +235,53 @@ namespace Exame.Services.Implemntation
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var exam = _unitOfWork._context.Exams.Include(e => e.Questions).Include(e => e.UserSkill).ThenInclude(e => e.Skill).Where(e => e.ID == id).FirstOrDefault();
-
+                answers = answers.DistinctBy(a => a.questionId).ToList();
                 if (exam == null || exam.UserSkill.UserID != user.Id)
                     return APIOperationResponse<Object>.NotFound("this exame is not found");
+                DateTime Now =
+   TimeZoneInfo.ConvertTimeFromUtc(
+       DateTime.UtcNow,
+       TimeZoneInfo.FindSystemTimeZoneById(
+           RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+               ? "Egypt Standard Time"
+               : "Africa/Cairo"
+       )
+   );
+
+                //if (exam.CreationDate.AddMinutes(exam.duration + 1) < Now || exam.IsAnswerd)
+                //{
+                //    return APIOperationResponse<Object>.BadRequest("the exame is end");
+                //}
                 var response = new ResultResponse();
+                int points = 0;
+                response.TotalQuestion = exam.Questions.Count();
+
                 foreach (var answer in answers)
                 {
                     var question = _unitOfWork._context.Questions.FirstOrDefault(q => q.ID == answer.questionId);
                     var option = _unitOfWork._context.Options.FirstOrDefault(q => q.ID == answer.optionId);
+
+                    var userAnswer=new UserAnwer();
                     if (option != null && question != null)
                     {
                         if (option.QuestionID == question.ID && option.IsCorrect == true)
                         {
-                            exam.Points += question.Points;
+                            points+= (exam.Points/response.TotalQuestion);
                             response.CorrectQuestion += 1;
+                            userAnswer.QuestionID=question.ID;
+                            userAnswer.OptionID=option.ID;
+                            userAnswer.UserID = user.Id; 
+                            _unitOfWork._context.UserAnswers.Add( userAnswer );
                         }
                     }
 
                 }
                 exam.IsAnswerd = true;
-                exam.UserSkill.Rate += exam.Points;
-                response.TotalQuestion = exam.Questions.Count();
+                exam.UserSkill.Rate += points;
                 response.skill = exam.UserSkill.Skill.Name;
                 _unitOfWork._context.Exams.Update(exam);
                 await _unitOfWork.SaveAsync();
                 return APIOperationResponse<Object>.Success(response);
-
             }
             catch (Exception ex)
             {
@@ -385,11 +349,10 @@ namespace Exame.Services.Implemntation
         public async Task<object> GetExamForinterview(int examid)
         {
             var user = await _authenticationService.GetCurrentUserAsync();
-            var exam = _unitOfWork._context.Exams.Include(e => e.Questions).ThenInclude(q => q.Options).Where(e => e.ID == examid && e.Type == ExamType.Interview ).FirstOrDefault();
+            var exam = _unitOfWork._context.Exams.Include(e => e.Questions).ThenInclude(q => q.Options).Where(e => e.ID == examid && e.Type == ExamType.Interview && e.CreatedBy==user.Id).FirstOrDefault();
             if (exam == null)
                 return null;
             var response = new InterviewExameResponse();
-
             foreach (var question in exam.Questions)
             {
 
@@ -402,6 +365,151 @@ namespace Exame.Services.Implemntation
                 response.Questions.Add(addquestion);
             }
             return response;
+        }
+
+        public async Task<APIOperationResponse<object>> GetExameByid(int exameID)
+        {
+          try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var Exam=_unitOfWork._context.Exams.Where(e=>e.ID==exameID).FirstOrDefault();
+
+                if(Exam==null)
+                    return APIOperationResponse<object>.NotFound("this exme is not found ");
+                if (Exam.Type == ExamType.Exame)
+                 return   GetSkillExame(Exam , user);
+                else if (Exam.Type == ExamType.Interview)
+               return GetInterviewExame(Exam , user);
+
+            return APIOperationResponse<object>.NotFound("this exme is not found ");
+
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured"); 
+            }
+        } 
+        private  APIOperationResponse<object> GetInterviewExame(Exam exame , ApplicationUser user)
+        {
+
+            try
+            {
+                var interview = _unitOfWork._context.Interviews.Include(i => i.Application).ThenInclude(a => a.Job).ThenInclude(j => j.Company).ThenInclude(c => c.account).Where(i => i.ExamID == exame.ID && i.Application.UserID == user.Id).FirstOrDefault();
+                if (interview == null)
+                    return APIOperationResponse<object>.NotFound("this exme is not found ");
+                DateTime CreationDate =
+TimeZoneInfo.ConvertTimeFromUtc(
+ DateTime.UtcNow,
+ TimeZoneInfo.FindSystemTimeZoneById(
+     RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+         ? "Egypt Standard Time"
+         : "Africa/Cairo"
+ )
+);
+                if (interview.TechStartTime == null || interview.TechStartTime>CreationDate)
+                {
+                    return APIOperationResponse<object>.CreateResponse(
+                        Project.ResponseHandler.Consts.ResponseType.BadRequest,
+                        message: "the start date is not now ",
+                        errors:null
+                         ,
+                        data: new {
+                            startTime = interview.TechStartTime              ,
+                            currentTime= CreationDate
+                        }
+                         );
+                }
+                var respone = new ExameResponse();
+                exame.Questions = _unitOfWork._context.Questions.Include(q=>q.Options).Where(q => q.ExamID == exame.ID).ToList();
+                respone.name = exame.Name;
+               respone.id = exame.ID;
+                respone.icon = interview.Application.Job.Company.account.ImagePath;
+          
+                foreach (var question in exame.Questions)
+                {
+                    if (question.Options != null)
+                    {
+                        var ques = new Questions();
+                        ques.question = question.Content;
+                        ques.id = question.ID;
+                        respone.QuestionsNumber += 1;
+                        respone.points += question.Points;
+                        foreach (var option in question.Options)
+                        {
+                            ques.options.Add(new services.Response.Options { id = option.ID, option = option.option });
+                        }
+                        respone.Questions.Add(ques);
+                    }
+
+                }
+                respone.startTime = interview.TechStartTime;
+                return APIOperationResponse<object>.Success(new
+                {
+                    id = exame.ID,
+
+                    startTime = respone.startTime,
+
+                    respone.Questions,
+                    respone.QuestionsNumber,
+                    respone.name,
+                    respone.duration,
+                    respone.points,
+                    respone.currentTime,
+                    jobTitle = interview.Application.Job.Title,
+                    companyLogo= respone.icon,
+                    companyName = interview.Application.Job.Company.account.FullName,
+                    jobDescription = interview.Application.Job.Description,
+                }, "the exame");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured ");
+            }
+
+   
+        }
+        private  APIOperationResponse<object> GetSkillExame(Exam exame , ApplicationUser user)
+        {
+            try
+            {
+                var newExam = _unitOfWork._context.Exams.Include(e => e.UserSkill).
+              ThenInclude(e => e.Skill).Include(e => e.Questions)
+              .ThenInclude(q => q.Options)
+             .Where(e => e.ID == exame.ID && user.Id == e.UserSkill.UserID).
+              FirstOrDefault();
+                var respone = new ExameResponse();
+                respone.name = newExam.Name;
+                respone.duration = newExam.duration;
+                respone.id = newExam.ID;
+                respone.skill.name = newExam.UserSkill.Skill.Name;
+                respone.skill.id = newExam.UserSkill.Skill.ID;
+                respone.skill.logo = newExam.UserSkill.Skill.ImagePath;
+                foreach (var question in newExam.Questions)
+                {
+                    if (question.Options != null)
+                    {
+                        var ques = new Questions();
+                        ques.question = question.Content;
+                        ques.id = question.ID;
+                        respone.QuestionsNumber += 1;
+                        respone.points += question.Points;
+                        foreach (var option in question.Options)
+                        {
+                            ques.options.Add(new services.Response.Options { id = option.ID, option = option.option });
+                        }
+                        respone.Questions.Add(ques);
+                    }
+
+                }
+                respone.startTime = newExam.CreationDate;
+
+                return APIOperationResponse<object>.Success(respone, "the exame");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured ");
+
+            }
         }
     }
 }

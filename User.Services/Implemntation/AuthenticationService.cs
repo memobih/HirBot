@@ -29,6 +29,7 @@ using System.IO;
 using Microsoft.VisualBasic;
 using HirBot.Common.Helpers;
 using static System.Net.Mime.MediaTypeNames;
+using System.Runtime.InteropServices;
 
 namespace User.Services.Implemntation
 {
@@ -76,7 +77,7 @@ namespace User.Services.Implemntation
                     return APIOperationResponse<AuthModel>.BadRequest(message: "Failed to register the  user. Please check the provided details.", errors);
                 }
                 var otp = GenerateOtp();
-                newUser.VerificationCode = int.Parse(otp);   
+                newUser.VerificationCode = int.Parse(otp); 
                 newUser.Code_Send_at=DateTime.UtcNow.AddMinutes(5);
                 try
                 {
@@ -219,7 +220,12 @@ namespace User.Services.Implemntation
                 newCompany.UserID = newUser.Id;
                 newUser.FullName = companyRegisterDto.CompanyName;
                 newCompany.Name = companyRegisterDto.CompanyName;
-                await _unitOfWork.Companies.AddAsync(newCompany);
+                newCompany.FacebookLink = companyRegisterDto.FacebookLink;
+                newCompany.TikTokLink = companyRegisterDto.TikTokLink;
+                newCompany.InstgrameLink = companyRegisterDto.InstgrameLink;
+                newCompany.TwitterLink = companyRegisterDto.TwitterLink;
+      
+        await _unitOfWork.Companies.AddAsync(newCompany);
                 //newUser.CompanyID = newCompany.ID; 
                  //await _userManager.AddToRoleAsync(newUser, "Company");
                 await _unitOfWork.SaveAsync();
@@ -447,9 +453,19 @@ namespace User.Services.Implemntation
                         new Claim ("username" , user.UserName) , 
                         new Claim ("email",user.Email) , 
                     };
-         
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+              DateTime CreationDate=
+    TimeZoneInfo.ConvertTimeFromUtc(
+        DateTime.UtcNow,
+        TimeZoneInfo.FindSystemTimeZoneById(
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "Egypt Standard Time"
+                : "Africa/Cairo"
+        )
+    );
+            CreationDate= CreationDate.AddHours(2);
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
 
@@ -457,7 +473,7 @@ namespace User.Services.Implemntation
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: CreationDate,
                 signingCredentials: signingCredentials
                 );
 
@@ -472,13 +488,22 @@ namespace User.Services.Implemntation
              var generator = new RNGCryptoServiceProvider();
 
             generator.GetBytes(randomNumber);
-
+                 DateTime CreationDate =
+TimeZoneInfo.ConvertTimeFromUtc(
+    DateTime.UtcNow,
+    TimeZoneInfo.FindSystemTimeZoneById(
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "Egypt Standard Time"
+            : "Africa/Cairo"
+    )
+);
+            
 
             return new RefreshToken
             {
                 token = Convert.ToBase64String(randomNumber),
-                expirationOn = DateTime.UtcNow.AddDays(10),
-                CreatedOn = DateTime.UtcNow
+                expirationOn = CreationDate.AddDays(10),
+                CreatedOn = CreationDate
             };
         }
         public async Task<APIOperationResponse<AuthModel>> RefreshTokenAsync(string token)
@@ -614,17 +639,22 @@ namespace User.Services.Implemntation
                     var identityResult = await _userManager.CreateAsync(user, GenerateRefreshToken().token);
                     if (!identityResult.Succeeded)
                         return APIOperationResponse<AuthModel>.BadRequest("Google login failed");
-
                     await _userManager.AddLoginAsync(user, info);
                     string token = await GenerateJwtTokenAsync(user);
                     var RefreshToken = GenerateRefreshToken();
                     user.refreshTokens?.Add(RefreshToken);
                     await _userManager.UpdateAsync(user);
                     return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, RefreshToken = RefreshToken.token, Email = email, Username = signing.UserName });
+
                 }
                 else
                 {
-                    return APIOperationResponse<AuthModel>.Conflict("email is already register");
+                    await _userManager.AddLoginAsync(user, info);
+                    string token = await GenerateJwtTokenAsync(user);
+                    var RefreshToken = GenerateRefreshToken();
+                    user.refreshTokens?.Add(RefreshToken);
+                    await _userManager.UpdateAsync(user);
+                    return APIOperationResponse<AuthModel>.Success(new AuthModel { Token = token, RefreshToken = RefreshToken.token, Email = email, Username = signing.UserName });
 
                 }
             }

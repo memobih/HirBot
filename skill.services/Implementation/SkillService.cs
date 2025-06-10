@@ -198,6 +198,47 @@ namespace skill.services.Implementation
                     Succeeded = false
                 });
             }
+
+        }
+        public async Task<APIOperationResponse<object>> DeleteUserSkill(int id)
+        {
+            try
+
+            {
+                var user =await _authenticationService.GetCurrentUserAsync();
+
+                var userSkill = _unitOfWork._context.UserSkills.Where(x => x.ID == id && x.UserID==user.Id).FirstOrDefault();
+                if (userSkill == null)
+                    return APIOperationResponse<object>.NotFound("this user skill is not found ");
+              userSkill.Delete_at=DateTime.Now;
+                _unitOfWork._context.Update(userSkill);
+               await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("this user skill is deleted succsful");
+            }
+            catch (Exception e)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
+        }
+        public async Task<APIOperationResponse<object>> RestoreUserSkill(int id)
+        {
+            try
+
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+
+                var userSkill = _unitOfWork._context.UserSkills.Where(x => x.ID == id && x.UserID == user.Id).FirstOrDefault();
+                if (userSkill == null)
+                    return APIOperationResponse<object>.NotFound("this user skill is not found ");
+                userSkill.Delete_at = null;
+                _unitOfWork._context.Update(userSkill);
+                await _unitOfWork.SaveAsync();
+                return APIOperationResponse<object>.Success("this user skill is deleted succsful");
+            }
+            catch (Exception e)
+            {
+                return APIOperationResponse<object>.ServerError("there are error accured");
+            }
         }
         public Task<APIOperationResponse<GettingAllSkillsDto>> GetSkill(int id)
         {
@@ -322,16 +363,35 @@ namespace skill.services.Implementation
             try
             {
                 var user = await _authenticationService.GetCurrentUserAsync();
-                var userSkill = _unitOfWork._context.UserSkills.Include(s=>s.Skill).Where(s => s.UserID == user.Id).ToList();
+                var userSkill = _unitOfWork._context.UserSkills.Include(s=>s.Skill).Where(s => s.UserID == user.Id &&s.Delete_at==null).ToList();
                 var response = new List<UserSkillResponse>();
                 foreach (var skill in userSkill)
                 {
-                    response.Add(new UserSkillResponse { skill = skill.Skill.Name, points = skill.Rate, level = "Basic"   ,logo=skill.Skill.ImagePath});
+                    response.Add(new UserSkillResponse { id=skill.ID , skill = skill.Skill.Name, points = skill.Rate, level = "Basic", logo = skill.Skill.ImagePath });
                 }
-                
-
-                    return APIOperationResponse<Object>.Success(response);
+                return APIOperationResponse<Object>.Success(response);
             
+            }
+            catch (Exception e)
+            {
+                return APIOperationResponse<Object>.ServerError("there are error accured");
+            }
+        }
+        public async Task<APIOperationResponse<object>> GetDeletedUserSkill()
+        {
+            try
+            {
+                var user = await _authenticationService.GetCurrentUserAsync();
+                var userSkill = _unitOfWork._context.UserSkills.Include(s => s.Skill).Where(s => s.UserID == user.Id && s.Delete_at!=null).ToList();
+                var response = new List<UserSkillResponse>();
+                foreach (var skill in userSkill)
+                {
+                    response.Add(new UserSkillResponse { id=skill.ID, skill = skill.Skill.Name, points = skill.Rate, level ="Basic", logo = skill.Skill.ImagePath });
+                }
+
+
+                return APIOperationResponse<Object>.Success(response);
+
             }
             catch (Exception e)
             {

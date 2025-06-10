@@ -84,7 +84,20 @@ namespace User.Services.Implemntation
                 return APIOperationResponse<ProfileDto>.ServerError("ther are error accured ");
             }
         }
-
+        public async Task<APIOperationResponse<object>> GetCvAync()
+        {
+            try
+            {
+                var user = await authenticationService.GetCurrentUserAsync();
+                user = await _unitOfWork._context.users.Include(U => U.Portfolio).FirstOrDefaultAsync(u => u.Id == user.Id);
+                if(user.Portfolio==null) user.Portfolio=new Portfolio();
+                return APIOperationResponse<object>.Success(new { Cv=user.Portfolio.CVUrl });
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError("ther are error accured ");
+            }
+        }
 
         public async Task<APIOperationResponse<object>> GetProfileWithUserName(string userName)
         {

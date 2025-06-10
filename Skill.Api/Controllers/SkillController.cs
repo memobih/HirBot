@@ -124,6 +124,37 @@ namespace skill.api.Controllers
         #endregion
 
         #region BY User 
+        [HttpGet("GetDeletedUserSkills")]
+        [Authorize]
+        public async Task<IActionResult> GetDeletedUserSkills()
+        {
+            var result = await _skillService.GetDeletedUserSkill();
+            if (result.StatusCode == 200)
+                return Ok(new { status = true, result.Data, result.Message });
+
+            return StatusCode(result.StatusCode, new { status = false, result.Message });
+        }
+        [HttpPut("RestoreUserSkill/{id}")]
+        [Authorize]
+        public async Task<IActionResult> RestoreUserSkill(int id)
+        {
+            var result = await _skillService.RestoreUserSkill(id);
+            if (result.StatusCode == 200)
+                return Ok(new { status = true, result.Message });
+
+            return StatusCode(result.StatusCode, new { status = false, result.Message });
+        }
+        [HttpDelete("DeleteUserSkill/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteUserSkill(int id)
+        {
+            var result = await _skillService.DeleteUserSkill(id);
+            if (result.StatusCode == 200)
+                return Ok(new { status = true, result.Message });
+
+            return StatusCode(result.StatusCode, new { status = false, result.Message });
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllSkillsFORUser()
         { 

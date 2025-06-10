@@ -16,5 +16,11 @@ namespace skill.services.Interfaces
         public Task<APIOperationResponse<object>> AddSkill(int id); 
 
         public Task<APIOperationResponse<object>> GetUserSkill();
+        public  Task<APIOperationResponse<object>> GetDeletedUserSkill();
+        public  Task<APIOperationResponse<object>> RestoreUserSkill(int id);
+        public Task<APIOperationResponse<object>> DeleteUserSkill(int id);
+
+
+
     }
 }

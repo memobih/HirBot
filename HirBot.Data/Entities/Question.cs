@@ -16,13 +16,13 @@ namespace HirBot.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         [ForeignKey("Exam")]
-       public int ExamID { get; set; }
+       public int  ? ExamID { get; set; }
         public string Content { get; set; }
         public int Points { get; set; }
 
         public QuestionType QuestionType { get; set; }
 
-        public virtual Exam  Exam { get; set; } 
+        public virtual Exam    Exam { get; set; } 
         public List<Option>  Options { get; set; } = new List<Option>();
         public List<UserAnwer> ? UserAnwers { get; set; }= new List<UserAnwer>();
     }

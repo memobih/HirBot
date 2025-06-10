@@ -35,6 +35,7 @@ namespace Jop.Services.Responses
             public string? logo { get; set; }
             public string name { get; set; }
            public  string ?  location { get; set; }
+        public string ? CompanyType { get; set; }
         }
     }
 

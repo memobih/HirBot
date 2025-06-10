@@ -26,5 +26,6 @@ namespace HirBot.Data.Entities
         public virtual Skill   Skill { get; set; }
         public virtual ApplicationUser   User { get; set; } 
         public virtual ICollection<Exam>  ? Exams { get; set; }
+        public DateTime  ? Delete_at { get; set; }
     }
 }

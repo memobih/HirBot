@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HirBot.Infrastructure\Project.EntityFramework\HirBot.EntityFramework.csproj" />
+    <ProjectReference Include="..\HirBot.Infrastructure\Project.Repository\HireBot.Repository.csproj" />
+  </ItemGroup>
+
+</Project>

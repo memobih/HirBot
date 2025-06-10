@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="DataTransferObjects\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HirBot.Data\HirBot.Data.csproj" />
+    <ProjectReference Include="..\HirBot.Infrastructure\Project.Repository\HireBot.Repository.csproj" />
+    <ProjectReference Include="..\Jop.Services\Jop.Services.csproj" />
+    <ProjectReference Include="..\Project.ResponseHandler\HirBot.ResponseHandler.csproj" />
+    <ProjectReference Include="..\User.Services\User.Services.csproj" />
+  </ItemGroup>
+
+</Project>
