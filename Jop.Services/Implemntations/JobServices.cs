@@ -101,8 +101,10 @@ namespace Jop.Services.Implemntations
                             company = new
                             {
                                 id = company.ID,
-                                name = company.Name?? "",
-                                logo = company.Logo?? "",
+                                name = company.Name ?? "",
+                                logo = company.Logo ?? "",
+                                email = user.Email ?? "",
+                                username = user.UserName
                             }
                         }
                     }
@@ -203,11 +205,13 @@ namespace Jop.Services.Implemntations
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this company is not accepted yet");
                 List<JobListResponse> jobs = new List<JobListResponse>();
+            
                 if (company.jobs != null)
                     foreach (var jop in company.jobs)
                     {
                         if (jop.status != JobStatus.drafted)
                         {
+                            var countapplications = await unitOfWork._context.Applications.CountAsync(a => a.JopID == jop.ID && a.status != ApplicationStatus.rejected);
                             var added = new JobListResponse
                             {
                                 Description = jop.Description,
@@ -219,17 +223,17 @@ namespace Jop.Services.Implemntations
                                 status = jop.status,
                                 Title = jop.Title,
                                 created_at = jop.CreationDate,
-                                LocationType = jop.LocationType
+                                LocationType = jop.LocationType,
                             };
                             if (jop.JobRequirments != null)
                             {
                                 added.Skills = new List<Skills>();
                                 foreach (var skill in jop.JobRequirments)
                                 {
-                                    added.Skills.Add(new Skills { SkillID=skill.ID , levelID=skill.LevelID,name = skill.Skill.Name, evaluation = skill.Level.Name });
+                                    added.Skills.Add(new Skills { SkillID = skill.ID, levelID = skill.LevelID, name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
-                            added.ApplicantNumber = 100;
+                            added.ApplicantNumber = countapplications;
                             jobs.Add(added);
                         }
                     }

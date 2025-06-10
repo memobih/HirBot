@@ -272,7 +272,7 @@ namespace Jop.Services.Implemntations
                             await _notificationService.SendNotificationAsync(
                                 $"Your application for the job {application.Job.Title} at {application.Job.Company.Name} has been approved",
                                 NotificationType.Application,
-                                NotficationStatus.accepted,
+                                NotficationStatus.approved,
                                 application.ID.ToString(),
                                 new List<string> { application.UserID },
                                 new
@@ -298,8 +298,10 @@ namespace Jop.Services.Implemntations
                                         ,company = new
                                         {
                                             id = application.Job.CompanyID,
-                                            name = application.Job.Company.Name?? "",
-                                            logo = application.Job.Company.Logo?? "",
+                                            name = application.Job.Company.Name ?? "",
+                                            logo = application.Job.Company.Logo ?? "",
+                                            email = user.Email ?? "",
+                                            username = user.UserName
                                         },  
                                     }
                                 });
@@ -405,9 +407,14 @@ namespace Jop.Services.Implemntations
 
         public async Task<APIOperationResponse<object>> RejectTheApplication(int ApplicationId)
         {
+            var user= await _authenticationService.GetCurrentUserAsync();
+            if (user == null)
+                return APIOperationResponse<object>.UnOthrized("you are not logged in");
             var application = await unitOfWork._context.Applications.Include(a => a.Job).ThenInclude(j => j.Company).FirstOrDefaultAsync(a => a.ID == ApplicationId);
             if (application == null)
                 return APIOperationResponse<object>.NotFound("this application is not found");
+            if(user.Id != application.Job.Company.UserID)
+                return APIOperationResponse<object>.UnOthrized("you are not authorized to reject this application");
             application.status = ApplicationStatus.rejected;
             try
             {
@@ -443,8 +450,10 @@ namespace Jop.Services.Implemntations
                             company = new
                             {
                                 id = application.Job.CompanyID,
-                                name = application.Job.Company.Name?? "",
-                                logo = application.Job.Company.Logo?? ""
+                                name = application.Job.Company.Name ?? "",
+                                logo = application.Job.Company.Logo ?? "",
+                                username = user.UserName,
+                                email = user.Email
                             }
                         }
                     }
@@ -711,7 +720,7 @@ namespace Jop.Services.Implemntations
                 return APIOperationResponse<object>.UnOthrized("this user is not a company");
             if (application == null)
                 return APIOperationResponse<object>.NotFound("this application is not found");
-
+            var usercom=await unitOfWork._context.Users.FirstOrDefaultAsync(u => u.Id == companyuser.UserID);
             if (application.Job.Company.ID != companyuser.ID)
                 return APIOperationResponse<object>.NotFound("this application doesn't belong to a job in your company");
             if (application.status == ApplicationStatus.accepted)
@@ -765,8 +774,11 @@ namespace Jop.Services.Implemntations
                             company = new
                             {
                                 id = application.Job.CompanyID,
-                                name = application.Job.Company.Name?? "",
-                                logo = application.Job.Company.Logo?? ""
+                                name = application.Job.Company.Name ?? "",
+                                logo = application.Job.Company.Logo ?? "",
+                                email = usercom.Email?? "",
+                                username=usercom.UserName
+                                
                             }
                         }
                         
