@@ -230,8 +230,11 @@ namespace Jop.Services.Implemntations
                                 company = new
                                 {
                                     id = application.Job.CompanyID,
-                                    name = application.Job.Company.Name?? "",
-                                    logo = application.Job.Company.Logo?? ""
+                                    name = application.Job.Company.Name ?? "",
+                                    logo = application.Job.Company.Logo ?? "",
+                                    email = Companyuser.Email ?? "",
+                                    username = Companyuser.UserName
+                                    
                                 }
 
                             }
@@ -337,8 +340,10 @@ namespace Jop.Services.Implemntations
                             company = new
                             {
                                 id = application.Job.CompanyID,
-                                name = application.Job.Company.Name?? "",
-                                logo = application.Job.Company.Logo?? ""
+                                name = application.Job.Company.Name ?? "",
+                                logo = application.Job.Company.Logo ?? "",
+                                email = user.Email ?? "",
+                                username = user.UserName
                             }
                         }
                     }
