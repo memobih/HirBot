@@ -179,16 +179,21 @@ namespace Jop.Services.Implemntations
                 {
                     foreach (var application in job.Applications)
                     {
+
                         if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
                         if (application.status == ApplicationStatus.approved)
                             if (application.Interviews != null) application.Interviews = application.Interviews.OrderBy(a => a.CreationDate).ToList();
+                        if (application.User.Portfolio == null) application.User.Portfolio = new Portfolio();
+                        var candidate = GetUserInformations(application.User);
+                        var ids = candidate.Skills.Select(s => s.SkillID).ToList();
+                        var skills = unitOfWork._context.Skills.Where(s => ids.Contains(s.ID)).Select(s => s.Name).ToList();
                         applications.Add(
                             new ApprovedApplication
                             {
                                 id = application.ID,
                                 name = application.User.FullName,
                                 email = application.User.Email,
-                                Score = 80,
+                                Score = JobMatcher.GetScore(candidate, job, skills),
                                 status = application.status,
                                 created_at = application.CreationDate,
                                 CVLink = application.User.Portfolio.CVUrl,
@@ -737,7 +742,7 @@ namespace Jop.Services.Implemntations
                 employee.workType = application.Job.LocationType;
                 employee.startDate = DateTime.Now;
                 employee.endDate = null;
-                employee.rate = 50;
+                employee.rate = 0;
                 employee.title = application.Job.Title;
                 employee.location = application.Job.location;
                 await _employeeService.AddEmployee(employee);

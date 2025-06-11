@@ -116,15 +116,18 @@ namespace Exame.Services.Implemntation
 
 
                 };
+
                 int questionNUmber = 5;
                 int points = 0;
-                foreach (var l in levels) {
+                foreach (var l in levels)
+                {
                     questionNUmber += 3;
                     points = (l.min + l.max) / 2;
                     if (l.ID == level.ID) break;
                 }
-                points += points % questionNUmber;  
-                newExam.Questions =await _questionGenration.GenerateQuestionsAsync("generate" + skill.Name + "question " , questionNUmber , "easy");
+                points += (points % questionNUmber);
+                newExam.Questions = await _questionGenration.GenerateQuestionsAsync(questionNUmber ,skill.ID);
+                newExam.Points = points;
                 _unitOfWork._context.Exams.Add(newExam);
                 _unitOfWork._context.SaveChanges();
                 return APIOperationResponse<object>.Success(new { examId = newExam.ID }, "the exame");
@@ -276,6 +279,7 @@ TimeZoneInfo.ConvertTimeFromUtc(
                     }
 
                 }
+                
                 exam.IsAnswerd = true;
                 exam.UserSkill.Rate += points;
                 response.skill = exam.UserSkill.Skill.Name;
@@ -414,7 +418,7 @@ TimeZoneInfo.ConvertTimeFromUtc(
                         errors:null
                          ,
                         data: new {
-                            startTime = interview.TechStartTime              ,
+                            startTime = interview.TechStartTime ,
                             currentTime= CreationDate
                         }
                          );

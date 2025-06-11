@@ -33,12 +33,7 @@ namespace Exame.Api.ExamController
                 return Ok(new {status=true , message=response.Message ,data=response.Data});
             return StatusCode(response.StatusCode , new { status = false, message = response.Message });
         }
-        [HttpGet("testgeneration")]
-        public async Task<IActionResult> GetExameForUserSkill(int id , int tm)
-        {
-            var response = await _questionGenration.GenerateQuestionsAsync("generate software engineer question", id, "easy");
-            return Ok(response);
-        }
+     
         [Authorize]
         [HttpGet("{id}/getexame")]
         public async Task<IActionResult> GetExameForUserSkill(int id)

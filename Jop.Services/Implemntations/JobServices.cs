@@ -1,4 +1,5 @@
 ﻿using HirBot.Comman.Enums;
+using HirBot.Comman.Idenitity;
 using HirBot.Data.Entities;
 using HirBot.Data.Enums;
 using HirBot.Data.IGenericRepository_IUOW;
@@ -198,7 +199,7 @@ namespace Jop.Services.Implemntations
                      ThenInclude(r => r.Skill)
                      .Include(c => c.jobs)
                      .ThenInclude(j => j.JobRequirments)
-                     .ThenInclude(r => r.Level).OrderByDescending(j => j.CreationDate).
+                     .ThenInclude(r => r.Level).OrderByDescending(j => j.CreationDate).Include(C => C.jobs).ThenInclude(j => j.Applications).
                      FirstOrDefaultAsync(c => c.UserID == user.Id);
                 if (company == null || company.status != CompanyStatus.accepted)
                     return APIOperationResponse<object>.UnOthrized("this company is not accepted yet");
@@ -229,7 +230,7 @@ namespace Jop.Services.Implemntations
                                     added.Skills.Add(new Skills { SkillID=skill.SkillID , levelID=skill.LevelID,name = skill.Skill.Name, evaluation = skill.Level.Name });
                                 }
                             }
-                            added.ApplicantNumber = 100;
+                            added.ApplicantNumber = jop.Applications.Count();
                             jobs.Add(added);
                         }
                     }
@@ -471,12 +472,16 @@ namespace Jop.Services.Implemntations
                     Where(j => j.status == JobStatus.published).ToList();
                 List<JobRecomendations> jobs = new List<JobRecomendations>();
                 var user = await _authenticationService.GetCurrentUserAsync();
+                user = unitOfWork._context.users.Include(u => u.Skills).Include(u => u.Portfolio).Where(u => u.Id == user.Id).First();
                 if (all != null)
                     foreach (var jop in all)
                     {
                         if (jop.status == JobStatus.published)
                         {
-                            
+                            if (user.Portfolio == null) user.Portfolio = new Portfolio();
+                            var candidate = GetUserInformations(user);
+                            var ids = candidate.Skills.Select(s => s.SkillID).ToList();
+                            var skills = unitOfWork._context.Skills.Where(s => ids.Contains(s.ID)).Select(s => s.Name).ToList();
 
                             var added = new JobRecomendations
                             {
@@ -487,6 +492,7 @@ namespace Jop.Services.Implemntations
                                 Salary = jop.Salary,
                                 ID = jop.ID,
                                 status = jop.status,
+                                score= JobMatcher.GetScore(candidate, jop, skills),
                                 Title = jop.Title,
                                 created_at = jop.CreationDate,
                                 LocationType = jop.LocationType
@@ -609,7 +615,12 @@ namespace Jop.Services.Implemntations
           
         }
 
-     
+        private ApplicationUser GetUserInformations(ApplicationUser user)
+        {
+            user.Skills = unitOfWork._context.UserSkills.Where(s => s.UserID == user.Id).ToList();
+            user.experiences = unitOfWork._context.Experiences.Where(e => e.UserID == user.Id).ToList();
+            return user;
+        }
 
         #endregion
 

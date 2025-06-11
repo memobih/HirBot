@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Mysqlx.Notice.Warning.Types;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Exame.Services.Implemntation
 {
@@ -52,7 +53,25 @@ namespace Exame.Services.Implemntation
                     {
                         if (userSkill.Exams == null)
                             userSkill.Exams = new List<Exam>();
-                        userSkill.Exams.Add(createExame(userSkill.Skill.Name, user.Id, userSkill.ID));
+
+
+
+                        var newExam = createExame(userSkill.Skill.Name, user.Id, userSkill.ID, userSkill.Rate, userSkill.ID);
+                        int number = 5;
+
+                        foreach (var level in levels)
+                        {
+                            number++;
+                            newExam.duration++;
+                            newExam.Points++;
+                            if (level.min <= userSkill.Rate && userSkill.Rate <= level.max)
+                            {
+                                break;
+                            }
+
+                        }
+                        newExam.Questions = await _questionGenration.GenerateQuestionsAsync(number,userSkill.SkillID);
+                        userSkill.Exams.Add(newExam);
                         await _unitOfWork.userSKils.UpdateAsync(userSkill);
                         await _unitOfWork.SaveAsync();
                     }
@@ -84,7 +103,7 @@ namespace Exame.Services.Implemntation
                 var user = await _authenticationService.GetCurrentUserAsync();
                 var newExam = _unitOfWork._context.Exams.Include(e => e.UserSkill).ThenInclude(e=>e.Skill).Include(e=>e.Questions).ThenInclude(q=>q.Options).Where(e => e.ID == id && e.IsAnswerd == false).FirstOrDefault();
                 if (newExam == null || newExam.UserSkill.UserID != user.Id)
-                    return APIOperationResponse<Object>.NotFound("this exame is answerd before or not found");
+                    return APIOperationResponse<object>.NotFound("this exame is answerd before or not found");
                 var respone = new ExameResponse();
                 respone.name = newExam.Name;
                 respone.duration = newExam.duration;
@@ -111,14 +130,14 @@ namespace Exame.Services.Implemntation
 
                 }
                 respone.startTime = newExam.CreationDate;
-                return APIOperationResponse<Object>.Success(respone, "the exame");
+                return APIOperationResponse<object>.Success(respone, "the exame");
             }
             catch (Exception ex) {
                 return APIOperationResponse<object>.ServerError("there are error eccured");
                 }
         }
 
-        private Exam createExame(string skill, string userid, int userskillID)
+        private   Exam createExame(string skill, string userid, int userskillID  , int rate , int id )
         {
             Exam newExam = new Exam
             {
@@ -126,11 +145,10 @@ namespace Exame.Services.Implemntation
                 Points = 5,
                 Type = ExamType.DailyChallenge,
                 Name = "daily question for " + skill,
-                duration = 10,
+                duration = 8,
                 CreationDate = DateTime.Today
             };
-
-            newExam.Questions =  _questionGenration.GenerateQuestionsAsync("generate" + skill + "question ", 5, "easy").Result;
+       
             return newExam;
         }
 

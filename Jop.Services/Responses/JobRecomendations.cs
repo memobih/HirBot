@@ -13,7 +13,8 @@ namespace Jop.Services.Responses
             public int ID { get; set; }
             public string Title { get; set; }
             public string? Description { get; set; }
-
+        
+         public int score { get; set; }
             public string location { get; set; }
             public int? Salary { get; set; }
             public LocationType LocationType { get; set; }

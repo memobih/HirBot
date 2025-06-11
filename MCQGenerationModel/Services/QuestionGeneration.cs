@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using HirBot.Data.IGenericRepository_IUOW;
 using Project.Repository.Repository;
 using MCQGenerationModel.Interfaces;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace MCQGenerationModel.Services
 {
@@ -27,55 +28,29 @@ namespace MCQGenerationModel.Services
             _unitOfWork = unitOfWork;
 
         }
-        public async Task<List<Question>> GenerateQuestionsAsync(string prompt, int questionCount, string level)
+        public async Task<List<Question>> GenerateQuestionsAsync( int questionCount, int id)
         {
-            var requestData = new GenerateRequest
+            var randomQuestions = _unitOfWork._context.Questions.Include(q=>q.Options)
+                                  .Where(q => q.SKillID == id)
+                                  .OrderBy(q => Guid.NewGuid())  // ترتيب عشوائي
+                                  .Take(questionCount)                       // أخذ n عنصر
+                                  .ToList();
+            var questions=new List<Question>(); 
+            foreach (var randomQuestion in randomQuestions)
             {
-                prompt = prompt,
-                max_length = 500
-            };
+                var question = new Question();
+                question.Content = randomQuestion.Content;
 
-            var content = new StringContent(
-                JsonSerializer.Serialize(requestData),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            var result = new List<Question>();
-
-            while (result.Count()<questionCount)
-            {
-                var response = await _httpClient.PostAsync("http://192.168.1.14:8000/generate", content);
-                response.EnsureSuccessStatusCode();
-
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<QuestionResponse>(json);
-
-                if (apiResponse == null || apiResponse.options == null || string.IsNullOrEmpty(apiResponse.question))
-                    continue;
-
-                var options = new List<Option>();
-                foreach (var kvp in apiResponse.options)
+                foreach (var option in randomQuestion.Options)
                 {
-                    options.Add(new Option
-                    {
-                        option = kvp.Value,
-                        IsCorrect = kvp.Key.ToLower() == apiResponse.answer.ToLower()
-                    });
+                    question.Options.Add(new Option { option = option.option, IsCorrect = option.IsCorrect });
+
                 }
+                questions.Add(question);
 
-                var question = new Question
-                {
-                    Content = apiResponse.question,
-                    Points = 5,
-                    QuestionType = QuestionType.MCQ,
-                    Options = options
-                };
 
-                result.Add(question);
             }
-
-            return result;
+            return questions;
         }
     }
 

@@ -9,6 +9,6 @@ namespace MCQGenerationModel.Interfaces
 {
     public interface IQuestionGenration
     {
-        public Task<List<Question>> GenerateQuestionsAsync(string prompt, int questionCount, string level);
+        public Task<List<Question>> GenerateQuestionsAsync( int questionCount, int id);
     }
 }
