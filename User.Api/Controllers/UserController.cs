@@ -92,15 +92,11 @@ namespace User.Api.Controllers
             if (Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             {
                 var response = await _authenticationService.Logout(refreshToken, currentToken);
-                if (response)
-                    return Ok();
-                return BadRequest(new
-                {
-                    status = "false",
-                    massage = "failed refresh token"   
-                });
+
+               
+                return Ok();
             } 
-            return BadRequest("no refresh token");
+            return BadRequest();
         }
         [HttpPost("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)

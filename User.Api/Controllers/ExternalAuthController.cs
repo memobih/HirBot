@@ -69,12 +69,14 @@ namespace User.Api.Controllers
             {
                 SetRefreshTokenInCookie(response.Data.RefreshToken, (DateTime)response.Data.ExpiresOn);
                 string token = response.Data.RefreshToken;
-                var redirectUrl = $"http://localhost:3000/auth/login?token={response.Data.Token}&refreshToken={token}";
+                token = token.Substring(0, token.Length - 1) + "%3D";
+
+                var redirectUrl = $"https://hirbot.vercel.app/auth/login?token={response.Data.Token}&refreshToken={token}";
                 return Redirect(redirectUrl);
             }
 
             var errorMessage = Uri.EscapeDataString(response.Message ?? "auth_failed");
-            var errorRedirect = $"http://localhost:3000/auth/login?error={errorMessage}";
+            var errorRedirect = $"https://hirbot.vercel.app/auth/login?error={errorMessage}";
             return Redirect(errorRedirect);
         }
 
@@ -86,7 +88,7 @@ namespace User.Api.Controllers
             {
                 HttpOnly = true,
                 Expires = expires.ToLocalTime(),
-                Secure = false,
+                Secure = true,
                 IsEssential = true,
                 SameSite = SameSiteMode.None,
                 Path = "/"

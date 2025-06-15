@@ -21,7 +21,7 @@ namespace HirBot.Data.Entities
         [JsonIgnore]
         public ExamType Type { get; set; }
         [JsonIgnore]
-
+         
         public int Points { get; set; }
         [ForeignKey("UserSkill")]
         [JsonIgnore]

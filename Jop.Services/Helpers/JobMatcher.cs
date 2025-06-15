@@ -180,7 +180,7 @@ namespace Jop.Services.Helpers
                 ? JobMatcherWithAI.ComputeTFIDFCosineSimilarity(job.GetJobText(), candidate.GetProfileText())
                 : 0;
 
-            double aiWeight = hasCV ? 0.7 : 0.3;
+            double aiWeight = hasCV ? 0.4 : 0.3;
 
             // زيادة وزن المهارات لرفع الدقة
             double totalScore = (skillMatch * 0.5) + (experienceMatch * 0.1) + (aiSimilarity * aiWeight);

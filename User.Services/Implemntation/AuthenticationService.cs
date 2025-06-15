@@ -60,7 +60,9 @@ namespace User.Services.Implemntation
 
             try
             {
+                
                 var user =await _userManager.FindByEmailAsync(userRegisterDto.Email); 
+                
                 if(user!=null)
                 {
                     return APIOperationResponse<AuthModel>.Conflict("this email is already register");
@@ -70,12 +72,7 @@ namespace User.Services.Implemntation
                 newUser.FullName = userRegisterDto.FullName;
                 newUser.UserName = userRegisterDto.Email.Split('@')[0];
                 newUser.role= UserType.User;
-                IdentityResult result = await _userManager.CreateAsync(newUser, userRegisterDto.Password);
-                if (!result.Succeeded)
-                {
-                    var errors = result.Errors.Select(e => e.Description).ToList();
-                    return APIOperationResponse<AuthModel>.BadRequest(message: "Failed to register the  user. Please check the provided details.", errors);
-                }
+                
                 var otp = GenerateOtp();
                 newUser.VerificationCode = int.Parse(otp); 
                 newUser.Code_Send_at=DateTime.UtcNow.AddMinutes(5);
@@ -88,7 +85,12 @@ namespace User.Services.Implemntation
                 {
                     return APIOperationResponse<AuthModel>.ServerError("an error accured", new List<string> { ex.Message });
                 }
-                await _userManager.UpdateAsync(newUser);
+                IdentityResult result = await _userManager.CreateAsync(newUser, userRegisterDto.Password);
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description).ToList();
+                    return APIOperationResponse<AuthModel>.BadRequest(message: "Failed to register the  user. Please check the provided details.", errors);
+                }
                 await _userManager.AddToRoleAsync(newUser, "User");
                 var Portfolio = new Portfolio();
                 Portfolio.UserID = newUser.Id;
@@ -322,7 +324,7 @@ namespace User.Services.Implemntation
 
             var user = await _userManager.Users.SingleOrDefaultAsync(u=>u.refreshTokens.Any(t=>t.token==token));
             if(user==null)
-                  return false;
+                  return true;
 
                       var refreshToken = user.refreshTokens.Single(t => t.token == token);
                       user.refreshTokens.Remove(refreshToken);
@@ -612,7 +614,7 @@ TimeZoneInfo.ConvertTimeFromUtc(
             var claims = result.Principal.Claims.ToDictionary(c => c.Type, c => c.Value);
             var userId = claims[ClaimTypes.NameIdentifier];
             var firstName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
-            var secondName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+            var secondName = info.Principal.FindFirstValue(ClaimTypes.Surname);
             var email = claims.TryGetValue(ClaimTypes.Email, out var emailClaim) ? emailClaim : null;
             var signing =await  _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
           
@@ -634,7 +636,7 @@ TimeZoneInfo.ConvertTimeFromUtc(
                         UserName = email.Split('@')[0],
                         Email = email,
                         FullName = firstName + " " + secondName,
-
+                        role=UserType.User,
                     };
                     var identityResult = await _userManager.CreateAsync(user, GenerateRefreshToken().token);
                     if (!identityResult.Succeeded)
@@ -660,6 +662,6 @@ TimeZoneInfo.ConvertTimeFromUtc(
             }
         } 
 
-       
+      
     }
 }
