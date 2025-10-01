@@ -5,7 +5,7 @@ An AI-powered recruitment platform designed to streamline the hiring journey for
 It focuses on intelligent job matching, automated application workflows, skill assessments, and professional networking within a single integrated system.
 
 ## 🔗 Live Demo
-[Visit the Recruitment Platform]((https://hirbot.vercel.app/auth/login))
+[Visit the Recruitment Platform](https://hirbot.vercel.app/auth/login?callbackUrl=https%3A%2F%2Fhirbot.vercel.app%2F)
 ## ✨ Features
 - Post jobs with **AI-powered candidate matching**.  
 - Advanced **Applicant Tracking System (ATS)** pipeline with exams and contextual filtering.  
